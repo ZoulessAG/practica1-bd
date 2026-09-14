@@ -24,3 +24,33 @@ Para levantar el gestor de base de datos en un contenedor local:
 ```bash
 docker compose up -d
 ```
+Para verificar el estado del contenedor en ejecución:
+```bash
+docker compose ps
+```
+
+Para acceder a la consola interactiva de PostgreSQL y validar el motor:
+```bash
+docker exec -it pg-practica1 psql -U postgres -d practica1
+```
+
+---
+
+<a id="evidencias-de-git-y-docker"></a>
+## 6. Evidencias de Git y Docker
+
+### Control de Versiones (Git & GitHub)
+
+* **Fusión de Pull Request en la rama principal (`main`):**  
+  ![Pull Request Merged](evidencias/git/pull-request-merged.png)
+
+* **Historial y Árbol de Ramas (`git log --graph`):**  
+  ![Git Log Graph](evidencias/git/git-log-graph.png)
+
+### Despliegue del Entorno de Base de Datos (Docker)
+
+* **Contenedor PostgreSQL Activo (`docker compose ps`):**  
+  ![Docker Compose Up](evidencias/docker/docker-compose-up.png)
+
+* **Verificación de Conexión Interactiva (`psql`):**  
+  ![Docker PSQL Connect](evidencias/docker/docker-psql-connect.png)
