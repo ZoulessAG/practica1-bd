@@ -54,3 +54,5 @@ docker exec -it pg-practica1 psql -U postgres -d practica1
 
 * **Verificación de Conexión Interactiva (`psql`):**  
   ![Docker PSQL Connect](evidencias/docker/docker-psql-connect.png)
+*  **Prueba de Persistencia con Volúmenes (`down` / `up`):**
+* ![Docker Persistencia](evidencias/docker/docker-persistencia.png)
