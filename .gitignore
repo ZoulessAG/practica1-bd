@@ -1,0 +1,11 @@
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs y editores
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
