@@ -25,7 +25,7 @@ PENDIENTE
 ## Índice de Entregables
 
 1. **Ejercicio 1. Control de versiones con Git y GitHub**
-   - Investigación: Conceptos y flujos de trabajo
+   - [Investigación: Conceptos y flujos de trabajo](./docs/Ejercicio1_Investigacion.pdf)
    - [Evidencia: Captura del árbol de confirmaciones (`git log`)](evidencias/git/git-log-graph.png)
    - [Evidencia: Captura del Pull Request fusionado](evidencias/git/pull-request-merged.png)
 
