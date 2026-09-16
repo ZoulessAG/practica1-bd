@@ -1,58 +1,55 @@
-# Instituto Politécnico Nacional
-## Escuela Superior de Cómputo
+# Práctica 1: Modelo Entidad Relación
 
-**Unidad de Aprendizaje:** Bases de Datos  
-**Plan de Estudios:** Ingeniería en Sistemas Computacionales (2020)  
-**Práctica 1:** Modelo Entidad Relación
-
-**Alumno:** Aguilar Garcia Ian Andrew  
-**Boleta:** 2026630300  
-**Grupo:** 3CV2
+**Instituto Politécnico Nacional**  
+**Escuela Superior de Cómputo**  
+*Unidad de aprendizaje:* Bases de Datos  
+*Plan de estudios:* Ingeniería en Sistemas Computacionales (2020)
 
 ---
 
-### Índice de Entregables
-1. [Investigación Teórica: Unidad I](docs/investigacion-bases-de-datos.pdf)
-2. [Estado del Arte: Artículos Científicos](docs/estado-del-arte.pdf)
-3. [Caso de Estudio y Modelo ER](docs/caso-de-estudio.pdf)
-4. [Diagrama Entidad-Relación](modelo/diagrama-er.png)
-5. [Configuración Docker Compose](compose.yaml)
-6. [Evidencias de Git y Docker](evidencias/)
+## Datos del Alumno / Equipo
 
-### Instrucciones de Despliegue
-Para levantar el gestor de base de datos en un contenedor local:
-```bash
-docker compose up -d
-```
-Para verificar el estado del contenedor en ejecución:
-```bash
-docker compose ps
-```
-
-Para acceder a la consola interactiva de PostgreSQL y validar el motor:
-```bash
-docker exec -it pg-practica1 psql -U postgres -d practica1
-```
+| Nombre Completo | Boleta | Grupo | Carrera |
+| :--- | :--- | :--- | :--- |
+| Ian Andrew Aguilar Garcia | 2026630300 | [Tu Grupo] | Ingeniería en Sistemas Computacionales |
+| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
 
 ---
 
-<a id="evidencias-de-git-y-docker"></a>
-## 6. Evidencias de Git y Docker
+## Descripción del Proyecto
+PENDIENTE
+---
 
-### Control de Versiones (Git & GitHub)
+## Índice de Entregables
 
-* **Fusión de Pull Request en la rama principal (`main`):**  
-  ![Pull Request Merged](evidencias/git/pull-request-merged.png)
+1. **Ejercicio 1. Control de versiones con Git y GitHub**
+  - Investigación: Conceptos y flujos de trabajo
+  - [Evidencia: Captura del árbol de confirmaciones (`git log`)](evidencias/git/git-log.png)
+  - [Evidencia: Captura del Pull Request fusionado](evidencias/git/pull-request-merge.png)
 
-* **Historial y Árbol de Ramas (`git log --graph`):**  
-  ![Git Log Graph](evidencias/git/git-log-graph.png)
+2. **Ejercicio 2. El sistema gestor en un contenedor: Docker**
+  - Investigación: Contenedores, imágenes y volúmenes
+  - [Configuración del contenedor: `compose.yaml`](entorno/compose.yaml)
+  - [Evidencia: Conexión al gestor PostgreSQL](evidencias/docker/conexion-postgres.png)
+  - [Evidencia: Demostración de persistencia de datos](evidencias/docker/persistencia-volumen.png)
 
-### Despliegue del Entorno de Base de Datos (Docker)
+3. **Ejercicio 3. Investigación: ¿Qué es una base de datos?**
+  - [Documento PDF: Unidad Temática I](docs/investigacion-bases-de-datos.pdf)
 
-* **Contenedor PostgreSQL Activo (`docker compose ps`):**  
-  ![Docker Compose Up](evidencias/docker/docker-compose-up.png)
+4. **Ejercicio 4. Estado del arte: tres artículos científicos**
+  - [Documento PDF: Fichas analíticas y comparativa](docs/estado-del-arte.pdf)
 
-* **Verificación de Conexión Interactiva (`psql`):**  
-  ![Docker PSQL Connect](evidencias/docker/docker-psql-connect.png)
-*  **Prueba de Persistencia con Volúmenes (`down` / `up`):**
-* ![Docker Persistencia](evidencias/docker/docker-persistencia.png)
+5. **Ejercicio 5. Caso de estudio y modelo entidad-relación**
+  - [Documento PDF: Planteamiento del problema, entrevista y requerimientos](docs/caso-de-estudio.pdf)
+  - [Diagrama Entidad-Relación: Esquema conceptual (PNG)](modelo/diagrama-er.png)
+
+---
+
+## Instrucciones para levantar el entorno
+
+1. Clonar el repositorio y acceder a la carpeta de configuración:
+   ```bash
+   git clone [https://github.com/ZoulessAG/practica1-bd.git](https://github.com/ZoulessAG/practica1-bd.git)
+   cd practica1-bd/entorno
