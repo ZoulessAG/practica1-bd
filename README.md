@@ -11,10 +11,10 @@
 
 | Nombre Completo | Boleta | Grupo | Carrera |
 | :--- | :--- | :--- | :--- |
-| Ian Andrew Aguilar Garcia | 2026630300 | [Tu Grupo] | Ingeniería en Sistemas Computacionales |
-| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
-| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
-| Kevin Edú Vega Treviño | [Boleta] | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Ian Andrew Aguilar Garcia | 2026630300 | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Kevin Edú Vega Treviño | 2026630108 | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Alondra Quintanar Sánchez | 2026630237 | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Sánchez Palma Joel | 2026630122 | [Grupo] | Ingeniería en Sistemas Computacionales |
 
 ---
 
