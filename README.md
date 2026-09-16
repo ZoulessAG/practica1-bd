@@ -39,7 +39,7 @@ PENDIENTE
   - [Documento PDF: Unidad Temática I](docs/investigacion-bases-de-datos.pdf)
 
 4. **Ejercicio 4. Estado del arte: tres artículos científicos**
-  - [Documento PDF: Fichas analíticas y comparativa](docs/estado-del-arte.pdf)
+  - [Documento PDF: Fichas analíticas y comparativa](./docs/estado-del-arte.pdf)
 
 5. **Ejercicio 5. Caso de estudio y modelo entidad-relación**
   - [Documento PDF: Planteamiento del problema, entrevista y requerimientos](docs/caso-de-estudio.pdf)
