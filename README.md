@@ -25,15 +25,15 @@ PENDIENTE
 ## Índice de Entregables
 
 1. **Ejercicio 1. Control de versiones con Git y GitHub**
-  - Investigación: Conceptos y flujos de trabajo
-  - [Evidencia: Captura del árbol de confirmaciones (`git log`)](evidencias/git/git-log.png)
-  - [Evidencia: Captura del Pull Request fusionado](evidencias/git/pull-request-merge.png)
+   - Investigación: Conceptos y flujos de trabajo
+   - [Evidencia: Captura del árbol de confirmaciones (`git log`)](evidencias/git/git-log-graph.png)
+   - [Evidencia: Captura del Pull Request fusionado](evidencias/git/pull-request-merged.png)
 
 2. **Ejercicio 2. El sistema gestor en un contenedor: Docker**
-  - Investigación: Contenedores, imágenes y volúmenes
-  - [Configuración del contenedor: `compose.yaml`](entorno/compose.yaml)
-  - [Evidencia: Conexión al gestor PostgreSQL](evidencias/docker/conexion-postgres.png)
-  - [Evidencia: Demostración de persistencia de datos](evidencias/docker/persistencia-volumen.png)
+   - Investigación: Contenedores, imágenes y volúmenes
+   - [Configuración del contenedor: `compose.yaml`](entorno/compose.yaml)
+   - [Evidencia: Conexión al gestor PostgreSQL](evidencias/docker/conexion-postgres.png)
+   - [Evidencia: Demostración de persistencia de datos](evidencias/docker/persistencia-volumen.png)
 
 3. **Ejercicio 3. Investigación: ¿Qué es una base de datos?**
   - [Documento PDF: Unidad Temática I](docs/investigacion-bases-de-datos.pdf)
