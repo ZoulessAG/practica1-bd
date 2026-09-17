@@ -30,7 +30,7 @@ PENDIENTE
    - [Evidencia: Captura del Pull Request fusionado](evidencias/git/pull-request-merged.png)
 
 2. **Ejercicio 2. El sistema gestor en un contenedor: Docker**
-   - Investigación: Contenedores, imágenes y volúmenes
+   - [Investigación: Contenedores, imágenes y volúmenes](./docs/Ejercicio2_Investigacion.pdf)
    - [Configuración del contenedor: `compose.yaml`](entorno/compose.yaml)
    - [Evidencia: Conexión al gestor PostgreSQL](evidencias/docker/conexion-postgres.png)
    - [Evidencia: Demostración de persistencia de datos](evidencias/docker/persistencia-volumen.png)
