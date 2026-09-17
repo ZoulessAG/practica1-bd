@@ -36,7 +36,7 @@ PENDIENTE
    - [Evidencia: Demostración de persistencia de datos](evidencias/docker/persistencia-volumen.png)
 
 3. **Ejercicio 3. Investigación: ¿Qué es una base de datos?**
-  - [Documento PDF: Unidad Temática I](docs/investigacion-bases-de-datos.pdf)
+  - [Documento PDF: Unidad Temática I](./docs/investigacion-bases-de-datos.pdf)
 
 4. **Ejercicio 4. Estado del arte: tres artículos científicos**
   - [Documento PDF: Fichas analíticas y comparativa](./docs/estado-del-arte.pdf)
