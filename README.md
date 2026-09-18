@@ -11,15 +11,27 @@
 
 | Nombre Completo | Boleta | Grupo | Carrera |
 | :--- | :--- | :--- | :--- |
-| Ian Andrew Aguilar Garcia | 2026630300 | [Grupo] | Ingeniería en Sistemas Computacionales |
-| Kevin Edú Vega Treviño | 2026630108 | [Grupo] | Ingeniería en Sistemas Computacionales |
-| Alondra Quintanar Sánchez | 2026630237 | [Grupo] | Ingeniería en Sistemas Computacionales |
-| Sánchez Palma Joel | 2026630122 | [Grupo] | Ingeniería en Sistemas Computacionales |
+| Ian Andrew Aguilar Garcia | 2026630300 | 3CV2 | Ingeniería en Sistemas Computacionales |
+| Kevin Edú Vega Treviño | 2026630108 | 3CV2 | Ingeniería en Sistemas Computacionales |
+| Alondra Quintanar Sánchez | 2026630237 | 3CV2 | Ingeniería en Sistemas Computacionales |
+| Sánchez Palma Joel | 2026630122 | 3CV2 | Ingeniería en Sistemas Computacionales |
 
 ---
 
 ## Descripción del Proyecto
-PENDIENTE
+
+> **Sistema de Gestión de Citas, Pacientes y Estudios en Laboratorio Clínico**
+>
+> Diseño e implementación de una base de datos relacional para optimizar el flujo operativo en el área de laboratorio de una unidad médica. El sistema centraliza la validación de derechohabientes mediante el Número de Seguridad Social (NSS), la programación controlada de tomas de muestra con base en reglas de anticipación médica, y la trazabilidad del historial de asistencia clínica.
+
+---
+
+### Alcance y Reglas del Negocio
+
+* **Control y Validación de Pacientes:** Registro de datos personales y verificación de identidad, vigencia y unidad médica de adscripción mediante NSS.
+* **Gestión y Agendamiento de Citas:** Programación de estudios clínicos cumpliendo la restricción temporal de 15 a 30 días de anticipación respecto a la consulta con el médico tratante.
+* **Trazabilidad de Estudios y Órdenes Médicas:** Vinculación de estudios específicos solicitados por orden médica e integración al expediente clínico del paciente.
+* **Eficiencia Operativa e Historial:** Registro de confirmación de asistencia y control de ausencias con un tiempo objetivo de atención máximo de 2 minutos por ventanilla.
 ---
 
 ## Índice de Entregables
