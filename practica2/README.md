@@ -18,7 +18,7 @@
 
 ## Información del Proyecto Asignado
 
-* **Proyecto:** [Pendiente de asignación por el docente]
+* **Proyecto:** [Pendiente]
 * **Repositorio Fork:** [Pendiente - URL del Fork]
 * **Commit de Funcionamiento:** `[Hash del commit]`
 
@@ -35,8 +35,8 @@
 3. **Artículos Científicos**
     * [Resúmenes de Artículos](articulos/articulo1-sismos.md)
 4. **Propuestas de Mejora (Issues)**
-    * [Issue #1 - Título]
-    * [Issue #2 - Título]
-    * [Issue #3 - Título]
+    * [Issue #1 - Título-Pendiente]
+    * [Issue #2 - Título-Pendiente]
+    * [Issue #3 - Título-Pendiente]
 5. **Exposición**
     * [Presentación en PDF](exposicion/presentacion.pdf)
