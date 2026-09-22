@@ -9,9 +9,10 @@
 
 | Nombre Completo | Boleta | Rol / Contribución |
 | :--- | :--- | :--- |
-| Ian Andrew Aguilar Garcia | [Tu Boleta] | Modelo EER Proyecto Propio / Levantamiento |
-| [Nombre Integrante 2] | [Boleta] | Resumen de Artículos / Modelo EER Asignado |
-| [Nombre Integrante 3] | [Boleta] | Propuestas de Mejora / Presentación |
+| Ian Andrew Aguilar Garcia | 2026630300 | Modelado EER y Requisitos Ampliados del Proyecto Propio |
+| Kevin Edú Vega Treviño | 2026630108 | Levantamiento y Correspondencia del Proyecto Asignado |
+| Alondra Quintanar Sánchez | 2026630237 | Resumen de Artículos Científicos y Propuestas de Mejora (Issues) |
+| Joel Palma Sánchez | 2026630122 | Reconstrucción del Esquema EER Asignado y Presentación Ejecutiva |
 
 ---
 
