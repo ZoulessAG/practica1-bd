@@ -24,19 +24,31 @@
 
 ---
 
+## Información del Proyecto Asignado
+
+* **Proyecto:** Monitoreo Sísmico y Eventos Telúricos
+* **Repositorio Fork:** [ZoulessAG/practica1-bd](https://github.com/ZoulessAG/practica1-bd)
+* **Rama de Trabajo:** `practica2`
+
+---
+
 ## Índice de Entregables
 
-1. **Proyecto Propio**
-    * [Requisitos Ampliados](proyecto-propio/requisitos-ampliados.pdf)
-    * Diagramas EER: Chen y Crow's Feet
-2. **Proyecto Asignado**
-    * [Documento de Levantamiento](proyecto-asignado/levantamiento.md)
-    * [Correspondencia con el Esquema](proyecto-asignado/correspondencia-con-el-esquema.pdf)
-3. **Artículos Científicos**
-    * [Resúmenes de Artículos](articulos/articulo1-sismos.md)
-4. **Propuestas de Mejora (Issues)**
-    * [Issue #1 - Título-Pendiente]
-    * [Issue #2 - Título-Pendiente]
-    * [Issue #3 - Título-Pendiente]
-5. **Exposición**
-    * [Presentación en PDF](exposicion/presentacion.pdf)
+### 1. Proyecto Asignado (Ejercicio 5)
+* [Documento de Levantamiento de Requerimientos y Abstracción](./proyecto-asignado/levantamiento.md)
+* [Tabla de Correspondencia entre Modelo EER y Esquema Publicado](./proyecto-asignado/correspondencia.md)
+* [Diagrama Conceptual EER (Imagen PNG)](./proyecto-asignado/diagrama-chen.png)
+
+### 2. Propuestas de Mejora (Ejercicio 6 - Issues)
+* [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
+* [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
+* [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
+
+### 3. Artículos Científicos
+* [Resúmenes y Análisis Comparativo de Artículos](./articulos/)
+
+### 4. Proyecto Propio
+* [Requisitos Ampliados](./proyecto-propio/)
+
+### 5. Exposición
+* [Presentación de la Práctica](./exposicion/)
