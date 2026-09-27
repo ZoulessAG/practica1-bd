@@ -20,9 +20,7 @@
 
 * **Proyecto:** Monitoreo Sísmico y Eventos Telúricos
 * **Repositorio Original:** [gabrielhuav/Seismic-Data-Visualization-System](https://github.com/gabrielhuav/Seismic-Data-Visualization-System)
-* **Repositorio Fork:** [ Pendiente ]
 * **Rama de Trabajo:** `practica2`
-* **Commit de Funcionamiento:** `[Hash del commit]`s
 
 ---
 
