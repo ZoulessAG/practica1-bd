@@ -18,10 +18,11 @@
 
 ## Información del Proyecto Asignado
 
-- **Proyecto:** Monitoreo Sísmico y Eventos Telúricos
-- **Repositorio Fork:** [ZoulessAG/practica1-bd](https://github.com/ZoulessAG/practica1-bd)
-- **Rama de Trabajo:** `practica2`
-- **Commit de Funcionamiento:** `[Hash del commit]` *(Reemplazar con el hash corto del commit)*
+* **Proyecto:** Monitoreo Sísmico y Eventos Telúricos
+* **Repositorio Original:** [gabrielhuav/Seismic-Data-Visualization-System](https://github.com/gabrielhuav/Seismic-Data-Visualization-System)
+* **Repositorio Fork:** [ Pendiente - URL del Fork de tu compañera ]
+* **Rama de Trabajo:** `practica2`
+* **Commit de Funcionamiento:** `[Hash del commit]`
 
 ---
 
