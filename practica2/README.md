@@ -31,14 +31,10 @@
 - [Tabla de Correspondencia entre Modelo EER y Esquema Publicado](./proyecto-asignado/correspondencia.md)
 - [Diagrama Conceptual EER (Imagen PNG)](./proyecto-asignado/diagrama-chen.png)
 
-### 2. Propuestas de Mejora (Ejercicio 6 - Issues)
-  - [Repositorio Fork](https://github.com/AlooXoX/Seismic-Data-Visualization-System)
-  - [Ver archivo de Levantamiento](https://github.com/AlooXoX/Seismic-Data-Visualization-System/blob/main/Levantamiento.md)
-  - *Commit ID de entrega:* `5010bf5a01a105742e5b2e679a73ad96817f6776`
-
-- [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
-- [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
-- [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
+### 2. Clonar y poner en funcionamiento el proyecto asignado
+- [Repositorio Fork](https://github.com/AlooXoX/Seismic-Data-Visualization-System)
+- [Ver archivo de Levantamiento](https://github.com/AlooXoX/Seismic-Data-Visualization-System/blob/main/Levantamiento.md)
+- *Hash del commit:* `5010bf5a01a105742e5b2e679a73ad96817f6776`
 
 ### 3. Artículos Científicos
 - [Resúmenes y Análisis Comparativo de Artículos (PDF)](./articulos/resumenes.pdf)
@@ -48,6 +44,12 @@
 
 ### 5. Exposición
 - [Presentación de la Práctica (PDF)](./exposicion/presentacion.pdf)
+
+### 6. Propuestas de mejora
+
+- [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
+- [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
+- [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
 
 ---
 
