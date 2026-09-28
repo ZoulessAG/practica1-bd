@@ -50,6 +50,9 @@
 - [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
 - [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
 - [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
+- [Issue #5: Mapeo de Vulnerabilidad por Tipo de Suelo](https://github.com/ZoulessAG/practica1-bd/issues/5)
+- [Issue #6: Registro Histórico de Daños Estructurales](https://github.com/ZoulessAG/practica1-bd/issues/6)
+- [Issue #7: Zonificación de Impacto Real mediante Isosistas (Polígonos Espaciales)](https://github.com/ZoulessAG/practica1-bd/issues/7)
 
 ---
 
