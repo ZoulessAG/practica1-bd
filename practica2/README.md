@@ -53,6 +53,9 @@
 - [Issue #5: Mapeo de Vulnerabilidad por Tipo de Suelo](https://github.com/ZoulessAG/practica1-bd/issues/5)
 - [Issue #6: Registro Histórico de Daños Estructurales](https://github.com/ZoulessAG/practica1-bd/issues/6)
 - [Issue #7: Zonificación de Impacto Real mediante Isosistas (Polígonos Espaciales)](https://github.com/ZoulessAG/practica1-bd/issues/7)
+- [Issue #8: Identificación y Visualización de Enjambres Sísmicos](https://github.com/ZoulessAG/practica1-bd/issues/8)
+- [Issue #9: Monitoreo de Brechas Sísmicas](https://github.com/ZoulessAG/practica1-bd/issues/9)
+- [Issue #10: Exportación de Reportes y Subconjuntos de Datos](https://github.com/ZoulessAG/practica1-bd/issues/10)
 
 ---
 
