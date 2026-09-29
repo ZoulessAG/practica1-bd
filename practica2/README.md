@@ -56,6 +56,9 @@
 - [Issue #8: Identificación y Visualización de Enjambres Sísmicos](https://github.com/ZoulessAG/practica1-bd/issues/8)
 - [Issue #9: Monitoreo de Brechas Sísmicas](https://github.com/ZoulessAG/practica1-bd/issues/9)
 - [Issue #10: Exportación de Reportes y Subconjuntos de Datos](https://github.com/ZoulessAG/practica1-bd/issues/10)
+- [Issue #12: Integración de Alertas de Tsunami para Epicentros Oceánicos](https://github.com/ZoulessAG/practica1-bd/issues/12)
+- [Issue #13: Módulo de Reportes Ciudadanos (Sismología Participativa)](https://github.com/ZoulessAG/practica1-bd/issues/13)
+- [Issue #14: Intersección Espacial con Infraestructura Crítica](https://github.com/ZoulessAG/practica1-bd/issues/14)
 
 ---
 
