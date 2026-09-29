@@ -19,10 +19,8 @@
 ## Información del Proyecto Asignado
 
 * **Proyecto:** Monitoreo Sísmico y Eventos Telúricos
-* **Repositorio Original:** [gabrielhuav/Seismic-Data-Visualization-System](https://github.com/gabrielhuav/Seismic-Data-Visualization-System)
-* **Repositorio Fork:** [ Pendiente ]
+* **Repositorio Original:** [(https://github.com/gabrielhuav/Seismic-Data-Visualization-System)](https://github.com/gabrielhuav/Seismic-Data-Visualization-System)]
 * **Rama de Trabajo:** `practica2`
-* **Commit de Funcionamiento:** `[Hash del commit]`s
 
 ---
 
@@ -33,14 +31,10 @@
 - [Tabla de Correspondencia entre Modelo EER y Esquema Publicado](./proyecto-asignado/correspondencia.md)
 - [Diagrama Conceptual EER (Imagen PNG)](./proyecto-asignado/diagrama-chen.png)
 
-### 2. Propuestas de Mejora (Ejercicio 6 - Issues)
-  - [Repositorio Fork](https://github.com/AlooXoX/Seismic-Data-Visualization-System)
-  - [Ver archivo de Levantamiento](https://github.com/AlooXoX/Seismic-Data-Visualization-System/blob/main/Levantamiento.md)
-  - *Commit ID de entrega:* `5010bf5a01a105742e5b2e679a73ad96817f6776`
-
-- [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
-- [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
-- [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
+### 2. Clonar y poner en funcionamiento el proyecto asignado
+- [Repositorio Fork](https://github.com/AlooXoX/Seismic-Data-Visualization-System)
+- [Ver archivo de Levantamiento](https://github.com/AlooXoX/Seismic-Data-Visualization-System/blob/main/Levantamiento.md)
+- *Hash del commit:* `5010bf5a01a105742e5b2e679a73ad96817f6776`
 
 ### 3. Artículos Científicos
 - [Resúmenes y Análisis Comparativo de Artículos (PDF)](./articulos/resumenes.pdf)
@@ -50,6 +44,21 @@
 
 ### 5. Exposición
 - [Presentación de la Práctica (PDF)](./exposicion/presentacion.pdf)
+
+### 6. Propuestas de mejora
+
+- [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
+- [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
+- [Issue #4: Calibración y Mantenimiento de Estaciones Sísmicas por Historial de Fallas](https://github.com/ZoulessAG/practica1-bd/issues/4)
+- [Issue #5: Mapeo de Vulnerabilidad por Tipo de Suelo](https://github.com/ZoulessAG/practica1-bd/issues/5)
+- [Issue #6: Registro Histórico de Daños Estructurales](https://github.com/ZoulessAG/practica1-bd/issues/6)
+- [Issue #7: Zonificación de Impacto Real mediante Isosistas (Polígonos Espaciales)](https://github.com/ZoulessAG/practica1-bd/issues/7)
+- [Issue #8: Identificación y Visualización de Enjambres Sísmicos](https://github.com/ZoulessAG/practica1-bd/issues/8)
+- [Issue #9: Monitoreo de Brechas Sísmicas](https://github.com/ZoulessAG/practica1-bd/issues/9)
+- [Issue #10: Exportación de Reportes y Subconjuntos de Datos](https://github.com/ZoulessAG/practica1-bd/issues/10)
+- [Issue #12: Integración de Alertas de Tsunami para Epicentros Oceánicos](https://github.com/ZoulessAG/practica1-bd/issues/12)
+- [Issue #13: Módulo de Reportes Ciudadanos (Sismología Participativa)](https://github.com/ZoulessAG/practica1-bd/issues/13)
+- [Issue #14: Intersección Espacial con Infraestructura Crítica](https://github.com/ZoulessAG/practica1-bd/issues/14)
 
 ---
 
