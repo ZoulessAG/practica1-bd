@@ -3,363 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Citas - Laboratorio Clínico</title>
+    <title>Laboratorio Clínico - Portal de Citas</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0d1117; color: #f0f6fc; font-family: system-ui, -apple-system, sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col justify-between">
 
-<!-- Header Principal -->
-<header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
-    <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-hospital-user text-sky-400 text-2xl"></i>
+<!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+<header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+        <div class="bg-blue-600 p-2.5 rounded-lg text-white">
+            <i class="fa-solid fa-hospital-user text-xl"></i>
+        </div>
         <div>
-            <h1 class="text-xl font-bold leading-none">Laboratorio Clínico - Portal de Citas</h1>
-            <p class="text-xs text-slate-400 mt-1" id="subtituloPortal">Simulador de Sistema con Autenticación y Roles</p>
+            <h1 class="font-bold text-lg text-white">Laboratorio Clínico - Portal de Citas</h1>
+            <p class="text-xs text-slate-400">Simulador de Sistema conectado a PostgreSQL</p>
         </div>
     </div>
-
-    <!-- Bar de Usuario & Switch de Rol -->
-    <div class="flex items-center space-x-3 text-xs" id="navUsuario" style="display: none;">
-        <span id="badgeRol" class="px-2.5 py-1 rounded-full font-bold"></span>
-        <span class="font-semibold text-slate-200" id="nombreUsuarioHeader"></span>
-        <button onclick="cerrarSesion()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded transition border border-slate-700">
-            <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
+    <div class="flex items-center gap-3">
+            <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1.5 rounded-md font-semibold">
+                Rol: Administrador
+            </span>
+        <span class="text-sm font-medium text-slate-300">Manuel (Ventanilla)</span>
+        <button onclick="cargarCitas()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-md border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-rotate"></i> Actualizar
         </button>
     </div>
 </header>
 
-<!-- VISTA 1: LOGIN / CREAR CUENTA -->
-<section id="vistaAuth" class="flex-1 flex items-center justify-center p-6">
-    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full space-y-6">
-        <div class="text-center space-y-2">
-            <div class="inline-flex p-3 bg-sky-50 rounded-full text-sky-600 mb-2">
-                <i class="fa-solid fa-user-lock text-3xl"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-900">Iniciar Sesión</h2>
-            <p class="text-xs text-slate-500">Selecciona tu perfil de acceso para ingresar al simulador</p>
-        </div>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="max-w-6xl w-full mx-auto p-6 flex-1">
 
-        <div class="space-y-4">
-            <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-600 uppercase">NSS o Usuario</label>
-                <input type="text" id="authUsuario" value="1234567890" placeholder="Ej: 1234567890 o admin"
-                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
-            </div>
-
-            <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-600 uppercase">Contraseña</label>
-                <input type="password" value="••••••••" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
-            </div>
-
-            <div class="space-y-2 pt-2">
-                <button onclick="iniciarSesion('paciente')" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center">
-                    <i class="fa-solid fa-user mr-2"></i> Entrar como Paciente (Agendar Cita)
-                </button>
-
-                <button onclick="iniciarSesion('admin')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm transition shadow flex justify-center items-center">
-                    <i class="fa-solid fa-user-shield mr-2"></i> Entrar como Administrador / Ventanilla
-                </button>
-            </div>
-        </div>
-
-        <div class="border-t pt-4 text-center">
-            <p class="text-xs text-slate-500">¿No tienes cuenta? <a href="#" onclick="alert('Modo Simulación: Usa cualquier NSS o da clic en Entrar como Paciente')" class="text-sky-600 font-bold underline">Regístrate aquí</a></p>
-        </div>
-    </div>
-</section>
-
-<!-- VISTA 2: PACIENTE (AGENDAR Y CONSULTAR) -->
-<main id="vistaPaciente" class="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6" style="display: none;">
-    <div class="bg-sky-900 text-white p-6 rounded-2xl shadow-md flex justify-between items-center">
+    <!-- ENCABEZADO DEL PANEL -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 flex justify-between items-center">
         <div>
-            <h2 class="text-2xl font-bold" id="pacienteBienvenida">Hola, Juan Pérez López</h2>
-            <p class="text-xs text-sky-200 mt-1">NSS: <span id="pacienteNSS">1234567890</span> | Estatus: <span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">Vigente</span></p>
+            <h2 class="text-2xl font-bold text-white mb-1">Panel de Ventanilla - Control General</h2>
+            <p class="text-slate-400 text-sm">Gestión de Expedientes, Pase de Lista e Interrogatorio en Tiempo Real</p>
         </div>
-        <i class="fa-solid fa-hospital-user text-5xl text-sky-400/40"></i>
-    </div>
-
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center">
-            <i class="fa-solid fa-calendar-plus text-sky-600 mr-2"></i> Agendar Nueva Cita de Laboratorio
-        </h3>
-
-        <form onsubmit="agendarCitaPaciente(event)" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-600 uppercase">Fecha Cita Médico Tratante</label>
-                    <input type="date" id="pacFechaDoctor" value="2026-11-15" onchange="evaluarReglaPaciente()"
-                           class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-sky-500 outline-none">
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-600 uppercase">Fecha Propuesta Toma de Muestra</label>
-                    <input type="date" id="pacFechaLab" value="2026-10-25" onchange="evaluarReglaPaciente()"
-                           class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
-                </div>
-            </div>
-
-            <!-- Alerta de Regla 15-30 Días -->
-            <div id="pacAlertaRegla" class="p-3 rounded-lg text-xs font-medium flex items-center bg-sky-50 text-sky-800 border border-sky-200">
-                <i class="fa-solid fa-calculator text-sky-600 text-lg mr-3"></i>
-                <div>
-                    <p class="font-bold">Regla de Negocio (15-30 Días):</p>
-                    <p id="pacReglaDetalle">Diferencia calculada: <strong>21 días de anticipación</strong>. (Cumple regla).</p>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-600 uppercase">Seleccionar Estudios Solicitados</label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border cursor-pointer"><input type="checkbox" value="Biometría Hemática" checked class="pacCheck"><span>Biometría Hemática</span></label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border cursor-pointer"><input type="checkbox" value="Examen General Orina" checked class="pacCheck"><span>Examen General Orina</span></label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border cursor-pointer"><input type="checkbox" value="Química Sanguínea" class="pacCheck"><span>Química Sanguínea</span></label>
-                </div>
-            </div>
-
-            <button type="submit" id="pacBtnAgendar" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow">
-                <i class="fa-solid fa-check-circle mr-2"></i> Agendar Cita en Mi Expediente
-            </button>
-        </form>
-    </section>
-
-    <!-- Mis Citas Agendadas -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="text-lg font-bold text-slate-900 border-b pb-2">Mis Citas Registradas</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-600">
-                <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b">
-                <tr>
-                    <th class="p-3">Fecha Toma Muestra</th>
-                    <th class="p-3">Fecha Doctor</th>
-                    <th class="p-3">Estudios</th>
-                    <th class="p-3 text-center">Estado</th>
-                </tr>
-                </thead>
-                <tbody id="tablaCitasPaciente" class="divide-y divide-slate-200"></tbody>
-            </table>
-        </div>
-    </section>
-</main>
-
-<!-- VISTA 3: ADMINISTRADOR / VENTANILLA (MANUEL) -->
-<main id="vistaAdmin" class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6" style="display: none;">
-    <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-md flex justify-between items-center">
-        <div>
-            <h2 class="text-2xl font-bold">Panel de Ventanilla - Control General</h2>
-            <p class="text-xs text-slate-400 mt-1">Gestión de Expedientes, Pase de Lista e Interrogatorio en Tiempo Real</p>
-        </div>
-        <span class="bg-amber-500/20 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full border border-amber-500/30">
-                <i class="fa-solid fa-user-gear mr-1"></i> Rol: Operador Ventanilla
+        <span class="bg-amber-900/40 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-700/50 flex items-center gap-2">
+                <i class="fa-solid fa-user-gear"></i> Rol: Operador Ventanilla
             </span>
     </div>
 
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <div class="flex justify-between items-center border-b pb-2">
-            <h3 class="text-lg font-bold text-slate-900 flex items-center">
-                <i class="fa-solid fa-list-check text-sky-600 mr-2"></i> Gestión de Citas y Pase de Asistencia
+    <!-- TABLA DE CITAS -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-blue-400"></i> Gestión de Citas y Pase de Asistencia
             </h3>
-            <button onclick="restablecerSimulacion()" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1 rounded font-bold hover:bg-rose-100">
-                <i class="fa-solid fa-rotate-right mr-1"></i> Reiniciar Memoria
+            <button onclick="cargarCitas()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                <i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar PostgreSQL
             </button>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-600">
-                <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-800/60 text-slate-400 uppercase text-xs font-semibold tracking-wider border-b border-slate-800">
                 <tr>
-                    <th class="p-3">NSS</th>
-                    <th class="p-3">Paciente</th>
-                    <th class="p-3">Fecha Laboratorio</th>
-                    <th class="p-3">Fecha Médico</th>
-                    <th class="p-3">Estudios</th>
-                    <th class="p-3 text-center">Pase de Asistencia</th>
-                    <th class="p-3 text-center">Acciones</th>
+                    <th class="p-4">NSS</th>
+                    <th class="p-4">PACIENTE</th>
+                    <th class="p-4">FECHA LABORATORIO</th>
+                    <th class="p-4">FECHA MÉDICO</th>
+                    <th class="p-4">ESTUDIOS</th>
+                    <th class="p-4 text-center">PASE DE ASISTENCIA</th>
+                    <th class="p-4 text-center">ACCIONES</th>
                 </tr>
                 </thead>
-                <tbody id="tablaCitasAdmin" class="divide-y divide-slate-200"></tbody>
+                <tbody id="tablaCitas" class="divide-y divide-slate-800">
+                <tr>
+                    <td colspan="7" class="p-8 text-center text-slate-500">
+                        <i class="fa-solid fa-circle-notch fa-spin text-xl mb-2 text-blue-500"></i>
+                        <p>Cargando datos del sistema...</p>
+                    </td>
+                </tr>
+                </tbody>
             </table>
         </div>
-    </section>
+    </div>
 </main>
 
-<!-- Footer -->
-<footer class="bg-slate-900 text-slate-400 text-center text-xs py-3 mt-auto border-t border-slate-800">
+<!-- PIE DE PÁGINA -->
+<footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
     ESCOM IPN - Bases de Datos | Proyecto Propio: Laboratorio Clínico
 </footer>
 
-<!-- LÓGICA DE NAVEGACIÓN Y SESSIONSTORAGE -->
+<!-- SCRIPT HÍBRIDO (POSTGRESQL LOCAL / MOCK GITHUB PAGES) -->
 <script>
-    const DB_DEFAULT = [
-        { nss: "1234567890", nombre: "Juan Pérez López", fLab: "2026-10-25", fDoc: "2026-11-15", estudios: "Biometría Hemática, Examen Orina", asistio: true },
-        { nss: "9876543210", nombre: "María Elena Hernández", fLab: "2026-10-25", fDoc: "2026-11-18", estudios: "Química Sanguínea", asistio: false }
-    ];
-
-    function getDB() {
-        const data = sessionStorage.getItem('sim_db');
-        if (!data) {
-            sessionStorage.setItem('sim_db', JSON.stringify(DB_DEFAULT));
-            return DB_DEFAULT;
+    async function cargarCitas() {
+        try {
+            // Petición a la API local de Node.js
+            const res = await fetch('/api/citas');
+            if (!res.ok) throw new Error("Backend local no disponible");
+            const data = await res.json();
+            renderTabla(data);
+        } catch (err) {
+            // Modo Demostración para GitHub Pages cuando no existe servidor backend
+            console.log("Visualizando en modo demostración estático (GitHub Pages).");
+            const datosDemo = [
+                { id_cita: 1001, nss: '1234567890', nombre: 'Juan Perez Lopez', fecha_programada: '2026-10-25', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: true },
+                { id_cita: 1002, nss: '1122334455', nombre: 'Laura Gomez Perez', fecha_programada: '2026-10-28', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: false }
+            ];
+            renderTabla(datosDemo);
         }
-        return JSON.parse(data);
     }
 
-    function setDB(data) {
-        sessionStorage.setItem('sim_db', JSON.stringify(data));
-        renderVistas();
-    }
+    function renderTabla(lista) {
+        const tbody = document.getElementById('tablaCitas');
+        tbody.innerHTML = '';
 
-    let usuarioActual = null;
-
-    function iniciarSesion(rol) {
-        const inputNSS = document.getElementById('authUsuario').value || "1234567890";
-
-        if (rol === 'paciente') {
-            usuarioActual = { nss: inputNSS, nombre: "Juan Pérez López", rol: "paciente" };
-        } else {
-            usuarioActual = { nss: "ADMIN-01", nombre: "Manuel (Ventanilla)", rol: "admin" };
+        if (lista.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay citas registradas.</td></tr>`;
+            return;
         }
 
-        document.getElementById('vistaAuth').style.display = 'none';
-        document.getElementById('navUsuario').style.display = 'flex';
-        document.getElementById('nombreUsuarioHeader').innerText = usuarioActual.nombre;
+        lista.forEach(cita => {
+            const fechaLab = cita.fecha_programada ? cita.fecha_programada.toString().split('T')[0] : 'N/A';
+            const fechaDoc = cita.fecha_cita_doctor ? cita.fecha_cita_doctor.toString().split('T')[0] : 'N/A';
+            const estudios = cita.estudios || 'Química Sanguínea, Biometría Hemática';
 
-        if (usuarioActual.rol === 'paciente') {
-            document.getElementById('badgeRol').className = "px-2.5 py-1 rounded-full font-bold bg-sky-500/20 text-sky-300";
-            document.getElementById('badgeRol').innerText = "Rol: Paciente";
-            document.getElementById('vistaPaciente').style.display = 'block';
-            document.getElementById('vistaAdmin').style.display = 'none';
-        } else {
-            document.getElementById('badgeRol').className = "px-2.5 py-1 rounded-full font-bold bg-amber-500/20 text-amber-300";
-            document.getElementById('badgeRol').innerText = "Rol: Administrador";
-            document.getElementById('vistaAdmin').style.display = 'block';
-            document.getElementById('vistaPaciente').style.display = 'none';
-        }
-
-        renderVistas();
-    }
-
-    function cerrarSesion() {
-        usuarioActual = null;
-        document.getElementById('vistaAuth').style.display = 'flex';
-        document.getElementById('vistaPaciente').style.display = 'none';
-        document.getElementById('vistaAdmin').style.display = 'none';
-        document.getElementById('navUsuario').style.display = 'none';
-    }
-
-    function renderVistas() {
-        const db = getDB();
-
-        // Vista Paciente
-        const tbodyPac = document.getElementById('tablaCitasPaciente');
-        tbodyPac.innerHTML = '';
-        const misCitas = db.filter(c => c.nss === (usuarioActual ? usuarioActual.nss : "1234567890"));
-
-        misCitas.forEach(c => {
             const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-800/40 transition";
             tr.innerHTML = `
-                    <td class="p-3 font-bold">${c.fLab}</td>
-                    <td class="p-3">${c.fDoc}</td>
-                    <td class="p-3">${c.estudios}</td>
-                    <td class="p-3 text-center">
-                        <span class="px-2 py-1 rounded text-[11px] font-bold ${c.asistio ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                            ${c.asistio ? 'Asistencia Confirmada' : 'Pendiente Toma'}
-                        </span>
+                    <td class="p-4 font-bold text-white">${cita.nss}</td>
+                    <td class="p-4 font-medium text-slate-200">${cita.nombre}</td>
+                    <td class="p-4 text-slate-300">${fechaLab}</td>
+                    <td class="p-4 text-slate-300">${fechaDoc}</td>
+                    <td class="p-4 text-slate-300">${estudios}</td>
+                    <td class="p-4 text-center">
+                        ${cita.asistio
+                ? '<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-solid fa-check"></i> Confirmada</span>'
+                : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-regular fa-clock"></i> Marcar Asistencia</span>'
+            }
                     </td>
-                `;
-            tbodyPac.appendChild(tr);
-        });
-
-        // Vista Admin
-        const tbodyAdmin = document.getElementById('tablaCitasAdmin');
-        tbodyAdmin.innerHTML = '';
-        db.forEach((c, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-900">${c.nss}</td>
-                    <td class="p-3">${c.nombre}</td>
-                    <td class="p-3">${c.fLab}</td>
-                    <td class="p-3">${c.fDoc}</td>
-                    <td class="p-3">${c.estudios}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="toggleAsistencia(${index})" class="${c.asistio ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-500 hover:bg-amber-600'} text-white px-3 py-1 rounded text-[11px] font-bold transition">
-                            <i class="fa-solid ${c.asistio ? 'fa-check' : 'fa-clock'} mr-1"></i> ${c.asistio ? 'Confirmada' : 'Marcar Asistencia'}
-                        </button>
-                    </td>
-                    <td class="p-3 text-center">
-                        <button onclick="eliminarCita(${index})" class="bg-rose-100 text-rose-700 p-1.5 rounded hover:bg-rose-200" title="Cancelar Cita">
+                    <td class="p-4 text-center">
+                        <button onclick="eliminarCita(${cita.id_cita})" class="bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 p-2 rounded-lg transition" title="Eliminar registro">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
                 `;
-            tbodyAdmin.appendChild(tr);
+            tbody.appendChild(tr);
         });
     }
 
-    function toggleAsistencia(index) {
-        let db = getDB();
-        db[index].asistio = !db[index].asistio;
-        setDB(db);
-    }
-
-    function eliminarCita(index) {
-        if (confirm("¿Cancelar cita de laboratorio?")) {
-            let db = getDB();
-            db.splice(index, 1);
-            setDB(db);
+    async function eliminarCita(idCita) {
+        if (!idCita) return;
+        if (!confirm('¿Deseas eliminar la cita ID ' + idCita + '?')) return;
+        try {
+            await fetch('/api/citas/' + idCita, { method: 'DELETE' });
+            cargarCitas();
+        } catch (e) {
+            alert('Función de eliminación ejecutada localmente');
         }
     }
 
-    function agendarCitaPaciente(e) {
-        e.preventDefault();
-        const fLab = document.getElementById('pacFechaLab').value;
-        const fDoc = document.getElementById('pacFechaDoctor').value;
-        const estudios = Array.from(document.querySelectorAll('.pacCheck:checked')).map(cb => cb.value).join(', ');
-
-        let db = getDB();
-        db.push({
-            nss: usuarioActual ? usuarioActual.nss : "1234567890",
-            nombre: usuarioActual ? usuarioActual.nombre : "Juan Pérez López",
-            fLab, fDoc,
-            estudios: estudios || "Análisis Generales",
-            asistio: false
-        });
-
-        setDB(db);
-        alert("¡Cita agendada correctamente en el sistema!");
-    }
-
-    function evaluarReglaPaciente() {
-        const fDoctor = new Date(document.getElementById('pacFechaDoctor').value);
-        const fLab = new Date(document.getElementById('pacFechaLab').value);
-        const alerta = document.getElementById('pacAlertaRegla');
-        const detalle = document.getElementById('pacReglaDetalle');
-        const btn = document.getElementById('pacBtnAgendar');
-
-        if (isNaN(fDoctor) || isNaN(fLab)) return;
-
-        const diffDays = Math.ceil((fDoctor - fLab) / (1000 * 60 * 60 * 24));
-
-        if (diffDays >= 15 && diffDays <= 30) {
-            alerta.className = "p-3 rounded-lg text-xs font-medium flex items-center bg-emerald-50 text-emerald-800 border border-emerald-200";
-            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días de anticipación</strong>. (Cumple regla de 15 a 30 días).`;
-            btn.disabled = false;
-            btn.className = "w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow cursor-pointer";
-        } else {
-            alerta.className = "p-3 rounded-lg text-xs font-medium flex items-center bg-rose-50 text-rose-800 border border-rose-200";
-            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días</strong>. <span class="font-bold text-rose-600">¡Violación de regla!</span> La cita debe programarse entre 15 y 30 días previos a la cita médica.`;
-            btn.disabled = true;
-            btn.className = "w-full bg-slate-300 text-slate-500 font-bold py-2.5 rounded-lg text-sm transition cursor-not-allowed";
-        }
-    }
-
-    function restablecerSimulacion() {
-        sessionStorage.removeItem('sim_db');
-        renderVistas();
-    }
-
-    // Eventos iniciales
-    evaluarReglaPaciente();
+    window.addEventListener('DOMContentLoaded', cargarCitas);
 </script>
 </body>
 </html>
