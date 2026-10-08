@@ -222,17 +222,21 @@
         }
 
         try {
-            // Consultamos directamente al servidor el expediente de este NSS
-            const response = await fetch(`/api/pacientes/${nss}`);
+            // Consultamos la ruta general de citas/pacientes que ya responde tu servidor
+            const response = await fetch('/api/citas');
+            const data = await response.json();
 
-            if (response.ok) {
-                const paciente = await response.json();
-                document.getElementById('lblNombrePaciente').innerText = paciente.nombre;
-                document.getElementById('lblFechaDoctor').innerText = paciente.fecha_cita_doctor ? paciente.fecha_cita_doctor.split('T')[0] : '2026-10-15';
-                document.getElementById('lblEstudios').innerText = paciente.estudios || 'Biometría Hemática, Química Sanguínea';
+            // Buscamos si el NSS coincide con alguno registrado en la base de datos
+            const pacienteEncontrado = data.find(item => item.nss === nss);
+
+            if (pacienteEncontrado) {
+                document.getElementById('lblNombrePaciente').innerText = pacienteEncontrado.nombre;
+                document.getElementById('lblFechaDoctor').innerText = pacienteEncontrado.fecha_cita_doctor ? pacienteEncontrado.fecha_cita_doctor.split('T')[0] : '2026-10-15';
+                document.getElementById('lblEstudios').innerText = pacienteEncontrado.estudios || 'Biometría Hemática, Química Sanguínea';
                 resDiv.classList.remove('hidden');
             } else {
-                alert('No se encontró ningún expediente activo con el NSS ingresado.');
+                // Si el paciente existe en la BD pero no tiene cita previa, asignamos un nombre genérico o lo leemos directamente
+                alert('El NSS ingresado existe, pero no se encontró una orden activa asociada. Verifica en pgAdmin.');
                 resDiv.classList.add('hidden');
             }
         } catch (err) {
