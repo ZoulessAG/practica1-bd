@@ -9,22 +9,22 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
 
-<!-- Header / Navbar -->
+<!-- Header -->
 <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
     <div class="flex items-center space-x-3">
         <i class="fa-solid fa-hospital-user text-sky-400 text-2xl"></i>
         <div>
             <h1 class="text-xl font-bold leading-none">Laboratorio Clínico - Control de Citas</h1>
-            <p class="text-xs text-slate-400 mt-1">Módulo de Atención en Ventanilla | Unidad Médica</p>
+            <p class="text-xs text-slate-400 mt-1">Módulo de Atención en Ventanilla (Modo Simulación Temporal)</p>
         </div>
     </div>
     <div class="flex items-center space-x-4">
-            <span class="bg-sky-500/20 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full border border-sky-500/30">
-                <i class="fa-solid fa-stopwatch mr-1"></i> Meta: &lt; 2 min / paciente
+            <span class="bg-amber-500/20 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full border border-amber-500/30">
+                <i class="fa-solid fa-memory mr-1"></i> Memoria Volátil (sessionStorage)
             </span>
         <div class="text-right text-xs text-slate-300">
             <p class="font-bold">Operador: Manuel</p>
-            <p class="text-slate-400">Auxiliar de Ventanilla</p>
+            <p class="text-slate-400">Ventanilla de Laboratorio</p>
         </div>
     </div>
 </header>
@@ -32,7 +32,7 @@
 <!-- Main Workspace -->
 <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    <!-- Columna Izquierda: Búsqueda y Validación por NSS -->
+    <!-- Columna 1: Búsqueda y Validación por NSS -->
     <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-4">
         <h2 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center">
             <i class="fa-solid fa-id-card text-sky-600 mr-2"></i> 1. Validación de Paciente
@@ -73,7 +73,7 @@
         </div>
     </section>
 
-    <!-- Columna Central: Agendamiento y Regla de Negocio (15-30 Días) -->
+    <!-- Columna 2: Agendamiento y Regla de Negocio (15-30 Días) -->
     <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-2 space-y-5">
         <h2 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center">
             <i class="fa-solid fa-calendar-plus text-sky-600 mr-2"></i> 2. Agendamiento de Cita de Laboratorio
@@ -81,76 +81,60 @@
 
         <form id="citaForm" onsubmit="validarYAgendar(event)" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Fecha Cita Médico Tratante -->
                 <div class="space-y-1">
                     <label class="text-xs font-bold text-slate-600 uppercase">Fecha Cita Médico Tratante</label>
-                    <input type="date" id="fechaDoctor" value="2026-11-15" onchange="calcularRangosPermitidos()"
+                    <input type="date" id="fechaDoctor" value="2026-11-15" onchange="evaluarReglaNegocio()"
                            class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-sky-500 outline-none">
-                    <p class="text-[11px] text-slate-500">Extraída de la orden médica expedida.</p>
                 </div>
 
-                <!-- Fecha Propuesta Cita Laboratorio -->
                 <div class="space-y-1">
                     <label class="text-xs font-bold text-slate-600 uppercase">Fecha Propuesta Toma de Muestra</label>
                     <input type="date" id="fechaLab" value="2026-10-25" onchange="evaluarReglaNegocio()"
                            class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
-                    <p class="text-[11px] text-slate-500">Rango válido: 15 a 30 días antes del doctor.</p>
                 </div>
             </div>
 
-            <!-- Alerta Dinámica de la Regla de Negocio -->
+            <!-- Alerta Dinámica de Regla -->
             <div id="alertaRegla" class="p-3 rounded-lg text-xs font-medium flex items-center bg-sky-50 text-sky-800 border border-sky-200">
                 <i class="fa-solid fa-calculator text-sky-600 text-lg mr-3"></i>
                 <div>
                     <p class="font-bold">Regla de Negocio (15-30 Días):</p>
-                    <p id="reglaDetalle">Diferencia calculada: <strong>21 días de anticipación</strong>. (Cumple con el criterio de agendamiento).</p>
+                    <p id="reglaDetalle">Diferencia calculada: <strong>21 días de anticipación</strong>. (Válida).</p>
                 </div>
             </div>
 
-            <!-- Catálogo de Estudios -->
+            <!-- Estudios -->
             <div class="space-y-2 pt-2">
-                <label class="text-xs font-bold text-slate-600 uppercase">Estudios Solicitados en la Orden</label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
+                <label class="text-xs font-bold text-slate-600 uppercase">Estudios Solicitados</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer">
+                        <input type="checkbox" value="Biometría Hemática" checked class="estudio-check rounded text-sky-600">
                         <span>Biometría Hemática</span>
                     </label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
-                        <span>Química Sanguínea</span>
-                    </label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer">
+                        <input type="checkbox" value="Examen General Orina" checked class="estudio-check rounded text-sky-600">
                         <span>Examen General Orina</span>
                     </label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
-                        <span>Prueba de Coagulación</span>
-                    </label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
-                        <span>Perfil Lipídico</span>
-                    </label>
-                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
-                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
-                        <span>Glucosa en Ayunas</span>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer">
+                        <input type="checkbox" value="Química Sanguínea" class="estudio-check rounded text-sky-600">
+                        <span>Química Sanguínea</span>
                     </label>
                 </div>
             </div>
 
             <button type="submit" id="btnAgendar" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow">
-                <i class="fa-solid fa-check-circle mr-2"></i> Confirmar y Agendar Cita de Laboratorio
+                <i class="fa-solid fa-plus-circle mr-2"></i> Agendar y Guardar en Memoria de Sesión
             </button>
         </form>
     </section>
 
-    <!-- Fila Inferior: Lista de Asistencia del Día -->
+    <!-- Columna 3: Pase de Asistencia Diario -->
     <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-3 space-y-4">
         <div class="flex justify-between items-center border-b pb-2">
             <h2 class="text-lg font-bold text-slate-900 flex items-center">
-                <i class="fa-solid fa-clipboard-check text-sky-600 mr-2"></i> 3. Control y Pase de Asistencia Diaria (Toma de Muestras)
+                <i class="fa-solid fa-clipboard-check text-sky-600 mr-2"></i> 3. Pase de Asistencia en Tiempo Real
             </h2>
-            <span class="text-xs text-slate-500">Fecha Actual: <strong id="fechaHoy">2026-10-07</strong></span>
+            <span class="text-xs text-slate-500">Muestras del día: <strong>2026-10-25</strong></span>
         </div>
 
         <div class="overflow-x-auto">
@@ -159,51 +143,115 @@
                 <tr>
                     <th class="p-3">NSS</th>
                     <th class="p-3">Paciente</th>
-                    <th class="p-3">Hora Programada</th>
+                    <th class="p-3">Fecha Programada</th>
+                    <th class="p-3">Cita Médico</th>
                     <th class="p-3">Estudios</th>
-                    <th class="p-3">Cita Médica Doctor</th>
-                    <th class="p-3 text-center">Estado / Asistencia</th>
+                    <th class="p-3 text-center">Asistencia</th>
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200" id="tablaAsistencia">
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-900">1234567890</td>
-                    <td class="p-3">Juan Pérez López</td>
-                    <td class="p-3">07:00 AM</td>
-                    <td class="p-3">Biometría Hemática, Examen Orina</td>
-                    <td class="p-3">2026-11-15</td>
-                    <td class="p-3 text-center">
-                        <button onclick="toggleAsistencia(this)" class="bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-emerald-600 transition">
-                            <i class="fa-solid fa-check mr-1"></i> Asistencia Confirmada
-                        </button>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-900">9876543210</td>
-                    <td class="p-3">María Elena Hernández</td>
-                    <td class="p-3">07:15 AM</td>
-                    <td class="p-3">Química Sanguínea (6 elementos)</td>
-                    <td class="p-3">2026-11-18</td>
-                    <td class="p-3 text-center">
-                        <button onclick="toggleAsistencia(this)" class="bg-amber-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-amber-600 transition">
-                            <i class="fa-solid fa-clock mr-1"></i> Pendiente
-                        </button>
-                    </td>
-                </tr>
+                <!-- Filas dinámicas generadas desde sessionStorage -->
                 </tbody>
             </table>
         </div>
     </section>
 
+    <!-- Columna 4: Consola de Consultas SQL Simulo-Interactivas -->
+    <section class="bg-slate-900 text-slate-200 p-5 rounded-xl shadow-sm border border-slate-800 lg:col-span-3 space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+            <h2 class="text-lg font-bold text-sky-400 flex items-center">
+                <i class="fa-solid fa-terminal mr-2"></i> 4. Consola de Consultas de Demostración (Simulada)
+            </h2>
+            <span class="text-xs text-slate-400">Simulación sobre la estructura PostgreSQL</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-400 uppercase">Seleccionar Consulta Predefinida:</label>
+                <select id="selectConsulta" onchange="cargarConsulta()" class="w-full bg-slate-800 text-sky-300 border border-slate-700 p-2 rounded text-xs outline-none">
+                    <option value="1">1. Consultar Pacientes Vigentes con Citas</option>
+                    <option value="2">2. Validar Citas que Cumplen Regla (15-30 Días)</option>
+                    <option value="3">3. Reporte de Asistencia Diaria (Toma de Muestras)</option>
+                </select>
+                <button onclick="ejecutarConsulta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded text-xs transition">
+                    <i class="fa-solid fa-play mr-1"></i> Ejecutar Consulta SQL
+                </button>
+            </div>
+
+            <div class="md:col-span-2 space-y-2">
+                <label class="text-xs font-bold text-slate-400 uppercase">Código SQL a Ejecutar:</label>
+                <textarea id="sqlCode" readonly class="w-full h-24 bg-slate-950 text-emerald-400 font-mono p-3 rounded text-xs border border-slate-800 outline-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Resultado de la Consulta -->
+        <div class="space-y-1">
+            <label class="text-xs font-bold text-slate-400 uppercase">Resultado de la Consulta (Dataset Resultante):</label>
+            <div id="sqlResult" class="bg-slate-950 p-3 rounded text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800">
+                Haz clic en "Ejecutar Consulta SQL" para ver los datos procesados en tiempo real.
+            </div>
+        </div>
+    </section>
+
 </main>
 
-<!-- Footer -->
-<footer class="bg-slate-900 text-slate-400 text-center text-xs py-3 mt-auto">
-    ESCOM IPN - Bases de Datos | Proyecto Propio: Sistema de Ventanilla de Laboratorio Clínico
+<footer class="bg-slate-900 text-slate-400 text-center text-xs py-3 mt-auto border-t border-slate-800">
+    ESCOM IPN - Bases de Datos | Proyecto Propio: Laboratorio Clínico
 </footer>
 
-<!-- Lógica JavaScript Interactiva -->
+<!-- Script de Estado Volátil (sessionStorage) -->
 <script>
+    // Datos Iniciales por Defecto
+    const datosIniciales = [
+        { nss: "1234567890", nombre: "Juan Pérez López", fLab: "2026-10-25", fDoc: "2026-11-15", estudios: "Biometría Hemática, Examen Orina", asistio: true },
+        { nss: "9876543210", nombre: "María Elena Hernández", fLab: "2026-10-25", fDoc: "2026-11-18", estudios: "Química Sanguínea", asistio: false }
+    ];
+
+    // Cargar o Inicializar sessionStorage
+    function getCitas() {
+        const data = sessionStorage.getItem('citas_lab');
+        if (!data) {
+            sessionStorage.setItem('citas_lab', JSON.stringify(datosIniciales));
+            return datosIniciales;
+        }
+        return JSON.parse(data);
+    }
+
+    function guardarCitas(citas) {
+        sessionStorage.setItem('citas_lab', JSON.stringify(citas));
+        renderTabla();
+    }
+
+    function renderTabla() {
+        const citas = getCitas();
+        const tbody = document.getElementById('tablaAsistencia');
+        tbody.innerHTML = '';
+
+        citas.forEach((c, index) => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50";
+            tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900">${c.nss}</td>
+                    <td class="p-3">${c.nombre}</td>
+                    <td class="p-3">${c.fLab}</td>
+                    <td class="p-3">${c.fDoc}</td>
+                    <td class="p-3">${c.estudios}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="toggleAsistencia(${index})" class="${c.asistio ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-500 hover:bg-amber-600'} text-white px-3 py-1 rounded text-[11px] font-bold transition">
+                            <i class="fa-solid ${c.asistio ? 'fa-check' : 'fa-clock'} mr-1"></i> ${c.asistio ? 'Confirmada' : 'Pendiente'}
+                        </button>
+                    </td>
+                `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function toggleAsistencia(index) {
+        const citas = getCitas();
+        citas[index].asistio = !citas[index].asistio;
+        guardarCitas(citas);
+    }
+
     function evaluarReglaNegocio() {
         const fDoctor = new Date(document.getElementById('fechaDoctor').value);
         const fLab = new Date(document.getElementById('fechaLab').value);
@@ -223,7 +271,7 @@
             btn.className = "w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow cursor-pointer";
         } else {
             alerta.className = "p-3 rounded-lg text-xs font-medium flex items-center bg-rose-50 text-rose-800 border border-rose-200";
-            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días</strong>. <span class="font-bold text-rose-600">¡Violación de regla de negocio!</span> Debe ser entre 15 y 30 días previos a la cita médica.`;
+            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días</strong>. <span class="font-bold text-rose-600">¡Violación de regla!</span> Debe ser entre 15 y 30 días antes del doctor.`;
             btn.disabled = true;
             btn.className = "w-full bg-slate-300 text-slate-500 font-bold py-2.5 rounded-lg text-sm transition cursor-not-allowed";
         }
@@ -237,29 +285,77 @@
             document.getElementById('pacVigencia').className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center";
             document.getElementById('pacVigencia').innerHTML = '<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> Vigente';
         } else {
-            document.getElementById('pacNombre').innerText = "Paciente No Registrado";
+            document.getElementById('pacNombre').innerText = "Paciente Demo (" + nss + ")";
             document.getElementById('pacNSS').innerText = "NSS: " + nss;
-            document.getElementById('pacVigencia').className = "bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center";
-            document.getElementById('pacVigencia').innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i> No Vigente';
-        }
-    }
-
-    function toggleAsistencia(btn) {
-        if (btn.classList.contains('bg-amber-500')) {
-            btn.className = "bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-emerald-600 transition";
-            btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Asistencia Confirmada';
-        } else {
-            btn.className = "bg-amber-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-amber-600 transition";
-            btn.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Pendiente';
+            document.getElementById('pacVigencia').className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center";
+            document.getElementById('pacVigencia').innerHTML = '<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> Vigente';
         }
     }
 
     function validarYAgendar(e) {
         e.preventDefault();
-        alert("¡Cita agendada con éxito en el sistema!");
+        const nss = document.getElementById('nssInput').value;
+        const nombre = document.getElementById('pacNombre').innerText;
+        const fLab = document.getElementById('fechaLab').value;
+        const fDoc = document.getElementById('fechaDoctor').value;
+
+        const selectedEstudios = Array.from(document.querySelectorAll('.estudio-check:checked'))
+            .map(cb => cb.value).join(', ');
+
+        const citas = getCitas();
+        citas.push({ nss, nombre, fLab, fDoc, estudios: selectedEstudios || "Estudios Generales", asistio: false });
+        guardarCitas(citas);
+
+        alert("¡Cita registrada en el caché de la sesión!");
     }
 
+    // Consultas SQL Simuladas
+    const consultasSQL = {
+        "1": {
+            sql: `SELECT p.nss, p.nombre, p.esta_vigente, c.fecha_programada \nFROM Paciente p \nJOIN CitaLaboratorio c ON p.nss = c.nss_paciente \nWHERE p.esta_vigente = TRUE;`,
+            fn: () => getCitas().map(c => ({ NSS: c.nss, Paciente: c.nombre, Vigente: "TRUE", CitaProgramada: c.fLab }))
+        },
+        "2": {
+            sql: `SELECT c.id_cita, p.nombre, \n       (o.fecha_cita_doctor - CAST(c.fecha_programada AS DATE)) AS dias_anticipacion \nFROM CitaLaboratorio c \nJOIN OrdenMedica o ON c.id_orden = o.id_orden \nJOIN Paciente p ON p.nss = c.nss_paciente;`,
+            fn: () => getCitas().map(c => {
+                const diff = Math.ceil((new Date(c.fDoc) - new Date(c.fLab)) / (1000 * 60 * 60 * 24));
+                return { Paciente: c.nombre, FechaLab: c.fLab, FechaDoctor: c.fDoc, DiasAnticipacion: diff, ReglaCumplida: (diff >= 15 && diff <= 30) ? "CUMPLIDA" : "VIOLADA" };
+            })
+        },
+        "3": {
+            sql: `SELECT p.nss, p.nombre, c.asistio \nFROM CitaLaboratorio c \nJOIN Paciente p ON p.nss = c.nss_paciente \nWHERE c.fecha_programada = '2026-10-25';`,
+            fn: () => getCitas().map(c => ({ NSS: c.nss, Paciente: c.nombre, AsistenciaConfirmada: c.asistio ? "SI" : "NO" }))
+        }
+    };
+
+    function cargarConsulta() {
+        const op = document.getElementById('selectConsulta').value;
+        document.getElementById('sqlCode').value = consultasSQL[op].sql;
+    }
+
+    function ejecutarConsulta() {
+        const op = document.getElementById('selectConsulta').value;
+        const res = consultasSQL[op].fn();
+
+        let html = `<table class="w-full text-left border-collapse"><tr class="border-b border-slate-700 text-sky-400">`;
+        const keys = Object.keys(res[0]);
+        keys.forEach(k => html += `<th class="p-1">${k}</th>`);
+        html += `</tr>`;
+
+        res.forEach(row => {
+            html += `<tr class="border-b border-slate-800">`;
+            keys.forEach(k => html += `<td class="p-1 text-slate-300">${row[k]}</td>`);
+            html += `</tr>`;
+        });
+        html += `</table>`;
+
+        document.getElementById('sqlResult').innerHTML = html;
+    }
+
+    // Inicialización
+    renderTabla();
     evaluarReglaNegocio();
+    cargarConsulta();
 </script>
 </body>
 </html>
