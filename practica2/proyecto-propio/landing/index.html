@@ -222,55 +222,22 @@
         }
 
         try {
-            // Hacemos una petición para verificar si el paciente y su orden existen
-            const response = await fetch('/api/citas');
-            const citas = await response.json();
-            let miCita = citas.find(c => c.nss === nss);
+            // Consultamos directamente al servidor el expediente de este NSS
+            const response = await fetch(`/api/pacientes/${nss}`);
 
-            if (miCita) {
-                document.getElementById('lblNombrePaciente').innerText = miCita.nombre;
-                document.getElementById('lblFechaDoctor').innerText = miCita.fecha_cita_doctor ? miCita.fecha_cita_doctor.split('T')[0] : 'N/A';
-                document.getElementById('lblEstudios').innerText = miCita.estudios || 'Biometría Hemática, Química Sanguínea';
+            if (response.ok) {
+                const paciente = await response.json();
+                document.getElementById('lblNombrePaciente').innerText = paciente.nombre;
+                document.getElementById('lblFechaDoctor').innerText = paciente.fecha_cita_doctor ? paciente.fecha_cita_doctor.split('T')[0] : '2026-10-15';
+                document.getElementById('lblEstudios').innerText = paciente.estudios || 'Biometría Hemática, Química Sanguínea';
                 resDiv.classList.remove('hidden');
             } else {
-                // Si no hay cita previa pero el paciente fue insertado en la BD, mostramos datos genéricos de su orden
-                document.getElementById('lblNombrePaciente').innerText = "Ian Andrew Aguilar Garcia";
-                document.getElementById('lblFechaDoctor').innerText = "2026-10-15";
-                document.getElementById('lblEstudios').innerText = "Biometría Hemática, Química Sanguínea";
-                resDiv.classList.remove('hidden');
+                alert('No se encontró ningún expediente activo con el NSS ingresado.');
+                resDiv.classList.add('hidden');
             }
         } catch (err) {
             console.error("Error al consultar orden:", err);
             alert('Error de conexión con el servidor de base de datos.');
-        }
-    }
-
-    async function confirmarCitaPaciente() {
-        const nss = document.getElementById('inputNSS').value.trim();
-        const fechaLab = document.getElementById('inputFechaLab').value;
-        const msg = document.getElementById('msgConfirmacion');
-
-        if (!nss) {
-            alert('Por favor ingresa y consulta tu NSS primero.');
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/citas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nss, fecha_programada: fechaLab })
-            });
-
-            if (res.ok) {
-                msg.classList.remove('hidden');
-                setTimeout(() => { msg.classList.add('hidden'); }, 4000);
-            } else {
-                alert('No se pudo registrar la cita. Verifica que la orden médica exista.');
-            }
-        } catch (e) {
-            console.error("Error al registrar:", e);
-            alert('Error al conectar con la API.');
         }
     }
 
