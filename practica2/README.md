@@ -41,6 +41,8 @@
 
 ### 4. Proyecto Propio
 - [Requisitos Ampliados y Modelo EER (PDF)](./proyecto-propio/requisitos-ampliados.pdf)
+- [Landing Page en GitHub Pages](https://zoulessag.github.io/practica1-bd/practica2/proyecto-propio/landing/index.html)
+- [Requisitos Ampliados y Modelo EER (PDF)](./proyecto-propio/requisitos-ampliados.pdf)
 
 ### 5. Exposición
 - [Presentación de la Práctica (PDF)](./exposicion/presentacion.pdf)

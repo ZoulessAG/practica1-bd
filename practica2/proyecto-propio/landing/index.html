@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Clínico - Control de Ventanilla</title>
+    <style>
+        :root { --primary: #0284c7; --dark: #0f172a; --bg: #f8fafc; }
+        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--dark); }
+        header { background: var(--dark); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .hero { padding: 3rem 2rem; text-align: center; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .badge { background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+        footer { text-align: center; padding: 1.5rem; background: var(--dark); color: #94a3b8; margin-top: 3rem; }
+    </style>
+</head>
+<body>
+<header>
+    <h2>Control de Ventanilla - Laboratorio Clínico</h2>
+    <span class="badge">Atención &lt; 2 min / paciente</span>
+</header>
+<section class="hero">
+    <h1>Sistema de Agendamiento y Citas</h1>
+    <p>Validación de NSS, control de vigencia y pase de lista en tiempo real.</p>
+</section>
+<main class="container">
+    <h2>Funcionalidades Operativas</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>Validación por NSS</h3>
+            <p>Muestra instantáneamente vigencia, unidad médica y núcleo familiar.</p>
+        </div>
+        <div class="card">
+            <h3>Regla de Agendamiento</h3>
+            <p>Bloquea o valida citas entre 15 y 30 días previos a la cita médica.</p>
+        </div>
+        <div class="card">
+            <h3>Pase de Asistencia</h3>
+            <p>Confirmación en tiempo real de presencia en toma de muestras.</p>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>ESCOM IPN - Bases de Datos | Proyecto Propio</p>
+</footer>
+</body>
+</html>
