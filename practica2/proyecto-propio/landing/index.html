@@ -51,8 +51,8 @@
                 <p class="text-slate-300 text-sm">Consulta tu orden médica, completa el interrogatorio previo y confirma tu cita de laboratorio.</p>
             </div>
             <span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-blue-500/30">
-                    Acceso Público
-                </span>
+                Acceso Público
+            </span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -64,16 +64,16 @@
                 <p class="text-xs text-slate-400">Ingresa tu Número de Seguridad Social (NSS) para obtener tus órdenes registradas.</p>
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">NSS del Paciente</label>
-                    <input type="text" id="inputNSS" placeholder="Ej: 1122334455" value="1122334455" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    <input type="text" id="inputNSS" placeholder="Ej: 1234567890" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
                 <button onclick="buscarOrdenPaciente()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-magnifying-glass"></i> Consultar Orden Médica
                 </button>
 
                 <!-- TARJETA RESULTADO PACIENTE -->
-                <div id="resultadoPaciente" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs space-y-2 mt-4">
-                    <p class="text-slate-400">Paciente: <strong id="lblNombrePaciente" class="text-white">Laura Gómez Pérez</strong></p>
-                    <p class="text-slate-400">Fecha Cita Médico: <strong id="lblFechaDoctor" class="text-blue-400">2026-11-15</strong></p>
+                <div id="resultadoPaciente" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs space-y-2 mt-4">
+                    <p class="text-slate-400">Paciente: <strong id="lblNombrePaciente" class="text-white"></strong></p>
+                    <p class="text-slate-400">Fecha Cita Médico: <strong id="lblFechaDoctor" class="text-blue-400"></strong></p>
                     <p class="text-slate-400">Estudios Solicitados: <span id="lblEstudios" class="text-slate-200">Biometría Hemática, Química Sanguínea</span></p>
                 </div>
             </div>
@@ -86,11 +86,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Fecha Programada para Laboratorio</label>
-                        <input type="date" id="inputFechaLab" value="2026-10-28" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <input type="date" id="inputFechaLab" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Horario Preferente</label>
-                        <select class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <select id="selectHorario" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
                             <option>07:00 AM - Ayuno General</option>
                             <option>08:00 AM - Ayuno General</option>
                             <option>09:00 AM - Ayuno General</option>
@@ -136,8 +136,8 @@
                 <p class="text-slate-400 text-sm">Gestión de Expedientes, Pase de Lista e Interrogatorio en Tiempo Real</p>
             </div>
             <span class="bg-amber-900/40 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-700/50 flex items-center gap-2">
-                    <i class="fa-solid fa-user-gear"></i> Rol: Operador Ventanilla
-                </span>
+                <i class="fa-solid fa-user-gear"></i> Rol: Operador Ventanilla
+            </span>
         </div>
 
         <!-- TABLA DE CITAS REGISTRADAS -->
@@ -184,9 +184,14 @@
     ESCOM IPN - Bases de Datos | Proyecto Propio: Laboratorio Clínico
 </footer>
 
-<!-- SCRIPT DE INTERACCIÓN Y CONEXIÓN A POSTGRESQL CON FALLBACK GITHUB PAGES -->
+<!-- SCRIPT DE INTERACCIÓN Y CONEXIÓN DINÁMICA A POSTGRESQL -->
 <script>
-    // Cambiar entre la vista de Paciente y Administrador
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        const inputFechaLab = document.getElementById('inputFechaLab');
+        if (inputFechaLab) inputFechaLab.value = today;
+    });
+
     function cambiarVista(vista) {
         const secPaciente = document.getElementById('seccionPaciente');
         const secAdmin = document.getElementById('seccionAdmin');
@@ -207,30 +212,76 @@
         }
     }
 
-    function buscarOrdenPaciente() {
-        document.getElementById('resultadoPaciente').classList.remove('hidden');
+    async function buscarOrdenPaciente() {
+        const nss = document.getElementById('inputNSS').value.trim();
+        const resDiv = document.getElementById('resultadoPaciente');
+
+        if (!nss) {
+            alert('Por favor ingresa un número de NSS.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/citas');
+            const citas = await response.json();
+            const miCita = citas.find(c => c.nss === nss);
+
+            if (miCita) {
+                document.getElementById('lblNombrePaciente').innerText = miCita.nombre;
+                document.getElementById('lblFechaDoctor').innerText = miCita.fecha_cita_doctor ? miCita.fecha_cita_doctor.split('T')[0] : 'N/A';
+                document.getElementById('lblEstudios').innerText = miCita.estudios || 'Biometría Hemática, Química Sanguínea';
+                resDiv.classList.remove('hidden');
+            } else {
+                alert('No se encontró ningún expediente activo con el NSS ingresado.');
+                resDiv.classList.add('hidden');
+            }
+        } catch (err) {
+            console.error("Error al consultar orden:", err);
+            alert('Error de conexión con el servidor de base de datos.');
+        }
     }
 
-    function confirmarCitaPaciente() {
+    async function confirmarCitaPaciente() {
+        const nss = document.getElementById('inputNSS').value.trim();
+        const fechaLab = document.getElementById('inputFechaLab').value;
         const msg = document.getElementById('msgConfirmacion');
-        msg.classList.remove('hidden');
-        setTimeout(() => { msg.classList.add('hidden'); }, 4000);
+
+        if (!nss) {
+            alert('Por favor ingresa y consulta tu NSS primero.');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/citas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nss, fecha_programada: fechaLab })
+            });
+
+            if (res.ok) {
+                msg.classList.remove('hidden');
+                setTimeout(() => { msg.classList.add('hidden'); }, 4000);
+            } else {
+                alert('No se pudo registrar la cita. Verifica que la orden médica exista.');
+            }
+        } catch (e) {
+            console.error("Error al registrar:", e);
+            alert('Error al conectar con la API.');
+        }
     }
 
-    // Consultar PostgreSQL vía API /api/citas con fallback estático para GitHub Pages
     async function cargarCitas() {
         try {
             const res = await fetch('/api/citas');
-            if (!res.ok) throw new Error("Backend local no disponible");
+            if (!res.ok) throw new Error("Error al obtener datos");
             const data = await res.json();
             renderTabla(data);
         } catch (err) {
-            console.log("Cargando datos estáticos en modo demostración (GitHub Pages).");
-            const datosDemo = [
-                { id_cita: 1001, nss: '1234567890', nombre: 'Juan Perez Lopez', fecha_programada: '2026-10-25', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: true },
-                { id_cita: 1002, nss: '1122334455', nombre: 'Laura Gomez Perez', fecha_programada: '2026-10-28', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: false }
-            ];
-            renderTabla(datosDemo);
+            console.error("Error cargando citas de PostgreSQL:", err);
+            const tbody = document.getElementById('tablaCitas');
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-rose-400">Error al conectar con la base de datos.</td></tr>`;
+            }
         }
     }
 
@@ -239,7 +290,7 @@
         if (!tbody) return;
         tbody.innerHTML = '';
 
-        if (lista.length === 0) {
+        if (!lista || lista.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay citas registradas.</td></tr>`;
             return;
         }
@@ -247,28 +298,28 @@
         lista.forEach(cita => {
             const fechaLab = cita.fecha_programada ? cita.fecha_programada.toString().split('T')[0] : 'N/A';
             const fechaDoc = cita.fecha_cita_doctor ? cita.fecha_cita_doctor.toString().split('T')[0] : 'N/A';
-            const estudios = cita.estudios || 'Química Sanguínea, Biometría Hemática';
+            const estudios = cita.estudios || 'Biometría Hemática, Química Sanguínea';
 
             const tr = document.createElement('tr');
             tr.className = "hover:bg-slate-800/40 transition";
             tr.innerHTML = `
-                    <td class="p-4 font-bold text-white">${cita.nss}</td>
-                    <td class="p-4 font-medium text-slate-200">${cita.nombre}</td>
-                    <td class="p-4 text-slate-300">${fechaLab}</td>
-                    <td class="p-4 text-slate-300">${fechaDoc}</td>
-                    <td class="p-4 text-slate-300">${estudios}</td>
-                    <td class="p-4 text-center">
-                        ${cita.asistio
+                <td class="p-4 font-bold text-white">${cita.nss}</td>
+                <td class="p-4 font-medium text-slate-200">${cita.nombre}</td>
+                <td class="p-4 text-slate-300">${fechaLab}</td>
+                <td class="p-4 text-slate-300">${fechaDoc}</td>
+                <td class="p-4 text-slate-300">${estudios}</td>
+                <td class="p-4 text-center">
+                    ${cita.asistio
                 ? '<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-solid fa-check"></i> Confirmada</span>'
-                : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-regular fa-clock"></i> Marcar Asistencia</span>'
+                : '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-regular fa-clock"></i> Pendiente</span>'
             }
-                    </td>
-                    <td class="p-4 text-center">
-                        <button onclick="eliminarCita(${cita.id_cita})" class="bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 p-2 rounded-lg transition" title="Eliminar registro">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                `;
+                </td>
+                <td class="p-4 text-center">
+                    <button onclick="eliminarCita(${cita.id_cita})" class="bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 p-2 rounded-lg transition" title="Eliminar registro">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `;
             tbody.appendChild(tr);
         });
     }
@@ -280,13 +331,9 @@
             await fetch('/api/citas/' + idCita, { method: 'DELETE' });
             cargarCitas();
         } catch (e) {
-            alert('Modo demostración: registro eliminado');
+            alert('Error al intentar eliminar el registro.');
         }
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        cargarCitas();
-    });
 </script>
 </body>
 </html>

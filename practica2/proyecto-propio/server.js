@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 app.get('/api/citas', async (req, res) => {
     try {
         const query = `
-            SELECT 
+            SELECT
                 c.id_cita,
                 p.nss,
                 p.nombre,
@@ -46,6 +46,31 @@ app.get('/api/citas', async (req, res) => {
     } catch (err) {
         console.error("Error al consultar PostgreSQL:", err);
         res.status(500).json({ error: 'Error en el servidor de base de datos' });
+    }
+});
+
+// POST: Registrar una nueva cita de laboratorio asociada a la orden médica del paciente
+app.post('/api/citas', async (req, res) => {
+    const { nss, fecha_programada } = req.body;
+    try {
+        // Buscar la orden médica asociada al paciente
+        const ordenQuery = await pool.query('SELECT id_orden FROM OrdenMedica WHERE nss_paciente = $1 LIMIT 1', [nss]);
+        if (ordenQuery.rows.length === 0) {
+            return res.status(404).json({ error: 'No se encontró una orden médica para este NSS' });
+        }
+        const idOrden = ordenQuery.rows[0].id_orden;
+
+        // Insertar la cita en CitaLaboratorio
+        const insertQuery = `
+            INSERT INTO CitaLaboratorio (nss_paciente, id_orden, fecha_programada, asistio)
+            VALUES ($1, $2, $3, false)
+            RETURNING id_cita;
+        `;
+        const result = await pool.query(insertQuery, [nss, idOrden, fecha_programada]);
+        res.status(201).json({ message: 'Cita registrada correctamente', id_cita: result.rows[0].id_cita });
+    } catch (err) {
+        console.error("Error al registrar la cita:", err);
+        res.status(500).json({ error: 'Error al registrar la cita' });
     }
 });
 
