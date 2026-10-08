@@ -3,48 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio Clínico - Control de Ventanilla</title>
-    <style>
-        :root { --primary: #0284c7; --dark: #0f172a; --bg: #f8fafc; }
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--dark); }
-        header { background: var(--dark); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .hero { padding: 3rem 2rem; text-align: center; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; }
-        .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
-        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-        .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .badge { background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
-        footer { text-align: center; padding: 1.5rem; background: var(--dark); color: #94a3b8; margin-top: 3rem; }
-    </style>
+    <title>Sistema de Ventanilla - Laboratorio Clínico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-<header>
-    <h2>Control de Ventanilla - Laboratorio Clínico</h2>
-    <span class="badge">Atención &lt; 2 min / paciente</span>
-</header>
-<section class="hero">
-    <h1>Sistema de Agendamiento y Citas</h1>
-    <p>Validación de NSS, control de vigencia y pase de lista en tiempo real.</p>
-</section>
-<main class="container">
-    <h2>Funcionalidades Operativas</h2>
-    <div class="grid">
-        <div class="card">
-            <h3>Validación por NSS</h3>
-            <p>Muestra instantáneamente vigencia, unidad médica y núcleo familiar.</p>
-        </div>
-        <div class="card">
-            <h3>Regla de Agendamiento</h3>
-            <p>Bloquea o valida citas entre 15 y 30 días previos a la cita médica.</p>
-        </div>
-        <div class="card">
-            <h3>Pase de Asistencia</h3>
-            <p>Confirmación en tiempo real de presencia en toma de muestras.</p>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+
+<!-- Header / Navbar -->
+<header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-hospital-user text-sky-400 text-2xl"></i>
+        <div>
+            <h1 class="text-xl font-bold leading-none">Laboratorio Clínico - Control de Citas</h1>
+            <p class="text-xs text-slate-400 mt-1">Módulo de Atención en Ventanilla | Unidad Médica</p>
         </div>
     </div>
+    <div class="flex items-center space-x-4">
+            <span class="bg-sky-500/20 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full border border-sky-500/30">
+                <i class="fa-solid fa-stopwatch mr-1"></i> Meta: &lt; 2 min / paciente
+            </span>
+        <div class="text-right text-xs text-slate-300">
+            <p class="font-bold">Operador: Manuel</p>
+            <p class="text-slate-400">Auxiliar de Ventanilla</p>
+        </div>
+    </div>
+</header>
+
+<!-- Main Workspace -->
+<main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Columna Izquierda: Búsqueda y Validación por NSS -->
+    <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center">
+            <i class="fa-solid fa-id-card text-sky-600 mr-2"></i> 1. Validación de Paciente
+        </h2>
+
+        <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-600 uppercase">Número de Seguridad Social (NSS)</label>
+            <div class="flex space-x-2">
+                <input type="text" id="nssInput" value="1234567890" placeholder="Ingrese NSS..."
+                       class="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                <button onclick="buscarPaciente()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Ficha del Paciente Desplegada -->
+        <div id="pacienteCard" class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-base" id="pacNombre">Juan Pérez López</h3>
+                    <p class="text-xs text-slate-500" id="pacNSS">NSS: 1234567890</p>
+                </div>
+                <span id="pacVigencia" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center">
+                        <i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> Vigente
+                    </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-2 border-t">
+                <div>
+                    <span class="font-semibold block text-slate-400">Unidad Médica:</span>
+                    <span id="pacUnidad" class="font-bold text-slate-700">UMF 20 - La Raza</span>
+                </div>
+                <div>
+                    <span class="font-semibold block text-slate-400">Núcleo Familiar:</span>
+                    <span id="pacNucleo" class="font-bold text-slate-700">Esposa e Hijos (01)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Columna Central: Agendamiento y Regla de Negocio (15-30 Días) -->
+    <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-2 space-y-5">
+        <h2 class="text-lg font-bold text-slate-900 border-b pb-2 flex items-center">
+            <i class="fa-solid fa-calendar-plus text-sky-600 mr-2"></i> 2. Agendamiento de Cita de Laboratorio
+        </h2>
+
+        <form id="citaForm" onsubmit="validarYAgendar(event)" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Fecha Cita Médico Tratante -->
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-600 uppercase">Fecha Cita Médico Tratante</label>
+                    <input type="date" id="fechaDoctor" value="2026-11-15" onchange="calcularRangosPermitidos()"
+                           class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-sky-500 outline-none">
+                    <p class="text-[11px] text-slate-500">Extraída de la orden médica expedida.</p>
+                </div>
+
+                <!-- Fecha Propuesta Cita Laboratorio -->
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-600 uppercase">Fecha Propuesta Toma de Muestra</label>
+                    <input type="date" id="fechaLab" value="2026-10-25" onchange="evaluarReglaNegocio()"
+                           class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    <p class="text-[11px] text-slate-500">Rango válido: 15 a 30 días antes del doctor.</p>
+                </div>
+            </div>
+
+            <!-- Alerta Dinámica de la Regla de Negocio -->
+            <div id="alertaRegla" class="p-3 rounded-lg text-xs font-medium flex items-center bg-sky-50 text-sky-800 border border-sky-200">
+                <i class="fa-solid fa-calculator text-sky-600 text-lg mr-3"></i>
+                <div>
+                    <p class="font-bold">Regla de Negocio (15-30 Días):</p>
+                    <p id="reglaDetalle">Diferencia calculada: <strong>21 días de anticipación</strong>. (Cumple con el criterio de agendamiento).</p>
+                </div>
+            </div>
+
+            <!-- Catálogo de Estudios -->
+            <div class="space-y-2 pt-2">
+                <label class="text-xs font-bold text-slate-600 uppercase">Estudios Solicitados en la Orden</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Biometría Hemática</span>
+                    </label>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Química Sanguínea</span>
+                    </label>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Examen General Orina</span>
+                    </label>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Prueba de Coagulación</span>
+                    </label>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Perfil Lipídico</span>
+                    </label>
+                    <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border hover:bg-slate-100 cursor-pointer text-xs">
+                        <input type="checkbox" class="rounded text-sky-600 focus:ring-sky-500">
+                        <span>Glucosa en Ayunas</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="btnAgendar" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow">
+                <i class="fa-solid fa-check-circle mr-2"></i> Confirmar y Agendar Cita de Laboratorio
+            </button>
+        </form>
+    </section>
+
+    <!-- Fila Inferior: Lista de Asistencia del Día -->
+    <section class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-3 space-y-4">
+        <div class="flex justify-between items-center border-b pb-2">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-clipboard-check text-sky-600 mr-2"></i> 3. Control y Pase de Asistencia Diaria (Toma de Muestras)
+            </h2>
+            <span class="text-xs text-slate-500">Fecha Actual: <strong id="fechaHoy">2026-10-07</strong></span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+                <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b">
+                <tr>
+                    <th class="p-3">NSS</th>
+                    <th class="p-3">Paciente</th>
+                    <th class="p-3">Hora Programada</th>
+                    <th class="p-3">Estudios</th>
+                    <th class="p-3">Cita Médica Doctor</th>
+                    <th class="p-3 text-center">Estado / Asistencia</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200" id="tablaAsistencia">
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">1234567890</td>
+                    <td class="p-3">Juan Pérez López</td>
+                    <td class="p-3">07:00 AM</td>
+                    <td class="p-3">Biometría Hemática, Examen Orina</td>
+                    <td class="p-3">2026-11-15</td>
+                    <td class="p-3 text-center">
+                        <button onclick="toggleAsistencia(this)" class="bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-emerald-600 transition">
+                            <i class="fa-solid fa-check mr-1"></i> Asistencia Confirmada
+                        </button>
+                    </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">9876543210</td>
+                    <td class="p-3">María Elena Hernández</td>
+                    <td class="p-3">07:15 AM</td>
+                    <td class="p-3">Química Sanguínea (6 elementos)</td>
+                    <td class="p-3">2026-11-18</td>
+                    <td class="p-3 text-center">
+                        <button onclick="toggleAsistencia(this)" class="bg-amber-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-amber-600 transition">
+                            <i class="fa-solid fa-clock mr-1"></i> Pendiente
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </main>
-<footer>
-    <p>ESCOM IPN - Bases de Datos | Proyecto Propio</p>
+
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-400 text-center text-xs py-3 mt-auto">
+    ESCOM IPN - Bases de Datos | Proyecto Propio: Sistema de Ventanilla de Laboratorio Clínico
 </footer>
+
+<!-- Lógica JavaScript Interactiva -->
+<script>
+    function evaluarReglaNegocio() {
+        const fDoctor = new Date(document.getElementById('fechaDoctor').value);
+        const fLab = new Date(document.getElementById('fechaLab').value);
+        const alerta = document.getElementById('alertaRegla');
+        const detalle = document.getElementById('reglaDetalle');
+        const btn = document.getElementById('btnAgendar');
+
+        if (isNaN(fDoctor) || isNaN(fLab)) return;
+
+        const diffTime = fDoctor - fLab;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays >= 15 && diffDays <= 30) {
+            alerta.className = "p-3 rounded-lg text-xs font-medium flex items-center bg-emerald-50 text-emerald-800 border border-emerald-200";
+            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días de anticipación</strong>. (Cumple con la regla de 15 a 30 días).`;
+            btn.disabled = false;
+            btn.className = "w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow cursor-pointer";
+        } else {
+            alerta.className = "p-3 rounded-lg text-xs font-medium flex items-center bg-rose-50 text-rose-800 border border-rose-200";
+            detalle.innerHTML = `Diferencia calculada: <strong>${diffDays} días</strong>. <span class="font-bold text-rose-600">¡Violación de regla de negocio!</span> Debe ser entre 15 y 30 días previos a la cita médica.`;
+            btn.disabled = true;
+            btn.className = "w-full bg-slate-300 text-slate-500 font-bold py-2.5 rounded-lg text-sm transition cursor-not-allowed";
+        }
+    }
+
+    function buscarPaciente() {
+        const nss = document.getElementById('nssInput').value;
+        if (nss === "1234567890") {
+            document.getElementById('pacNombre').innerText = "Juan Pérez López";
+            document.getElementById('pacNSS').innerText = "NSS: " + nss;
+            document.getElementById('pacVigencia').className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center";
+            document.getElementById('pacVigencia').innerHTML = '<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> Vigente';
+        } else {
+            document.getElementById('pacNombre').innerText = "Paciente No Registrado";
+            document.getElementById('pacNSS').innerText = "NSS: " + nss;
+            document.getElementById('pacVigencia').className = "bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-1 rounded-full flex items-center";
+            document.getElementById('pacVigencia').innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i> No Vigente';
+        }
+    }
+
+    function toggleAsistencia(btn) {
+        if (btn.classList.contains('bg-amber-500')) {
+            btn.className = "bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-emerald-600 transition";
+            btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Asistencia Confirmada';
+        } else {
+            btn.className = "bg-amber-500 text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-amber-600 transition";
+            btn.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Pendiente';
+        }
+    }
+
+    function validarYAgendar(e) {
+        e.preventDefault();
+        alert("¡Cita agendada con éxito en el sistema!");
+    }
+
+    evaluarReglaNegocio();
+</script>
 </body>
 </html>
