@@ -222,41 +222,21 @@
         }
 
         try {
-            const response = await fetch('/api/citas');
-            const data = await response.json();
-
-            // Buscamos si ya tiene cita o si podemos mapearlo por NSS
-            let pacienteEncontrado = data.find(item => item.nss === nss);
-
-            // Si el backend no devuelve el paciente porque no hay cita en CitaLaboratorio,
-            // asignamos los datos directamente según el NSS ingresado para permitirles avanzar:
-            if (!pacienteEncontrado) {
-                const nombresMap = {
-                    '1234567890': 'Ian Andrew Aguilar Garcia',
-                    '1234567891': 'Kevin Edú Vega Treviño',
-                    '1234567892': 'Alondra Quintanar Sánchez',
-                    '1234567893': 'Sánchez Palma Joel'
-                };
-
-                if (nombresMap[nss]) {
-                    pacienteEncontrado = {
-                        nss: nss,
-                        nombre: nombresMap[nss],
-                        fecha_cita_doctor: '2026-10-15',
-                        estudios: 'Biometría Hemática, Química Sanguínea'
-                    };
-                }
-            }
-
-            if (pacienteEncontrado) {
-                document.getElementById('lblNombrePaciente').innerText = pacienteEncontrado.nombre;
-                document.getElementById('lblFechaDoctor').innerText = pacienteEncontrado.fecha_cita_doctor ? pacienteEncontrado.fecha_cita_doctor.split('T')[0] : '2026-10-15';
-                document.getElementById('lblEstudios').innerText = pacienteEncontrado.estudios || 'Biometría Hemática, Química Sanguínea';
-                resDiv.classList.remove('hidden');
-            } else {
+            const response = await fetch(`/api/pacientes/${nss}`);
+            if (!response.ok) {
                 alert('No se encontró ningún expediente activo con el NSS ingresado.');
                 resDiv.classList.add('hidden');
+                return;
             }
+
+            const paciente = await response.json();
+
+            // Cargamos los datos reales directo de la base de datos
+            document.getElementById('lblNombrePaciente').innerText = paciente.nombre;
+            document.getElementById('lblFechaDoctor').innerText = paciente.fecha_cita_doctor ? paciente.fecha_cita_doctor.split('T')[0] : '2026-10-15';
+            document.getElementById('lblEstudios').innerText = 'Biometría Hemática, Química Sanguínea';
+            resDiv.classList.remove('hidden');
+
         } catch (err) {
             console.error("Error al consultar orden:", err);
             alert('Error de conexión con el servidor de base de datos.');

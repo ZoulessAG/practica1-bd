@@ -24,7 +24,36 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'landing', 'index.html'));
 });
 
-// GET: Consultar citas reales desde PostgreSQL
+// GET: Consultar expediente y orden médica de un paciente por su NSS (Para la búsqueda del Portal Paciente)
+app.get('/api/pacientes/:nss', async (req, res) => {
+    const { nss } = req.params;
+    try {
+        const query = `
+            SELECT 
+                p.nss, 
+                p.nombre, 
+                p.esta_vigente, 
+                p.unidad_medica, 
+                p.nucleo_familiar, 
+                p.telefono,
+                o.id_orden,
+                o.fecha_cita_doctor
+            FROM Paciente p
+            LEFT JOIN OrdenMedica o ON p.nss = o.nss_paciente
+            WHERE p.nss = $1;
+        `;
+        const result = await pool.query(query, [nss]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Paciente no encontrado' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error("Error al buscar paciente:", err);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+// GET: Consultar citas reales desde PostgreSQL (Para el Panel de Administración)
 app.get('/api/citas', async (req, res) => {
     try {
         const query = `
@@ -37,8 +66,8 @@ app.get('/api/citas', async (req, res) => {
                 c.asistio,
                 EXTRACT(DAY FROM (o.fecha_cita_doctor::timestamp - c.fecha_programada::timestamp))::INTEGER AS dias_anticipacion
             FROM CitaLaboratorio c
-            JOIN Paciente p ON c.nss_paciente = p.nss
-            JOIN OrdenMedica o ON c.id_orden = o.id_orden
+                     JOIN Paciente p ON c.nss_paciente = p.nss
+                     JOIN OrdenMedica o ON c.id_orden = o.id_orden
             ORDER BY c.id_cita ASC;
         `;
         const result = await pool.query(query);
@@ -64,7 +93,7 @@ app.post('/api/citas', async (req, res) => {
         const insertQuery = `
             INSERT INTO CitaLaboratorio (nss_paciente, id_orden, fecha_programada, asistio)
             VALUES ($1, $2, $3, false)
-            RETURNING id_cita;
+                RETURNING id_cita;
         `;
         const result = await pool.query(insertQuery, [nss, idOrden, fecha_programada]);
         res.status(201).json({ message: 'Cita registrada correctamente', id_cita: result.rows[0].id_cita });
