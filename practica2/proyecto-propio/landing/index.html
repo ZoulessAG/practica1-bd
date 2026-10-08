@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio Clínico - Portal de Citas</title>
+    <title>Laboratorio Clínico - Portal de Citas y Control</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -14,24 +14,25 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-<!-- BARRA DE NAVEGACIÓN SUPERIOR -->
-<header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+<!-- BARRA DE NAVEGACIÓN SUPERIOR CON CONMUTADOR DE VISTAS -->
+<header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-3">
         <div class="bg-blue-600 p-2.5 rounded-lg text-white">
             <i class="fa-solid fa-hospital-user text-xl"></i>
         </div>
         <div>
-            <h1 class="font-bold text-lg text-white">Laboratorio Clínico - Portal de Citas</h1>
-            <p class="text-xs text-slate-400">Simulador de Sistema conectado a PostgreSQL</p>
+            <h1 class="font-bold text-lg text-white">Laboratorio Clínico - Portal Unificado</h1>
+            <p class="text-xs text-slate-400">Sistema Integral con PostgreSQL & Express</p>
         </div>
     </div>
-    <div class="flex items-center gap-3">
-            <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1.5 rounded-md font-semibold">
-                Rol: Administrador
-            </span>
-        <span class="text-sm font-medium text-slate-300">Manuel (Ventanilla)</span>
-        <button onclick="cargarCitas()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-md border border-slate-700 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-rotate"></i> Actualizar
+
+    <!-- SELECTOR DE ROL / VISTA -->
+    <div class="flex items-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 gap-1">
+        <button id="btnVistaPaciente" onclick="cambiarVista('paciente')" class="px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 bg-blue-600 text-white shadow-lg">
+            <i class="fa-solid fa-user text-sm"></i> Portal Paciente
+        </button>
+        <button id="btnVistaAdmin" onclick="cambiarVista('admin')" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-2">
+            <i class="fa-solid fa-user-shield text-sm"></i> Panel Administrador / Ventanilla
         </button>
     </div>
 </header>
@@ -39,52 +40,143 @@
 <!-- CONTENIDO PRINCIPAL -->
 <main class="max-w-6xl w-full mx-auto p-6 flex-1">
 
-    <!-- ENCABEZADO DEL PANEL -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 flex justify-between items-center">
-        <div>
-            <h2 class="text-2xl font-bold text-white mb-1">Panel de Ventanilla - Control General</h2>
-            <p class="text-slate-400 text-sm">Gestión de Expedientes, Pase de Lista e Interrogatorio en Tiempo Real</p>
-        </div>
-        <span class="bg-amber-900/40 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-700/50 flex items-center gap-2">
-                <i class="fa-solid fa-user-gear"></i> Rol: Operador Ventanilla
-            </span>
-    </div>
-
-    <!-- TABLA DE CITAS -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-            <h3 class="font-bold text-white text-base flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-blue-400"></i> Gestión de Citas y Pase de Asistencia
-            </h3>
-            <button onclick="cargarCitas()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs px-3 py-1.5 rounded-lg font-medium transition">
-                <i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar PostgreSQL
-            </button>
+    <!-- ========================================== -->
+    <!-- VISTA 1: PORTAL DEL PACIENTE              -->
+    <!-- ========================================== -->
+    <section id="seccionPaciente" class="space-y-6">
+        <!-- BANNER PACIENTE -->
+        <div class="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-800/40 rounded-2xl p-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-1"><i class="fa-solid fa-notes-medical text-blue-400 mr-2"></i>Atención e Interrogatorio al Paciente</h2>
+                <p class="text-slate-300 text-sm">Consulta tu orden médica, completa el interrogatorio previo y confirma tu cita de laboratorio.</p>
+            </div>
+            <span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-blue-500/30">
+                    Acceso Público
+                </span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-slate-800/60 text-slate-400 uppercase text-xs font-semibold tracking-wider border-b border-slate-800">
-                <tr>
-                    <th class="p-4">NSS</th>
-                    <th class="p-4">PACIENTE</th>
-                    <th class="p-4">FECHA LABORATORIO</th>
-                    <th class="p-4">FECHA MÉDICO</th>
-                    <th class="p-4">ESTUDIOS</th>
-                    <th class="p-4 text-center">PASE DE ASISTENCIA</th>
-                    <th class="p-4 text-center">ACCIONES</th>
-                </tr>
-                </thead>
-                <tbody id="tablaCitas" class="divide-y divide-slate-800">
-                <tr>
-                    <td colspan="7" class="p-8 text-center text-slate-500">
-                        <i class="fa-solid fa-circle-notch fa-spin text-xl mb-2 text-blue-500"></i>
-                        <p>Cargando datos del sistema...</p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- CONSULTA DE NSS -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-id-card text-blue-400"></i> Consultar Expediente
+                </h3>
+                <p class="text-xs text-slate-400">Ingresa tu Número de Seguridad Social (NSS) para obtener tus órdenes registradas.</p>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">NSS del Paciente</label>
+                    <input type="text" id="inputNSS" placeholder="Ej: 1122334455" value="1122334455" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <button onclick="buscarOrdenPaciente()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Consultar Orden Médica
+                </button>
+
+                <!-- TARJETA RESULTADO PACIENTE -->
+                <div id="resultadoPaciente" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs space-y-2 mt-4">
+                    <p class="text-slate-400">Paciente: <strong id="lblNombrePaciente" class="text-white">Laura Gómez Pérez</strong></p>
+                    <p class="text-slate-400">Fecha Cita Médico: <strong id="lblFechaDoctor" class="text-blue-400">2026-11-15</strong></p>
+                    <p class="text-slate-400">Estudios Solicitados: <span id="lblEstudios" class="text-slate-200">Biometría Hemática, Química Sanguínea</span></p>
+                </div>
+            </div>
+
+            <!-- AGENDAMIENTO & INTERROGATORIO PREVIO -->
+            <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-emerald-400"></i> Agendar Cita de Laboratorio
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Fecha Programada para Laboratorio</label>
+                        <input type="date" id="inputFechaLab" value="2026-10-28" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Horario Preferente</label>
+                        <select class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option>07:00 AM - Ayuno General</option>
+                            <option>08:00 AM - Ayuno General</option>
+                            <option>09:00 AM - Ayuno General</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- INTERROGATORIO CLÍNICO PREVIO -->
+                <div class="border-t border-slate-800 pt-4 space-y-3">
+                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-clipboard-question"></i> Interrogatorio de Preparación Previa
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700">
+                            <input type="checkbox" id="chkAyuno" checked class="rounded accent-blue-600">
+                            <span class="text-slate-300">Cumplo con el ayuno estricto de 8 horas</span>
+                        </label>
+                        <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700">
+                            <input type="checkbox" id="chkMedicamentos" class="rounded accent-blue-600">
+                            <span class="text-slate-300">Tomé medicamentos matutinos el día de hoy</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="confirmarCitaPaciente()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-check-circle"></i> Confirmar y Registrar Cita
+                </button>
+                <div id="msgConfirmacion" class="hidden bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 p-3 rounded-lg text-xs text-center">
+                    ¡Cita agendada con éxito! Puedes consultar tu registro en el panel de Ventanilla.
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VISTA 2: PANEL DE ADMINISTRADOR/VENTANILLA -->
+    <!-- ========================================== -->
+    <section id="seccionAdmin" class="hidden space-y-6">
+        <!-- ENCABEZADO DEL PANEL -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-1">Panel de Ventanilla - Control General</h2>
+                <p class="text-slate-400 text-sm">Gestión de Expedientes, Pase de Lista e Interrogatorio en Tiempo Real</p>
+            </div>
+            <span class="bg-amber-900/40 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-700/50 flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear"></i> Rol: Operador Ventanilla
+                </span>
+        </div>
+
+        <!-- TABLA DE CITAS REGISTRADAS -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-blue-400"></i> Gestión de Citas y Pase de Asistencia
+                </h3>
+                <button onclick="cargarCitas()" class="bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Sincronizar PostgreSQL
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-800/60 text-slate-400 uppercase text-xs font-semibold tracking-wider border-b border-slate-800">
+                    <tr>
+                        <th class="p-4">NSS</th>
+                        <th class="p-4">PACIENTE</th>
+                        <th class="p-4">FECHA LABORATORIO</th>
+                        <th class="p-4">FECHA MÉDICO</th>
+                        <th class="p-4">ESTUDIOS</th>
+                        <th class="p-4 text-center">PASE DE ASISTENCIA</th>
+                        <th class="p-4 text-center">ACCIONES</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tablaCitas" class="divide-y divide-slate-800">
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-slate-500">
+                            <i class="fa-solid fa-circle-notch fa-spin text-xl mb-2 text-blue-500"></i>
+                            <p>Cargando información del sistema...</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <!-- PIE DE PÁGINA -->
@@ -92,18 +184,48 @@
     ESCOM IPN - Bases de Datos | Proyecto Propio: Laboratorio Clínico
 </footer>
 
-<!-- SCRIPT HÍBRIDO (POSTGRESQL LOCAL / MOCK GITHUB PAGES) -->
+<!-- SCRIPT DE INTERACCIÓN Y CONEXIÓN A POSTGRESQL CON FALLBACK GITHUB PAGES -->
 <script>
+    // Cambiar entre la vista de Paciente y Administrador
+    function cambiarVista(vista) {
+        const secPaciente = document.getElementById('seccionPaciente');
+        const secAdmin = document.getElementById('seccionAdmin');
+        const btnPaciente = document.getElementById('btnVistaPaciente');
+        const btnAdmin = document.getElementById('btnVistaAdmin');
+
+        if (vista === 'paciente') {
+            secPaciente.classList.remove('hidden');
+            secAdmin.classList.add('hidden');
+            btnPaciente.className = "px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 bg-blue-600 text-white shadow-lg";
+            btnAdmin.className = "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-2";
+        } else {
+            secPaciente.classList.add('hidden');
+            secAdmin.classList.remove('hidden');
+            btnAdmin.className = "px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 bg-amber-600 text-white shadow-lg";
+            btnPaciente.className = "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-2";
+            cargarCitas();
+        }
+    }
+
+    function buscarOrdenPaciente() {
+        document.getElementById('resultadoPaciente').classList.remove('hidden');
+    }
+
+    function confirmarCitaPaciente() {
+        const msg = document.getElementById('msgConfirmacion');
+        msg.classList.remove('hidden');
+        setTimeout(() => { msg.classList.add('hidden'); }, 4000);
+    }
+
+    // Consultar PostgreSQL vía API /api/citas con fallback estático para GitHub Pages
     async function cargarCitas() {
         try {
-            // Petición a la API local de Node.js
             const res = await fetch('/api/citas');
             if (!res.ok) throw new Error("Backend local no disponible");
             const data = await res.json();
             renderTabla(data);
         } catch (err) {
-            // Modo Demostración para GitHub Pages cuando no existe servidor backend
-            console.log("Visualizando en modo demostración estático (GitHub Pages).");
+            console.log("Cargando datos estáticos en modo demostración (GitHub Pages).");
             const datosDemo = [
                 { id_cita: 1001, nss: '1234567890', nombre: 'Juan Perez Lopez', fecha_programada: '2026-10-25', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: true },
                 { id_cita: 1002, nss: '1122334455', nombre: 'Laura Gomez Perez', fecha_programada: '2026-10-28', fecha_cita_doctor: '2026-11-15', estudios: 'Química Sanguínea, Biometría Hemática', asistio: false }
@@ -114,6 +236,7 @@
 
     function renderTabla(lista) {
         const tbody = document.getElementById('tablaCitas');
+        if (!tbody) return;
         tbody.innerHTML = '';
 
         if (lista.length === 0) {
@@ -157,11 +280,13 @@
             await fetch('/api/citas/' + idCita, { method: 'DELETE' });
             cargarCitas();
         } catch (e) {
-            alert('Función de eliminación ejecutada localmente');
+            alert('Modo demostración: registro eliminado');
         }
     }
 
-    window.addEventListener('DOMContentLoaded', cargarCitas);
+    window.addEventListener('DOMContentLoaded', () => {
+        cargarCitas();
+    });
 </script>
 </body>
 </html>
