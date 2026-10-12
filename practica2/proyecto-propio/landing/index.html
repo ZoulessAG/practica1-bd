@@ -231,7 +231,7 @@
 
             const paciente = await response.json();
 
-            // Cargamos los datos reales directo de la base de datos
+
             document.getElementById('lblNombrePaciente').innerText = paciente.nombre;
             document.getElementById('lblFechaDoctor').innerText = paciente.fecha_cita_doctor ? paciente.fecha_cita_doctor.split('T')[0] : '2026-10-15';
             document.getElementById('lblEstudios').innerText = 'Biometría Hemática, Química Sanguínea';
