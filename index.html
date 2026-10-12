@@ -42,7 +42,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-<!-- Header / Topbar -->
+
 <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
     <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center space-x-3">
@@ -52,34 +52,41 @@
             <div>
                 <h1 class="font-bold text-lg leading-tight text-white flex items-center gap-2">
                     Sistema Clínico - Sandbox EER
-                    <span class="text-xs font-normal bg-clinical-500/20 text-clinical-400 border border-clinical-500/30 px-2 py-0.5 rounded-full">v1.0 RAM</span>
+                    <span id="system-version-badge" class="text-xs font-normal bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Docker BD
+                    </span>
                 </h1>
-                <p class="text-xs text-slate-400">Base de Datos Relacional Interactiva</p>
+                <p class="text-xs text-slate-400">Base de Datos PostgreSQL (Docker) + Express</p>
             </div>
         </div>
 
-        <!-- Warning Banner -->
-        <div class="flex-1 max-w-2xl bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-amber-300">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0"></i>
+        
+        <div id="db-status-banner" class="flex-1 max-w-2xl bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-emerald-300">
+            <i id="db-status-icon" class="fa-solid fa-server text-emerald-400 text-base shrink-0"></i>
             <div>
-                <strong class="font-semibold text-amber-200">Modo Simulación Volátil Activo:</strong> Todos los cambios se guardan únicamente en la memoria de la sesión. <u>Al cerrar o recargar la pestaña</u>, los datos regresarán automáticamente a su estado predeterminado.
+                <strong id="db-status-title" class="font-semibold text-emerald-200">PostgreSQL (Docker) Conectado:</strong>
+                <span id="db-status-desc">Conexión activa a laboratorio_db en puerto 5433.</span>
             </div>
         </div>
 
-        <!-- Actions -->
+        
         <div class="flex items-center gap-2">
+            <button onclick="syncDatabaseWithBackend()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition" title="Sincronizar datos con PostgreSQL">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                Sincronizar BD
+            </button>
             <button onclick="resetDatabaseConfirm()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition">
                 <i class="fa-solid fa-rotate-left"></i>
-                Restablecer BD
+                Restablecer
             </button>
         </div>
     </div>
 </header>
 
-<!-- Main Content Layout -->
+
 <div class="flex flex-1 overflow-hidden">
 
-    <!-- Sidebar Navigation -->
+    
     <aside class="w-64 bg-slate-800/80 border-r border-slate-700 flex flex-col shrink-0">
         <div class="p-4 border-b border-slate-700/60">
             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Módulos del Sistema</p>
@@ -130,7 +137,7 @@
                 <span id="badge-count-estudio" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
             </button>
 
-            <!-- Sub-estudios / Especializaciones -->
+            
             <div class="ml-4 pl-2 border-l border-slate-700 space-y-1">
                 <button onclick="switchTable('prueba_sangre')" id="nav-table-prueba_sangre" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
                     <span>PRUEBA_SANGRE</span>
@@ -179,17 +186,17 @@
         </div>
     </aside>
 
-    <!-- Content Area -->
+    
     <main class="flex-1 bg-slate-900 overflow-y-auto custom-scrollbar p-6">
 
-        <!-- VIEW 1: DASHBOARD -->
+        
         <section id="view-dashboard" class="space-y-6">
             <div>
                 <h2 class="text-2xl font-bold text-white">Panel de Control General</h2>
                 <p class="text-sm text-slate-400">Resumen y métricas del modelo de datos clínico</p>
             </div>
 
-            <!-- Stats Cards Grid -->
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
                     <div>
@@ -224,7 +231,7 @@
                 </div>
             </div>
 
-            <!-- Fast Quick Links / Actions -->
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
                     <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
@@ -276,12 +283,12 @@
             </div>
         </section>
 
-        <!-- VIEW 2: DYNAMIC TABLE VIEWER (CRUD) -->
+        
         <section id="view-table" class="hidden space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
                 <div>
                     <h2 id="table-title" class="text-xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                        <!-- Table Name Header -->
+                        
                     </h2>
                     <p id="table-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
                 </div>
@@ -294,7 +301,7 @@
                 </div>
             </div>
 
-            <!-- Search & Filters -->
+            
             <div class="flex items-center gap-3">
                 <div class="relative flex-1">
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -302,15 +309,15 @@
                 </div>
             </div>
 
-            <!-- Table Container -->
+            
             <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-900/80 text-xs uppercase font-semibold text-slate-400 border-b border-slate-700" id="table-head">
-                        <!-- Dynamic Headers -->
+                        
                         </thead>
                         <tbody id="table-body" class="divide-y divide-slate-700/60">
-                        <!-- Dynamic Rows -->
+                        
                         </tbody>
                     </table>
                 </div>
@@ -321,21 +328,21 @@
             </div>
         </section>
 
-        <!-- VIEW 3: EER DIAGRAM & RELATIONAL SCHEMA -->
+        
         <section id="view-eer-diagram" class="hidden space-y-6">
             <div>
                 <h2 class="text-2xl font-bold text-white">Diagrama EER y Esquema Relacional</h2>
                 <p class="text-sm text-slate-400">Modelado conceptual Entidad-Relación Extendido y su correspondencia a Tablas</p>
             </div>
 
-            <!-- Interactive Map / Diagram Representation -->
+            
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
                 <h3 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-project-diagram text-clinical-400"></i> Diagrama de Estructura Entidad-Relación
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                    <!-- Entity Card: PACIENTE -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-blue-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>PACIENTE</span>
@@ -351,7 +358,7 @@
                         </ul>
                     </div>
 
-                    <!-- Entity Card: ORDEN_MEDICA -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-indigo-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>ORDEN_MEDICA</span>
@@ -365,7 +372,7 @@
                         </ul>
                     </div>
 
-                    <!-- Entity Card: ESTUDIO -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-cyan-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>ESTUDIO</span>
@@ -381,7 +388,7 @@
                         </div>
                     </div>
 
-                    <!-- Entity Card: CITA -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-amber-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>CITA</span>
@@ -396,7 +403,7 @@
                         </ul>
                     </div>
 
-                    <!-- Entity Card: RESULTADO -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-emerald-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>RESULTADO</span>
@@ -413,7 +420,7 @@
                         </ul>
                     </div>
 
-                    <!-- Relational Card: ORDEN_MEDICA_ESTUDIO -->
+                    
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
                         <div class="font-bold text-teal-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
                             <span>ORDEN_MEDICA_ESTUDIO</span>
@@ -427,7 +434,7 @@
                 </div>
             </div>
 
-            <!-- Explanation Section -->
+            
             <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 space-y-3">
                 <h3 class="font-bold text-white text-base">Reglas del Modelo Clínico</h3>
                 <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
@@ -441,33 +448,39 @@
             </div>
         </section>
 
-        <!-- VIEW 4: SQL CONSOLE PLAYGROUND -->
+        
         <section id="view-sql-console" class="hidden space-y-4">
             <div>
-                <h2 class="text-2xl font-bold text-white">Consola SQL Simulada</h2>
-                <p class="text-sm text-slate-400">Ejecuta consultas SQL interactivas sobre la memoria RAM del sistema</p>
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-emerald-400"></i> Consola SQL PostgreSQL
+                    <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">Motor: PostgreSQL 15</span>
+                </h2>
+                <p class="text-sm text-slate-400">Ejecuta consultas SQL interactivas en vivo contra el contenedor Docker de PostgreSQL</p>
             </div>
 
-            <!-- Quick Query Buttons -->
+            
             <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 space-y-2">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultas Frecuentes / Plantillas</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultas Frecuentes / Demostración en Vivo</p>
                 <div class="flex flex-wrap gap-2">
+                    <button onclick="runPredefinedQuery('demo_completa')" class="bg-indigo-600 hover:bg-indigo-500 text-xs text-white px-3 py-1.5 rounded-lg border border-indigo-400 font-semibold transition shadow">
+                        <i class="fa-solid fa-star text-amber-300 mr-1"></i> Demo Práctica 2 (JOINs + Fechas)
+                    </button>
                     <button onclick="runPredefinedQuery('pacientes_ordenes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Pacientes con sus Órdenes
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Pacientes con Órdenes
                     </button>
                     <button onclick="runPredefinedQuery('citas_pendientes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Citas Agendadas y Estatus
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Citas y Estatus
                     </button>
                     <button onclick="runPredefinedQuery('resultados_completos')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Resultados y Valores Obtenidos
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Resultados Obtenidos
                     </button>
                     <button onclick="runPredefinedQuery('estudios_sangre')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Estudios de Sangre Requeridos
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Estudios Registrados
                     </button>
                 </div>
             </div>
 
-            <!-- SQL Editor -->
+            
             <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
                 <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
                     <span class="text-xs font-mono text-slate-400"><i class="fa-solid fa-code text-clinical-400 mr-1"></i> Editor SQL</span>
@@ -478,7 +491,7 @@
                 <textarea id="sql-input" rows="4" class="w-full bg-slate-950 text-emerald-400 font-mono text-xs p-4 focus:outline-none resize-y" placeholder="Escribe una consulta, ejemplo: SELECT * FROM PACIENTE"></textarea>
             </div>
 
-            <!-- Query Results Output -->
+            
             <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
                 <div class="bg-slate-900/60 px-4 py-2.5 border-b border-slate-700 flex justify-between items-center">
                     <span class="text-xs font-semibold text-slate-300">Resultado de la Consulta</span>
@@ -500,7 +513,7 @@
     </main>
 </div>
 
-<!-- Modal: Add / Edit Record -->
+
 <div id="modal-record" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden">
         <div class="bg-slate-900 px-5 py-4 border-b border-slate-700 flex justify-between items-center">
@@ -512,7 +525,7 @@
 
         <form id="record-form" onsubmit="saveRecord(event)" class="p-5 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
             <div id="modal-form-fields" class="space-y-3">
-                <!-- Dynamic Inputs inserted via JS -->
+                
             </div>
 
             <div class="pt-3 border-t border-slate-700 flex justify-end gap-2">
@@ -664,8 +677,9 @@
     let dbState = {};
     let currentActiveTable = 'paciente';
     let editingIndex = null;
+    let isConnectedToPostgres = false;
 
-    function initDatabase() {
+    async function initDatabase() {
         const savedState = sessionStorage.getItem("CLINICAL_DB_RAM");
         if (savedState) {
             try {
@@ -676,25 +690,80 @@
         } else {
             dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
         }
-        saveStateToSession();
         updateAllBadges();
         updateDashboardStats();
+
+        await syncDatabaseWithBackend();
+    }
+
+    async function syncDatabaseWithBackend() {
+        try {
+            const statusRes = await fetch('/api/status');
+            if (statusRes.ok) {
+                const statusData = await statusRes.json();
+                isConnectedToPostgres = statusData.db_connected;
+
+                const banner = document.getElementById('db-status-banner');
+                const title = document.getElementById('db-status-title');
+                const desc = document.getElementById('db-status-desc');
+                const icon = document.getElementById('db-status-icon');
+                const badge = document.getElementById('system-version-badge');
+
+                if (isConnectedToPostgres) {
+                    banner.className = "flex-1 max-w-2xl bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-emerald-300";
+                    icon.className = "fa-solid fa-server text-emerald-400 text-base shrink-0";
+                    title.textContent = "PostgreSQL (Docker) Conectado:";
+                    desc.textContent = `Base: ${statusData.database} en puerto 5433 | Sincronizado en vivo.`;
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Docker BD Activa`;
+                }
+
+                const dumpRes = await fetch('/api/db-dump');
+                if (dumpRes.ok) {
+                    const dumpData = await dumpRes.json();
+                    if (dumpData.paciente && dumpData.paciente.length > 0) dbState.paciente = dumpData.paciente;
+                    if (dumpData.orden_medica && dumpData.orden_medica.length > 0) dbState.orden_medica = dumpData.orden_medica;
+                    if (dumpData.estudio && dumpData.estudio.length > 0) dbState.estudio = dumpData.estudio;
+                    if (dumpData.cita && dumpData.cita.length > 0) dbState.cita = dumpData.cita;
+                    if (dumpData.resultado && dumpData.resultado.length > 0) dbState.resultado = dumpData.resultado;
+
+                    saveStateToSession();
+                    updateAllBadges();
+                    updateDashboardStats();
+                    if (!document.getElementById('view-table').classList.contains('hidden')) {
+                        renderTable(currentActiveTable);
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn("Backend no disponible en este momento. Operando en modo local.", err);
+            const banner = document.getElementById('db-status-banner');
+            const title = document.getElementById('db-status-title');
+            const desc = document.getElementById('db-status-desc');
+            const icon = document.getElementById('db-status-icon');
+            if (banner) {
+                banner.className = "flex-1 max-w-2xl bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-amber-300";
+                icon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0";
+                title.textContent = "Modo Local Temporal:";
+                desc.textContent = "Sin conexión al backend Express. Cambios retenidos en memoria de sesión.";
+            }
+        }
     }
 
     function saveStateToSession() {
         sessionStorage.setItem("CLINICAL_DB_RAM", JSON.stringify(dbState));
     }
 
-    function resetDatabaseConfirm() {
-        if (confirm("¿Estás seguro de restablecer la base de datos a su estado original? Todos los cambios temporales se borrarán.")) {
+    async function resetDatabaseConfirm() {
+        if (confirm("¿Estás seguro de restablecer los datos? Se sincronizarán nuevamente desde la base de datos PostgreSQL.")) {
+            sessionStorage.removeItem("CLINICAL_DB_RAM");
             dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
-            saveStateToSession();
+            await syncDatabaseWithBackend();
             updateAllBadges();
             updateDashboardStats();
             if (document.getElementById('view-table').classList.contains('hidden') === false) {
                 renderTable(currentActiveTable);
             }
-            alert("Base de datos restablecida correctamente a memoria predeterminada.");
+            alert("Base de datos sincronizada con PostgreSQL correctamente.");
         }
     }
 
@@ -749,7 +818,6 @@
         const tbody = document.getElementById('table-body');
         const emptyMsg = document.getElementById('table-empty-msg');
 
-        // Render Header
         let headHTML = '<tr>';
         schema.fields.forEach(f => {
             const badge = f.isPk ? '<span class="ml-1 text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded border border-amber-500/30">PK</span>' :
@@ -759,7 +827,6 @@
         headHTML += '<th class="p-3 text-right">Acciones</th></tr>';
         thead.innerHTML = headHTML;
 
-        // Render Rows
         const rows = dbState[tableName] || [];
         if (rows.length === 0) {
             tbody.innerHTML = '';
@@ -825,7 +892,10 @@
 
         schema.fields.forEach(field => {
             const val = currentValues[field.name] !== undefined ? currentValues[field.name] : '';
-            const isDisabled = (editingIndex !== null && field.isPk) ? 'disabled class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-500 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-clinical-500"';
+            const isPkLocked = (editingIndex !== null && field.isPk);
+            const inputClass = isPkLocked 
+                ? 'readonly class="w-full bg-slate-900/60 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-400 cursor-not-allowed"' 
+                : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-clinical-500"';
 
             html += `<div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">
@@ -833,13 +903,13 @@
                     </label>`;
 
             if (field.type === 'select') {
-                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${isDisabled}>
+                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${inputClass}>
                         <option value="">-- Seleccionar --</option>
                         ${field.options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                     </select>`;
             } else if (field.type === 'fk') {
                 const fkOptions = dbState[field.fkTable] || [];
-                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${isDisabled}>
+                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${inputClass}>
                         <option value="">-- Seleccionar de ${field.fkTable.toUpperCase()} --</option>
                         ${fkOptions.map(item => {
                     const optVal = item[field.fkKey];
@@ -847,9 +917,9 @@
                 }).join('')}
                     </select>`;
             } else if (field.type === 'textarea') {
-                html += `<textarea name="${field.name}" rows="2" ${field.required ? 'required' : ''} ${isDisabled}>${val}</textarea>`;
+                html += `<textarea name="${field.name}" rows="2" ${field.required ? 'required' : ''} ${inputClass}>${val}</textarea>`;
             } else {
-                html += `<input type="${field.type || 'text'}" name="${field.name}" value="${val}" ${field.required ? 'required' : ''} ${isDisabled}>`;
+                html += `<input type="${field.type || 'text'}" name="${field.name}" value="${val}" ${field.required ? 'required' : ''} ${inputClass}>`;
             }
 
             html += `</div>`;
@@ -858,21 +928,62 @@
         container.innerHTML = html;
     }
 
-    function saveRecord(event) {
+    async function saveRecord(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
         const newRecord = {};
 
         TABLE_SCHEMAS[currentActiveTable].fields.forEach(field => {
             let val = formData.get(field.name);
+            if ((val === null || val === undefined || val === "") && editingIndex !== null) {
+                const existingVal = dbState[currentActiveTable][editingIndex]?.[field.name];
+                if (existingVal !== undefined) val = existingVal;
+            }
             if (val === "" && !field.required) val = null;
             newRecord[field.name] = val;
         });
+
+        if (currentActiveTable === 'paciente') {
+            if (!newRecord.nss && editingIndex !== null) {
+                newRecord.nss = dbState.paciente[editingIndex]?.nss;
+            }
+            if (!newRecord.nss || String(newRecord.nss).trim() === '') {
+                alert("Error: El campo NSS es obligatorio para registrar o actualizar un paciente.");
+                return;
+            }
+        }
 
         if (editingIndex === null) {
             dbState[currentActiveTable].push(newRecord);
         } else {
             dbState[currentActiveTable][editingIndex] = newRecord;
+        }
+
+        try {
+            if (currentActiveTable === 'paciente') {
+                const res = await fetch('/api/pacientes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newRecord)
+                });
+                if (!res.ok) {
+                    const errInfo = await res.json();
+                    console.error("Error al persistir paciente en PostgreSQL:", errInfo);
+                    alert(`Aviso de BD: ${errInfo.error || 'Error al guardar en PostgreSQL'}`);
+                }
+            } else if (currentActiveTable === 'cita') {
+                const res = await fetch('/api/citas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newRecord)
+                });
+                if (!res.ok) {
+                    const errInfo = await res.json();
+                    console.error("Error al persistir cita en PostgreSQL:", errInfo);
+                }
+            }
+        } catch (apiErr) {
+            console.warn("No se pudo persistir en backend:", apiErr);
         }
 
         saveStateToSession();
@@ -882,8 +993,21 @@
         closeRecordModal();
     }
 
-    function deleteRecord(index) {
-        if (confirm("¿Deseas eliminar este registro de la memoria RAM?")) {
+    async function deleteRecord(index) {
+        const record = dbState[currentActiveTable][index];
+        if (confirm("¿Deseas eliminar este registro de la base de datos?")) {
+            if (currentActiveTable === 'cita' && record.id_cita) {
+                try {
+                    const res = await fetch(`/api/citas/${record.id_cita}`, { method: 'DELETE' });
+                    if (!res.ok) {
+                        const errData = await res.json();
+                        alert(`Aviso de BD: ${errData.error || 'No se pudo eliminar en el servidor'}`);
+                    }
+                } catch (e) {
+                    console.warn("Fallo al eliminar en backend:", e);
+                }
+            }
+
             dbState[currentActiveTable].splice(index, 1);
             saveStateToSession();
             updateAllBadges();
@@ -892,7 +1016,7 @@
         }
     }
 
-    function executeCustomSql() {
+    async function executeCustomSql() {
         const query = document.getElementById('sql-input').value.trim();
         const head = document.getElementById('sql-result-head');
         const body = document.getElementById('sql-result-body');
@@ -900,6 +1024,52 @@
 
         if (!query) return;
 
+        count.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Consultando PostgreSQL...`;
+
+        try {
+            const response = await fetch('/api/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sql: query })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.rows) {
+                if (data.rows.length === 0) {
+                    head.innerHTML = '<tr><th class="p-3">Resultado</th></tr>';
+                    body.innerHTML = '<tr><td class="p-4 text-amber-400">PostgreSQL ejecutó la consulta pero devolvió 0 filas.</td></tr>';
+                    count.textContent = '0 filas en PostgreSQL';
+                    return;
+                }
+
+                const columns = data.fields && data.fields.length > 0 ? data.fields : Object.keys(data.rows[0]);
+                let headHTML = '<tr>';
+                columns.forEach(col => headHTML += `<th class="p-3">${col}</th>`);
+                headHTML += '</tr>';
+                head.innerHTML = headHTML;
+
+                let bodyHTML = '';
+                data.rows.forEach(row => {
+                    bodyHTML += `<tr class="hover:bg-slate-800 transition">`;
+                    columns.forEach(col => {
+                        const cellVal = row[col] !== null && row[col] !== undefined ? row[col] : '<span class="text-slate-600 italic">NULL</span>';
+                        bodyHTML += `<td class="p-3">${cellVal}</td>`;
+                    });
+                    bodyHTML += `</tr>`;
+                });
+                body.innerHTML = bodyHTML;
+                count.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> PostgreSQL Docker: ${data.rows.length} filas</span>`;
+                return;
+            } else if (data.error) {
+                head.innerHTML = '<tr><th class="p-3 text-rose-400">Error de PostgreSQL</th></tr>';
+                body.innerHTML = `<tr><td class="p-4 text-rose-300 font-mono"><i class="fa-solid fa-circle-xmark mr-2 text-rose-400"></i> ${data.error}</td></tr>`;
+                count.innerHTML = `<span class="text-rose-400 font-semibold">Fallo en PostgreSQL</span>`;
+                return;
+            }
+        } catch (netErr) {
+            console.warn("Fallo de red en consola SQL, usando fallback local:", netErr);
+        }
 
         const upper = query.toUpperCase();
         let targetTable = null;
@@ -932,89 +1102,72 @@
                 bodyHTML += `</tr>`;
             });
             body.innerHTML = bodyHTML;
-            count.textContent = `${data.length} filas devueltas`;
+            count.textContent = `${data.length} filas (Simulación local)`;
         } else {
             head.innerHTML = '<tr><th class="p-3">Mensaje</th></tr>';
-            body.innerHTML = `<tr><td class="p-4 text-emerald-400 font-mono">Consulta ejecutada correctamente (Simulación de consulta). Para visualizar filas, usa SELECT * FROM [PACIENTE | ORDEN_MEDICA | ESTUDIO | CITA | RESULTADO]</td></tr>`;
+            body.innerHTML = `<tr><td class="p-4 text-emerald-400 font-mono">Consulta procesada localmente.</td></tr>`;
             count.textContent = 'Consulta procesada';
         }
     }
 
     function runPredefinedQuery(type) {
         const sqlInput = document.getElementById('sql-input');
-        const head = document.getElementById('sql-result-head');
-        const body = document.getElementById('sql-result-body');
-        const count = document.getElementById('sql-result-count');
 
-        if (type === 'pacientes_ordenes') {
-            sqlInput.value = "SELECT p.nss, p.nombre, o.folio_orden, o.fecha_de_cita_con_su_medico \nFROM PACIENTE p \nJOIN ORDEN_MEDICA o ON p.nss = o.nss_paciente;";
-
-            head.innerHTML = '<tr><th class="p-3">NSS</th><th class="p-3">Nombre Paciente</th><th class="p-3">Folio Orden</th><th class="p-3">Fecha Cita Médico</th></tr>';
-            let rows = '';
-            dbState.orden_medica.forEach(ord => {
-                const pac = dbState.paciente.find(p => p.nss === ord.nss_paciente);
-                rows += `<tr>
-                        <td class="p-3 font-mono text-amber-300">${ord.nss_paciente}</td>
-                        <td class="p-3">${pac ? pac.nombre : 'Desconocido'}</td>
-                        <td class="p-3 font-mono text-cyan-300">${ord.folio_orden}</td>
-                        <td class="p-3">${ord.fecha_de_cita_con_su_medico}</td>
-                    </tr>`;
-            });
-            body.innerHTML = rows;
-            count.textContent = `${dbState.orden_medica.length} filas devueltas`;
+        if (type === 'demo_completa') {
+            sqlInput.value = `SELECT 
+    p.nss, 
+    p.nombre AS paciente, 
+    p.esta_vigente, 
+    c.fecha_programada AS cita_laboratorio, 
+    o.fecha_cita_doctor AS cita_doctor, 
+    (o.fecha_cita_doctor - CAST(c.fecha_programada AS DATE)) AS dias_anticipacion, 
+    e.nombre AS estudio_solicitado, 
+    c.asistio 
+FROM Paciente p 
+JOIN CitaLaboratorio c ON p.nss = c.nss_paciente 
+JOIN OrdenMedica o ON c.id_orden = o.id_orden 
+JOIN Cita_Estudio ce ON c.id_cita = ce.id_cita 
+JOIN Estudio e ON ce.id_estudio = e.id_estudio 
+WHERE p.nss = '1234567890';`;
+            executeCustomSql();
+        }
+        else if (type === 'pacientes_ordenes') {
+            sqlInput.value = `SELECT 
+    p.nss, 
+    p.nombre, 
+    o.id_orden AS folio_orden, 
+    o.fecha_cita_doctor 
+FROM Paciente p 
+JOIN OrdenMedica o ON p.nss = o.nss_paciente;`;
+            executeCustomSql();
         }
         else if (type === 'citas_pendientes') {
-            sqlInput.value = "SELECT id_cita, fecha_hora_laboratorio, estatus_asistencia, folio_orden \nFROM CITA;";
-
-            head.innerHTML = '<tr><th class="p-3">ID Cita</th><th class="p-3">Fecha/Hora Lab</th><th class="p-3">Estatus</th><th class="p-3">Folio Orden</th></tr>';
-            let rows = '';
-            dbState.cita.forEach(c => {
-                rows += `<tr>
-                        <td class="p-3 font-mono text-amber-300">${c.id_cita}</td>
-                        <td class="p-3">${c.fecha_hora_laboratorio}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.estatus_asistencia === 'ASISTIÓ' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${c.estatus_asistencia}</span></td>
-                        <td class="p-3 font-mono text-cyan-300">${c.folio_orden}</td>
-                    </tr>`;
-            });
-            body.innerHTML = rows;
-            count.textContent = `${dbState.cita.length} filas devueltas`;
+            sqlInput.value = `SELECT 
+    c.id_cita, 
+    c.fecha_programada, 
+    c.asistio, 
+    c.id_orden AS folio_orden 
+FROM CitaLaboratorio c;`;
+            executeCustomSql();
         }
         else if (type === 'resultados_completos') {
-            sqlInput.value = "SELECT id_resultado, valor_obtenido, unidad_de_medida, observaciones, id_cita \nFROM RESULTADO;";
-
-            head.innerHTML = '<tr><th class="p-3">ID Resultado</th><th class="p-3">Valor</th><th class="p-3">Unidad</th><th class="p-3">Observaciones</th><th class="p-3">ID Cita</th></tr>';
-            let rows = '';
-            dbState.resultado.forEach(r => {
-                rows += `<tr>
-                        <td class="p-3 font-mono text-amber-300">${r.id_resultado}</td>
-                        <td class="p-3 font-semibold text-white">${r.valor_obtenido}</td>
-                        <td class="p-3">${r.unidad_de_medida}</td>
-                        <td class="p-3 text-slate-400">${r.observaciones}</td>
-                        <td class="p-3 font-mono text-cyan-300">${r.id_cita}</td>
-                    </tr>`;
-            });
-            body.innerHTML = rows;
-            count.textContent = `${dbState.resultado.length} filas devueltas`;
+            sqlInput.value = `SELECT 
+    id_resultado, 
+    valor_obtenido, 
+    unidad_de_medida, 
+    observaciones, 
+    id_cita 
+FROM resultado;`;
+            executeCustomSql();
         }
         else if (type === 'estudios_sangre') {
-            sqlInput.value = "SELECT e.id_estudio, e.nombre_de_estudio, s.tipo_de_tubo, s.ayuno_horas \nFROM ESTUDIO e \nJOIN PRUEBA_SANGRE s ON e.id_estudio = s.id_estudio;";
-
-            head.innerHTML = '<tr><th class="p-3">ID Estudio</th><th class="p-3">Nombre Estudio</th><th class="p-3">Tubo</th><th class="p-3">Ayuno (hrs)</th></tr>';
-            let rows = '';
-            dbState.prueba_sangre.forEach(ps => {
-                const est = dbState.estudio.find(e => e.id_estudio === ps.id_estudio);
-                rows += `<tr>
-                        <td class="p-3 font-mono text-amber-300">${ps.id_estudio}</td>
-                        <td class="p-3">${est ? est.nombre_de_estudio : 'N/A'}</td>
-                        <td class="p-3">${ps.tipo_de_tubo}</td>
-                        <td class="p-3 font-mono">${ps.ayuno_horas} hrs</td>
-                    </tr>`;
-            });
-            body.innerHTML = rows;
-            count.textContent = `${dbState.prueba_sangre.length} filas devueltas`;
+            sqlInput.value = `SELECT 
+    id_estudio, 
+    nombre AS nombre_estudio 
+FROM Estudio;`;
+            executeCustomSql();
         }
     }
-
 
     window.onload = function() {
         initDatabase();
