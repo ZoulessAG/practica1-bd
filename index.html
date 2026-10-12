@@ -2,10 +2,1024 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=./practica2/proyecto-propio/landing/index.html">
-    <title>Redireccionando al Sistema de Ventanilla...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Base de Datos Clínica (EER Sandbox)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        clinical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+    </style>
 </head>
-<body>
-<p>Redireccionando a la Landing Page del Laboratorio Clínico... <a href="./practica2/proyecto-propio/landing/index.html">Haz clic aquí si no redirige automáticamente</a>.</p>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+<!-- Header / Topbar -->
+<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
+    <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="bg-clinical-600 text-white p-2 rounded-lg shadow-lg">
+                <i class="fa-solid fa-hospital-user text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight text-white flex items-center gap-2">
+                    Sistema Clínico - Sandbox EER
+                    <span class="text-xs font-normal bg-clinical-500/20 text-clinical-400 border border-clinical-500/30 px-2 py-0.5 rounded-full">v1.0 RAM</span>
+                </h1>
+                <p class="text-xs text-slate-400">Base de Datos Relacional Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="flex-1 max-w-2xl bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-amber-300">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0"></i>
+            <div>
+                <strong class="font-semibold text-amber-200">Modo Simulación Volátil Activo:</strong> Todos los cambios se guardan únicamente en la memoria de la sesión. <u>Al cerrar o recargar la pestaña</u>, los datos regresarán automáticamente a su estado predeterminado.
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2">
+            <button onclick="resetDatabaseConfirm()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition">
+                <i class="fa-solid fa-rotate-left"></i>
+                Restablecer BD
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content Layout -->
+<div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-800/80 border-r border-slate-700 flex flex-col shrink-0">
+        <div class="p-4 border-b border-slate-700/60">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Módulos del Sistema</p>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1 text-sm">
+
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <i class="fa-solid fa-chart-line text-clinical-400 w-5"></i>
+                <span>Panel de Control</span>
+            </button>
+
+            <button onclick="switchTab('eer-diagram')" id="nav-eer-diagram" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <i class="fa-solid fa-diagram-project text-purple-400 w-5"></i>
+                <span>Diagrama EER & Esquema</span>
+            </button>
+
+            <button onclick="switchTab('sql-console')" id="nav-sql-console" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <i class="fa-solid fa-terminal text-emerald-400 w-5"></i>
+                <span>Consola SQL (Playground)</span>
+            </button>
+
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tablas de la Base de Datos</p>
+            </div>
+
+            <button onclick="switchTable('paciente')" id="nav-table-paciente" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-hospital-user text-blue-400 w-4"></i>
+                    <span>PACIENTE</span>
+                </div>
+                <span id="badge-count-paciente" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+
+            <button onclick="switchTable('orden_medica')" id="nav-table-orden_medica" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-indigo-400 w-4"></i>
+                    <span>ORDEN_MEDICA</span>
+                </div>
+                <span id="badge-count-orden_medica" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+
+            <button onclick="switchTable('estudio')" id="nav-table-estudio" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-microscope text-cyan-400 w-4"></i>
+                    <span>ESTUDIO</span>
+                </div>
+                <span id="badge-count-estudio" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+
+            <!-- Sub-estudios / Especializaciones -->
+            <div class="ml-4 pl-2 border-l border-slate-700 space-y-1">
+                <button onclick="switchTable('prueba_sangre')" id="nav-table-prueba_sangre" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
+                    <span>PRUEBA_SANGRE</span>
+                    <span id="badge-count-prueba_sangre" class="font-mono">0</span>
+                </button>
+                <button onclick="switchTable('prueba_orina')" id="nav-table-prueba_orina" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
+                    <span>PRUEBA_ORINA</span>
+                    <span id="badge-count-prueba_orina" class="font-mono">0</span>
+                </button>
+                <button onclick="switchTable('prueba_fecal')" id="nav-table-prueba_fecal" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
+                    <span>PRUEBA_FECAL</span>
+                    <span id="badge-count-prueba_fecal" class="font-mono">0</span>
+                </button>
+            </div>
+
+            <button onclick="switchTable('orden_medica_estudio')" id="nav-table-orden_medica_estudio" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-link text-teal-400 w-4"></i>
+                    <span>ORDEN_ESTUDIO (N:M)</span>
+                </div>
+                <span id="badge-count-orden_medica_estudio" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+
+            <button onclick="switchTable('cita')" id="nav-table-cita" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-check text-amber-400 w-4"></i>
+                    <span>CITA</span>
+                </div>
+                <span id="badge-count-cita" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+
+            <button onclick="switchTable('resultado')" id="nav-table-resultado" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-square-poll-vertical text-emerald-400 w-4"></i>
+                    <span>RESULTADO</span>
+                </div>
+                <span id="badge-count-resultado" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </button>
+        </nav>
+
+        <div class="p-3 border-t border-slate-700/60 bg-slate-900/30">
+            <div class="text-xs text-slate-400 flex items-center justify-between">
+                <span>Estado BD: <span class="text-emerald-400 font-semibold">En Línea</span></span>
+                <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="flex-1 bg-slate-900 overflow-y-auto custom-scrollbar p-6">
+
+        <!-- VIEW 1: DASHBOARD -->
+        <section id="view-dashboard" class="space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Panel de Control General</h2>
+                <p class="text-sm text-slate-400">Resumen y métricas del modelo de datos clínico</p>
+            </div>
+
+            <!-- Stats Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">Pacientes Registrados</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-pacientes">0</p>
+                    </div>
+                    <div class="bg-blue-500/20 text-blue-400 p-3 rounded-lg"><i class="fa-solid fa-users text-xl"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">Órdenes Médicas</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-ordenes">0</p>
+                    </div>
+                    <div class="bg-indigo-500/20 text-indigo-400 p-3 rounded-lg"><i class="fa-solid fa-file-medical text-xl"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">Citas Agendadas</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-citas">0</p>
+                    </div>
+                    <div class="bg-amber-500/20 text-amber-400 p-3 rounded-lg"><i class="fa-solid fa-calendar-days text-xl"></i></div>
+                </div>
+
+                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400">Resultados Emitidos</p>
+                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-resultados">0</p>
+                    </div>
+                    <div class="bg-emerald-500/20 text-emerald-400 p-3 rounded-lg"><i class="fa-solid fa-square-check text-xl"></i></div>
+                </div>
+            </div>
+
+            <!-- Fast Quick Links / Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> Acciones Rápidas
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="switchTable('paciente')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
+                            <i class="fa-solid fa-user-plus text-blue-400 mb-1 block text-base"></i>
+                            <span class="font-medium text-slate-200">Gestionar Pacientes</span>
+                        </button>
+                        <button onclick="switchTable('orden_medica')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
+                            <i class="fa-solid fa-plus-square text-indigo-400 mb-1 block text-base"></i>
+                            <span class="font-medium text-slate-200">Crear Orden Médica</span>
+                        </button>
+                        <button onclick="switchTab('sql-console')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
+                            <i class="fa-solid fa-terminal text-emerald-400 mb-1 block text-base"></i>
+                            <span class="font-medium text-slate-200">Probar Consultas SQL</span>
+                        </button>
+                        <button onclick="switchTab('eer-diagram')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
+                            <i class="fa-solid fa-sitemap text-purple-400 mb-1 block text-base"></i>
+                            <span class="font-medium text-slate-200">Ver Estructura EER</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-clinical-400"></i> Resumen de Entidades Principales
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2">
+                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
+                            <span class="text-slate-400">PACIENTE (Jerarquía Titular)</span>
+                            <span class="font-mono text-clinical-300">Relación 1:N (Depende De)</span>
+                        </li>
+                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
+                            <span class="text-slate-400">ORDEN_MEDICA - ESTUDIO</span>
+                            <span class="font-mono text-clinical-300">Relación N:M (CONTIENE)</span>
+                        </li>
+                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
+                            <span class="text-slate-400">ORDEN_MEDICA - CITA</span>
+                            <span class="font-mono text-clinical-300">Relación 1:1 (GENERA)</span>
+                        </li>
+                        <li class="flex justify-between pb-1">
+                            <span class="text-slate-400">CITA - RESULTADO</span>
+                            <span class="font-mono text-clinical-300">Relación 1:1 / 1:N (ARROJA)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: DYNAMIC TABLE VIEWER (CRUD) -->
+        <section id="view-table" class="hidden space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
+                <div>
+                    <h2 id="table-title" class="text-xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <!-- Table Name Header -->
+                    </h2>
+                    <p id="table-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openModalAddRecord()" class="bg-clinical-600 hover:bg-clinical-700 text-white px-3.5 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-lg transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nuevo Registro</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="flex items-center gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="table-search-input" onkeyup="filterCurrentTable()" placeholder="Buscar en esta tabla..." class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-clinical-500">
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/80 text-xs uppercase font-semibold text-slate-400 border-b border-slate-700" id="table-head">
+                        <!-- Dynamic Headers -->
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-700/60">
+                        <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="table-empty-msg" class="hidden p-8 text-center text-slate-500">
+                    <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+                    <p class="text-sm">No hay registros almacenados en esta tabla.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: EER DIAGRAM & RELATIONAL SCHEMA -->
+        <section id="view-eer-diagram" class="hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Diagrama EER y Esquema Relacional</h2>
+                <p class="text-sm text-slate-400">Modelado conceptual Entidad-Relación Extendido y su correspondencia a Tablas</p>
+            </div>
+
+            <!-- Interactive Map / Diagram Representation -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
+                <h3 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-project-diagram text-clinical-400"></i> Diagrama de Estructura Entidad-Relación
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <!-- Entity Card: PACIENTE -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-blue-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>PACIENTE</span>
+                            <span class="text-[10px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded">Entidad</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑 <span class="text-amber-400 font-semibold">nss</span> (PK)</li>
+                            <li>🔹 nombre</li>
+                            <li>🔹 estatus/vigencia</li>
+                            <li>🔹 teléfono</li>
+                            <li>🔹 unidad médica adscripción</li>
+                            <li>🔗 <span class="text-cyan-400">nss_titular</span> (FK -> PACIENTE)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Entity Card: ORDEN_MEDICA -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-indigo-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>ORDEN_MEDICA</span>
+                            <span class="text-[10px] bg-indigo-950 text-indigo-300 px-1.5 py-0.5 rounded">Entidad</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑 <span class="text-amber-400 font-semibold">folio_orden</span> (PK)</li>
+                            <li>🔹 cédula profesional</li>
+                            <li>🔹 fecha de cita con su médico</li>
+                            <li>🔗 <span class="text-cyan-400">nss_paciente</span> (FK -> PACIENTE)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Entity Card: ESTUDIO -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-cyan-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>ESTUDIO</span>
+                            <span class="text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded">Superclase</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑 <span class="text-amber-400 font-semibold">id_estudio</span> (PK)</li>
+                            <li>🔹 nombre de estudio</li>
+                            <li>🔹 indicaciones previas</li>
+                        </ul>
+                        <div class="mt-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+                            ⚡ Subclases: Sangre, Orina, Fecal
+                        </div>
+                    </div>
+
+                    <!-- Entity Card: CITA -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-amber-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>CITA</span>
+                            <span class="text-[10px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded">Entidad</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑 <span class="text-amber-400 font-semibold">id_cita</span> (PK)</li>
+                            <li>🔹 fecha hora agendamiento</li>
+                            <li>🔹 fecha hora laboratorio</li>
+                            <li>🔹 estatus asistencia</li>
+                            <li>🔗 <span class="text-cyan-400">folio_orden</span> (FK -> ORDEN)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Entity Card: RESULTADO -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-emerald-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>RESULTADO</span>
+                            <span class="text-[10px] bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded">Entidad</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑 <span class="text-amber-400 font-semibold">id_resultado</span> (PK)</li>
+                            <li>🔹 valor obtenido</li>
+                            <li>🔹 observaciones</li>
+                            <li>🔹 unidad de medida</li>
+                            <li>🔹 fecha/hora de emisión</li>
+                            <li>🔹 tipo de prueba</li>
+                            <li>🔗 <span class="text-cyan-400">id_cita</span> (FK -> CITA)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Relational Card: ORDEN_MEDICA_ESTUDIO -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
+                        <div class="font-bold text-teal-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
+                            <span>ORDEN_MEDICA_ESTUDIO</span>
+                            <span class="text-[10px] bg-teal-950 text-teal-300 px-1.5 py-0.5 rounded">Relación N:M</span>
+                        </div>
+                        <ul class="space-y-1 text-slate-300 font-mono">
+                            <li>🔑🔗 <span class="text-amber-400 font-semibold">folio_orden</span> (PK, FK)</li>
+                            <li>🔑🔗 <span class="text-amber-400 font-semibold">id_estudio</span> (PK, FK)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explanation Section -->
+            <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 space-y-3">
+                <h3 class="font-bold text-white text-base">Reglas del Modelo Clínico</h3>
+                <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
+                    <li><strong class="text-slate-200">Depende de (Recursiva 1:N):</strong> Un paciente puede ser titular de otros pacientes beneficiarios (`nss_titular`).</li>
+                    <li><strong class="text-slate-200">Presenta (1:N):</strong> Un Paciente presenta una o más Órdenes Médicas.</li>
+                    <li><strong class="text-slate-200">Contiene (N:M):</strong> Una Orden Médica puede incluir múltiples Estudios y un Estudio estar en múltiples órdenes.</li>
+                    <li><strong class="text-slate-200">Especialización de ESTUDIO:</strong> La entidad `ESTUDIO` se especializa según el tipo de muestra: `PRUEBA_SANGRE` (tubo, aditivo, ayuno), `PRUEBA_ORINA` (frasco, vol) y `PRUEBA_FECAL` (frasco, medio).</li>
+                    <li><strong class="text-slate-200">Genera (1:1):</strong> Una Orden Médica genera una Cita de Laboratorio.</li>
+                    <li><strong class="text-slate-200">Arroja (1:N):</strong> Una Cita genera uno o varios Resultados de laboratorio.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- VIEW 4: SQL CONSOLE PLAYGROUND -->
+        <section id="view-sql-console" class="hidden space-y-4">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Consola SQL Simulada</h2>
+                <p class="text-sm text-slate-400">Ejecuta consultas SQL interactivas sobre la memoria RAM del sistema</p>
+            </div>
+
+            <!-- Quick Query Buttons -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 space-y-2">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultas Frecuentes / Plantillas</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="runPredefinedQuery('pacientes_ordenes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Pacientes con sus Órdenes
+                    </button>
+                    <button onclick="runPredefinedQuery('citas_pendientes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Citas Agendadas y Estatus
+                    </button>
+                    <button onclick="runPredefinedQuery('resultados_completos')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Resultados y Valores Obtenidos
+                    </button>
+                    <button onclick="runPredefinedQuery('estudios_sangre')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Estudios de Sangre Requeridos
+                    </button>
+                </div>
+            </div>
+
+            <!-- SQL Editor -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+                <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-mono text-slate-400"><i class="fa-solid fa-code text-clinical-400 mr-1"></i> Editor SQL</span>
+                    <button onclick="executeCustomSql()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1 rounded font-medium transition flex items-center gap-1">
+                        <i class="fa-solid fa-bolt"></i> Ejecutar SQL
+                    </button>
+                </div>
+                <textarea id="sql-input" rows="4" class="w-full bg-slate-950 text-emerald-400 font-mono text-xs p-4 focus:outline-none resize-y" placeholder="Escribe una consulta, ejemplo: SELECT * FROM PACIENTE"></textarea>
+            </div>
+
+            <!-- Query Results Output -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
+                <div class="bg-slate-900/60 px-4 py-2.5 border-b border-slate-700 flex justify-between items-center">
+                    <span class="text-xs font-semibold text-slate-300">Resultado de la Consulta</span>
+                    <span id="sql-result-count" class="text-xs font-mono text-slate-400">0 filas devueltas</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar max-h-96">
+                    <table class="w-full text-left text-xs text-slate-300 font-mono">
+                        <thead class="bg-slate-900 text-slate-400 uppercase border-b border-slate-700" id="sql-result-head">
+                        <tr><th class="p-3">Info</th></tr>
+                        </thead>
+                        <tbody id="sql-result-body" class="divide-y divide-slate-700/60">
+                        <tr><td class="p-4 text-slate-500 italic">Ejecuta una consulta SQL para visualizar los registros aquí.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- Modal: Add / Edit Record -->
+<div id="modal-record" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden">
+        <div class="bg-slate-900 px-5 py-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 id="modal-title" class="font-bold text-white text-base">Nuevo Registro</h3>
+            <button onclick="closeRecordModal()" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <form id="record-form" onsubmit="saveRecord(event)" class="p-5 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
+            <div id="modal-form-fields" class="space-y-3">
+                <!-- Dynamic Inputs inserted via JS -->
+            </div>
+
+            <div class="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                <button type="button" onclick="closeRecordModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-clinical-600 hover:bg-clinical-700 text-white rounded-lg text-xs font-medium transition shadow-md">Guardar Registro</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+
+    const DEFAULT_DATABASE = {
+        paciente: [
+            { nss: "1122334455", nombre: "Carlos Mendoza Silva", estatus_vigencia: "VIGENTE", telefono: "5551234567", unidad_medica_adscripcion: "UMF 10", nss_titular: null },
+            { nss: "1122334456", nombre: "María Mendoza López", estatus_vigencia: "VIGENTE", telefono: "5551234567", unidad_medica_adscripcion: "UMF 10", nss_titular: "1122334455" },
+            { nss: "9988776655", nombre: "Ana Gómez Morales", estatus_vigencia: "VIGENTE", telefono: "5559876543", unidad_medica_adscripcion: "HGZ 32", nss_titular: null }
+        ],
+        orden_medica: [
+            { folio_orden: "ORD-2026-001", cedula_profesional: "CED-884920", fecha_de_cita_con_su_medico: "2026-10-10", nss_paciente: "1122334455" },
+            { folio_orden: "ORD-2026-002", cedula_profesional: "CED-993012", fecha_de_cita_con_su_medico: "2026-10-11", nss_paciente: "9988776655" }
+        ],
+        estudio: [
+            { id_estudio: "EST-01", nombre_de_estudio: "Biometría Hemática Completa", indicaciones_previas: "8 horas de ayuno" },
+            { id_estudio: "EST-02", nombre_de_estudio: "Examen General de Orina", indicaciones_previas: "Primera orina de la mañana" },
+            { id_estudio: "EST-03", nombre_de_estudio: "Coproparasitoscópico", indicaciones_previas: "Muestra fresca en frasco estéril" }
+        ],
+        prueba_sangre: [
+            { id_estudio: "EST-01", tipo_de_tubo: "Tubo Tapón Morado (EDTA)", aditivo: "Anticoagulante EDTA K2", ayuno_horas: 8 }
+        ],
+        prueba_orina: [
+            { id_estudio: "EST-02", tipo_de_frasco: "Frasco Estéril 100ml", volumen_min: "20 ml" }
+        ],
+        prueba_fecal: [
+            { id_estudio: "EST-03", tipo_de_frasco: "Frasco Recolector con Espátula", requiere_medio_transporte: "No" }
+        ],
+        orden_medica_estudio: [
+            { folio_orden: "ORD-2026-001", id_estudio: "EST-01" },
+            { folio_orden: "ORD-2026-001", id_estudio: "EST-02" },
+            { folio_orden: "ORD-2026-002", id_estudio: "EST-03" }
+        ],
+        cita: [
+            { id_cita: "CIT-101", fecha_hora_agendamiento: "2026-10-10 14:00", fecha_hora_laboratorio: "2026-10-12 07:30", estatus_asistencia: "ASISTIÓ", folio_orden: "ORD-2026-001" },
+            { id_cita: "CIT-102", fecha_hora_agendamiento: "2026-10-11 11:15", fecha_hora_laboratorio: "2026-10-13 08:00", estatus_asistencia: "PENDIENTE", folio_orden: "ORD-2026-002" }
+        ],
+        resultado: [
+            { id_resultado: "RES-501", valor_obtenido: "14.5", observaciones: "Niveles de hemoglobina dentro del rango normal.", unidad_de_medida: "g/dL", fecha_hora_de_emision: "2026-10-12 12:00", tipo_de_prueba: "Cuantitativa", id_cita: "CIT-101" },
+            { id_resultado: "RES-502", valor_obtenido: "7,200", observaciones: "Leucocitos sin alteraciones.", unidad_de_medida: "/mm3", fecha_hora_de_emision: "2026-10-12 12:05", tipo_de_prueba: "Cuantitativa", id_cita: "CIT-101" }
+        ]
+    };
+
+
+    const TABLE_SCHEMAS = {
+        paciente: {
+            title: "Pacientes",
+            pk: "nss",
+            fields: [
+                { name: "nss", label: "NSS (PK)", type: "text", required: true, isPk: true },
+                { name: "nombre", label: "Nombre Completo", type: "text", required: true },
+                { name: "estatus_vigencia", label: "Estatus / Vigencia", type: "select", options: ["VIGENTE", "NO VIGENTE", "PENDIENTE"] },
+                { name: "telefono", label: "Teléfono", type: "text" },
+                { name: "unidad_medica_adscripcion", label: "Unidad Médica Adscripción", type: "text" },
+                { name: "nss_titular", label: "NSS Titular (FK)", type: "fk", fkTable: "paciente", fkKey: "nss" }
+            ]
+        },
+        orden_medica: {
+            title: "Órdenes Médicas",
+            pk: "folio_orden",
+            fields: [
+                { name: "folio_orden", label: "Folio Orden (PK)", type: "text", required: true, isPk: true },
+                { name: "cedula_profesional", label: "Cédula Profesional", type: "text", required: true },
+                { name: "fecha_de_cita_con_su_medico", label: "Fecha Cita Médico", type: "date" },
+                { name: "nss_paciente", label: "Paciente NSS (FK)", type: "fk", fkTable: "paciente", fkKey: "nss", required: true }
+            ]
+        },
+        estudio: {
+            title: "Estudios Generales",
+            pk: "id_estudio",
+            fields: [
+                { name: "id_estudio", label: "ID Estudio (PK)", type: "text", required: true, isPk: true },
+                { name: "nombre_de_estudio", label: "Nombre del Estudio", type: "text", required: true },
+                { name: "indicaciones_previas", label: "Indicaciones Previas", type: "textarea" }
+            ]
+        },
+        prueba_sangre: {
+            title: "Prueba de Sangre (Especialización)",
+            pk: "id_estudio",
+            fields: [
+                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
+                { name: "tipo_de_tubo", label: "Tipo de Tubo", type: "text" },
+                { name: "aditivo", label: "Aditivo", type: "text" },
+                { name: "ayuno_horas", label: "Horas de Ayuno", type: "number" }
+            ]
+        },
+        prueba_orina: {
+            title: "Prueba de Orina (Especialización)",
+            pk: "id_estudio",
+            fields: [
+                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
+                { name: "tipo_de_frasco", label: "Tipo de Frasco", type: "text" },
+                { name: "volumen_min", label: "Volumen Mínimo", type: "text" }
+            ]
+        },
+        prueba_fecal: {
+            title: "Prueba Fecal (Especialización)",
+            pk: "id_estudio",
+            fields: [
+                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
+                { name: "tipo_de_frasco", label: "Tipo de Frasco", type: "text" },
+                { name: "requiere_medio_transporte", label: "Requiere Medio Transporte", type: "select", options: ["Sí", "No"] }
+            ]
+        },
+        orden_medica_estudio: {
+            title: "Orden - Estudio (Relación N:M)",
+            pk: ["folio_orden", "id_estudio"],
+            fields: [
+                { name: "folio_orden", label: "Folio Orden (PK/FK)", type: "fk", fkTable: "orden_medica", fkKey: "folio_orden", required: true, isPk: true },
+                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true }
+            ]
+        },
+        cita: {
+            title: "Citas de Laboratorio",
+            pk: "id_cita",
+            fields: [
+                { name: "id_cita", label: "ID Cita (PK)", type: "text", required: true, isPk: true },
+                { name: "fecha_hora_agendamiento", label: "Agendamiento", type: "text" },
+                { name: "fecha_hora_laboratorio", label: "Fecha/Hora Cita Lab", type: "text" },
+                { name: "estatus_asistencia", label: "Estatus Asistencia", type: "select", options: ["PENDIENTE", "ASISTIÓ", "CANCELADA", "REPROGRAMADA"] },
+                { name: "folio_orden", label: "Folio Orden (FK/1:1)", type: "fk", fkTable: "orden_medica", fkKey: "folio_orden", required: true }
+            ]
+        },
+        resultado: {
+            title: "Resultados de Laboratorio",
+            pk: "id_resultado",
+            fields: [
+                { name: "id_resultado", label: "ID Resultado (PK)", type: "text", required: true, isPk: true },
+                { name: "valor_obtenido", label: "Valor Obtenido", type: "text", required: true },
+                { name: "observaciones", label: "Observaciones", type: "textarea" },
+                { name: "unidad_de_medida", label: "Unidad de Medida", type: "text" },
+                { name: "fecha_hora_de_emision", label: "Fecha/Hora Emisión", type: "text" },
+                { name: "tipo_de_prueba", label: "Tipo de Prueba", type: "text" },
+                { name: "id_cita", label: "ID Cita (FK)", type: "fk", fkTable: "cita", fkKey: "id_cita", required: true }
+            ]
+        }
+    };
+
+
+    let dbState = {};
+    let currentActiveTable = 'paciente';
+    let editingIndex = null;
+
+    function initDatabase() {
+        const savedState = sessionStorage.getItem("CLINICAL_DB_RAM");
+        if (savedState) {
+            try {
+                dbState = JSON.parse(savedState);
+            } catch(e) {
+                dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
+            }
+        } else {
+            dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
+        }
+        saveStateToSession();
+        updateAllBadges();
+        updateDashboardStats();
+    }
+
+    function saveStateToSession() {
+        sessionStorage.setItem("CLINICAL_DB_RAM", JSON.stringify(dbState));
+    }
+
+    function resetDatabaseConfirm() {
+        if (confirm("¿Estás seguro de restablecer la base de datos a su estado original? Todos los cambios temporales se borrarán.")) {
+            dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
+            saveStateToSession();
+            updateAllBadges();
+            updateDashboardStats();
+            if (document.getElementById('view-table').classList.contains('hidden') === false) {
+                renderTable(currentActiveTable);
+            }
+            alert("Base de datos restablecida correctamente a memoria predeterminada.");
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-700', 'text-white'));
+
+        const activeView = document.getElementById(`view-${tabId}`);
+        if (activeView) activeView.classList.remove('hidden');
+
+        const activeNav = document.getElementById(`nav-${tabId}`);
+        if (activeNav) activeNav.classList.add('bg-slate-700', 'text-white');
+    }
+
+    function switchTable(tableName) {
+        currentActiveTable = tableName;
+        switchTab('table');
+
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-700', 'text-white'));
+        const activeNav = document.getElementById(`nav-table-${tableName}`);
+        if (activeNav) activeNav.classList.add('bg-slate-700', 'text-white');
+
+        renderTable(tableName);
+    }
+
+    function updateAllBadges() {
+        Object.keys(dbState).forEach(tableKey => {
+            const badge = document.getElementById(`badge-count-${tableKey}`);
+            if (badge) {
+                badge.textContent = dbState[tableKey].length;
+            }
+        });
+    }
+
+    function updateDashboardStats() {
+        document.getElementById('dash-stat-pacientes').textContent = dbState.paciente.length;
+        document.getElementById('dash-stat-ordenes').textContent = dbState.orden_medica.length;
+        document.getElementById('dash-stat-citas').textContent = dbState.cita.length;
+        document.getElementById('dash-stat-resultados').textContent = dbState.resultado.length;
+    }
+
+    function renderTable(tableName) {
+        const schema = TABLE_SCHEMAS[tableName];
+        if (!schema) return;
+
+        document.getElementById('table-title').innerHTML = `
+                <i class="fa-solid fa-database text-clinical-400"></i> ${schema.title}
+            `;
+        document.getElementById('table-subtitle').textContent = `Tabla: ${tableName.toUpperCase()} | Clave Primaria: ${Array.isArray(schema.pk) ? schema.pk.join(' + ') : schema.pk}`;
+
+        const thead = document.getElementById('table-head');
+        const tbody = document.getElementById('table-body');
+        const emptyMsg = document.getElementById('table-empty-msg');
+
+        // Render Header
+        let headHTML = '<tr>';
+        schema.fields.forEach(f => {
+            const badge = f.isPk ? '<span class="ml-1 text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded border border-amber-500/30">PK</span>' :
+                (f.type === 'fk' ? '<span class="ml-1 text-[10px] bg-cyan-500/20 text-cyan-300 px-1 py-0.5 rounded border border-cyan-500/30">FK</span>' : '');
+            headHTML += `<th class="p-3">${f.label} ${badge}</th>`;
+        });
+        headHTML += '<th class="p-3 text-right">Acciones</th></tr>';
+        thead.innerHTML = headHTML;
+
+        // Render Rows
+        const rows = dbState[tableName] || [];
+        if (rows.length === 0) {
+            tbody.innerHTML = '';
+            emptyMsg.classList.remove('hidden');
+            return;
+        }
+        emptyMsg.classList.add('hidden');
+
+        let bodyHTML = '';
+        rows.forEach((row, index) => {
+            bodyHTML += `<tr class="hover:bg-slate-700/40 transition">`;
+            schema.fields.forEach(f => {
+                const val = row[f.name] !== null && row[f.name] !== undefined ? row[f.name] : '<span class="text-slate-600 italic">NULL</span>';
+                const isPkCol = f.isPk ? 'font-mono font-semibold text-amber-300' : (f.type === 'fk' ? 'font-mono text-cyan-300' : '');
+                bodyHTML += `<td class="p-3 ${isPkCol}">${val}</td>`;
+            });
+            bodyHTML += `
+                    <td class="p-3 text-right space-x-1">
+                        <button onclick="editRecord(${index})" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 p-1.5 rounded border border-slate-600 transition" title="Editar">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteRecord(${index})" class="text-xs bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 p-1.5 rounded border border-rose-500/30 transition" title="Eliminar">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+        tbody.innerHTML = bodyHTML;
+    }
+
+    function filterCurrentTable() {
+        const query = document.getElementById('table-search-input').value.toLowerCase();
+        const rows = document.querySelectorAll('#table-body tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+
+    function openModalAddRecord() {
+        editingIndex = null;
+        document.getElementById('modal-title').textContent = `Nuevo Registro en ${TABLE_SCHEMAS[currentActiveTable].title}`;
+        buildModalFields({});
+        document.getElementById('modal-record').classList.remove('hidden');
+    }
+
+    function editRecord(index) {
+        editingIndex = index;
+        const record = dbState[currentActiveTable][index];
+        document.getElementById('modal-title').textContent = `Editar Registro en ${TABLE_SCHEMAS[currentActiveTable].title}`;
+        buildModalFields(record);
+        document.getElementById('modal-record').classList.remove('hidden');
+    }
+
+    function closeRecordModal() {
+        document.getElementById('modal-record').classList.add('hidden');
+    }
+
+    function buildModalFields(currentValues) {
+        const schema = TABLE_SCHEMAS[currentActiveTable];
+        const container = document.getElementById('modal-form-fields');
+        let html = '';
+
+        schema.fields.forEach(field => {
+            const val = currentValues[field.name] !== undefined ? currentValues[field.name] : '';
+            const isDisabled = (editingIndex !== null && field.isPk) ? 'disabled class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-500 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-clinical-500"';
+
+            html += `<div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">
+                        ${field.label} ${field.required ? '<span class="text-rose-400">*</span>' : ''}
+                    </label>`;
+
+            if (field.type === 'select') {
+                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${isDisabled}>
+                        <option value="">-- Seleccionar --</option>
+                        ${field.options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>`;
+            } else if (field.type === 'fk') {
+                const fkOptions = dbState[field.fkTable] || [];
+                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${isDisabled}>
+                        <option value="">-- Seleccionar de ${field.fkTable.toUpperCase()} --</option>
+                        ${fkOptions.map(item => {
+                    const optVal = item[field.fkKey];
+                    return `<option value="${optVal}" ${val === optVal ? 'selected' : ''}>${optVal}</option>`;
+                }).join('')}
+                    </select>`;
+            } else if (field.type === 'textarea') {
+                html += `<textarea name="${field.name}" rows="2" ${field.required ? 'required' : ''} ${isDisabled}>${val}</textarea>`;
+            } else {
+                html += `<input type="${field.type || 'text'}" name="${field.name}" value="${val}" ${field.required ? 'required' : ''} ${isDisabled}>`;
+            }
+
+            html += `</div>`;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function saveRecord(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const newRecord = {};
+
+        TABLE_SCHEMAS[currentActiveTable].fields.forEach(field => {
+            let val = formData.get(field.name);
+            if (val === "" && !field.required) val = null;
+            newRecord[field.name] = val;
+        });
+
+        if (editingIndex === null) {
+            dbState[currentActiveTable].push(newRecord);
+        } else {
+            dbState[currentActiveTable][editingIndex] = newRecord;
+        }
+
+        saveStateToSession();
+        updateAllBadges();
+        updateDashboardStats();
+        renderTable(currentActiveTable);
+        closeRecordModal();
+    }
+
+    function deleteRecord(index) {
+        if (confirm("¿Deseas eliminar este registro de la memoria RAM?")) {
+            dbState[currentActiveTable].splice(index, 1);
+            saveStateToSession();
+            updateAllBadges();
+            updateDashboardStats();
+            renderTable(currentActiveTable);
+        }
+    }
+
+    function executeCustomSql() {
+        const query = document.getElementById('sql-input').value.trim();
+        const head = document.getElementById('sql-result-head');
+        const body = document.getElementById('sql-result-body');
+        const count = document.getElementById('sql-result-count');
+
+        if (!query) return;
+
+
+        const upper = query.toUpperCase();
+        let targetTable = null;
+
+        Object.keys(dbState).forEach(tbl => {
+            if (upper.includes(`FROM ${tbl.toUpperCase()}`)) {
+                targetTable = tbl;
+            }
+        });
+
+        if (targetTable && dbState[targetTable]) {
+            const data = dbState[targetTable];
+            if (data.length === 0) {
+                head.innerHTML = '<tr><th class="p-3">Resultado</th></tr>';
+                body.innerHTML = '<tr><td class="p-4 text-amber-400">La tabla está vacía.</td></tr>';
+                count.textContent = '0 filas';
+                return;
+            }
+
+            const keys = Object.keys(data[0]);
+            let headHTML = '<tr>';
+            keys.forEach(k => headHTML += `<th class="p-3">${k}</th>`);
+            headHTML += '</tr>';
+            head.innerHTML = headHTML;
+
+            let bodyHTML = '';
+            data.forEach(row => {
+                bodyHTML += `<tr class="hover:bg-slate-800 transition">`;
+                keys.forEach(k => bodyHTML += `<td class="p-3">${row[k]}</td>`);
+                bodyHTML += `</tr>`;
+            });
+            body.innerHTML = bodyHTML;
+            count.textContent = `${data.length} filas devueltas`;
+        } else {
+            head.innerHTML = '<tr><th class="p-3">Mensaje</th></tr>';
+            body.innerHTML = `<tr><td class="p-4 text-emerald-400 font-mono">Consulta ejecutada correctamente (Simulación de consulta). Para visualizar filas, usa SELECT * FROM [PACIENTE | ORDEN_MEDICA | ESTUDIO | CITA | RESULTADO]</td></tr>`;
+            count.textContent = 'Consulta procesada';
+        }
+    }
+
+    function runPredefinedQuery(type) {
+        const sqlInput = document.getElementById('sql-input');
+        const head = document.getElementById('sql-result-head');
+        const body = document.getElementById('sql-result-body');
+        const count = document.getElementById('sql-result-count');
+
+        if (type === 'pacientes_ordenes') {
+            sqlInput.value = "SELECT p.nss, p.nombre, o.folio_orden, o.fecha_de_cita_con_su_medico \nFROM PACIENTE p \nJOIN ORDEN_MEDICA o ON p.nss = o.nss_paciente;";
+
+            head.innerHTML = '<tr><th class="p-3">NSS</th><th class="p-3">Nombre Paciente</th><th class="p-3">Folio Orden</th><th class="p-3">Fecha Cita Médico</th></tr>';
+            let rows = '';
+            dbState.orden_medica.forEach(ord => {
+                const pac = dbState.paciente.find(p => p.nss === ord.nss_paciente);
+                rows += `<tr>
+                        <td class="p-3 font-mono text-amber-300">${ord.nss_paciente}</td>
+                        <td class="p-3">${pac ? pac.nombre : 'Desconocido'}</td>
+                        <td class="p-3 font-mono text-cyan-300">${ord.folio_orden}</td>
+                        <td class="p-3">${ord.fecha_de_cita_con_su_medico}</td>
+                    </tr>`;
+            });
+            body.innerHTML = rows;
+            count.textContent = `${dbState.orden_medica.length} filas devueltas`;
+        }
+        else if (type === 'citas_pendientes') {
+            sqlInput.value = "SELECT id_cita, fecha_hora_laboratorio, estatus_asistencia, folio_orden \nFROM CITA;";
+
+            head.innerHTML = '<tr><th class="p-3">ID Cita</th><th class="p-3">Fecha/Hora Lab</th><th class="p-3">Estatus</th><th class="p-3">Folio Orden</th></tr>';
+            let rows = '';
+            dbState.cita.forEach(c => {
+                rows += `<tr>
+                        <td class="p-3 font-mono text-amber-300">${c.id_cita}</td>
+                        <td class="p-3">${c.fecha_hora_laboratorio}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.estatus_asistencia === 'ASISTIÓ' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${c.estatus_asistencia}</span></td>
+                        <td class="p-3 font-mono text-cyan-300">${c.folio_orden}</td>
+                    </tr>`;
+            });
+            body.innerHTML = rows;
+            count.textContent = `${dbState.cita.length} filas devueltas`;
+        }
+        else if (type === 'resultados_completos') {
+            sqlInput.value = "SELECT id_resultado, valor_obtenido, unidad_de_medida, observaciones, id_cita \nFROM RESULTADO;";
+
+            head.innerHTML = '<tr><th class="p-3">ID Resultado</th><th class="p-3">Valor</th><th class="p-3">Unidad</th><th class="p-3">Observaciones</th><th class="p-3">ID Cita</th></tr>';
+            let rows = '';
+            dbState.resultado.forEach(r => {
+                rows += `<tr>
+                        <td class="p-3 font-mono text-amber-300">${r.id_resultado}</td>
+                        <td class="p-3 font-semibold text-white">${r.valor_obtenido}</td>
+                        <td class="p-3">${r.unidad_de_medida}</td>
+                        <td class="p-3 text-slate-400">${r.observaciones}</td>
+                        <td class="p-3 font-mono text-cyan-300">${r.id_cita}</td>
+                    </tr>`;
+            });
+            body.innerHTML = rows;
+            count.textContent = `${dbState.resultado.length} filas devueltas`;
+        }
+        else if (type === 'estudios_sangre') {
+            sqlInput.value = "SELECT e.id_estudio, e.nombre_de_estudio, s.tipo_de_tubo, s.ayuno_horas \nFROM ESTUDIO e \nJOIN PRUEBA_SANGRE s ON e.id_estudio = s.id_estudio;";
+
+            head.innerHTML = '<tr><th class="p-3">ID Estudio</th><th class="p-3">Nombre Estudio</th><th class="p-3">Tubo</th><th class="p-3">Ayuno (hrs)</th></tr>';
+            let rows = '';
+            dbState.prueba_sangre.forEach(ps => {
+                const est = dbState.estudio.find(e => e.id_estudio === ps.id_estudio);
+                rows += `<tr>
+                        <td class="p-3 font-mono text-amber-300">${ps.id_estudio}</td>
+                        <td class="p-3">${est ? est.nombre_de_estudio : 'N/A'}</td>
+                        <td class="p-3">${ps.tipo_de_tubo}</td>
+                        <td class="p-3 font-mono">${ps.ayuno_horas} hrs</td>
+                    </tr>`;
+            });
+            body.innerHTML = rows;
+            count.textContent = `${dbState.prueba_sangre.length} filas devueltas`;
+        }
+    }
+
+
+    window.onload = function() {
+        initDatabase();
+        switchTab('dashboard');
+    };
+</script>
 </body>
 </html>
