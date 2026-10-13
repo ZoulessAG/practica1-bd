@@ -10,7 +10,7 @@
 
 ---
 
-## 👥 Integrantes del Equipo y Registro de Issues (Ejercicio 8)
+## Integrantes del Equipo y Registro de Issues (Ejercicio 8)
 
 | Integrante | Usuario de GitHub | Propuesta Seleccionada (Issue Práctica 2) | Enlace al Issue |
 | :--- | :--- | :--- | :--- |
@@ -21,7 +21,7 @@
 
 ---
 
-## 📁 Estructura del Entregable (`practica3/`)
+## Estructura del Entregable (`practica3/`)
 
 ```text
 practica3/
@@ -54,12 +54,12 @@ practica3/
 
 ---
 
-## 🤖 Declaración de Integridad Académica y Uso de IA Generativa
+## Declaración de Integridad Académica y Uso de IA Generativa
 En apego a la rúbrica de la práctica, se declara que para el desarrollo de esta práctica se emplearon herramientas de Inteligencia Artificial Generativa como apoyo para la formulación inicial de scripts DDL, diseño de casos de prueba de restricciones y redacción técnica de matrices comparativas. Todo el código resultante fue verificado, ejecutado y validado en el sistema gestor PostgreSQL por los integrantes del equipo.
 
 ---
 
-## 📚 Bibliografía (Formato APA 7.ª edición)
+## Bibliografía (Formato APA 7.ª edición)
 * Elmasri, R., & Navathe, S. B. (2016). *Fundamentals of database systems* (7th ed.). Pearson.
 * Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). *Database system concepts* (7th ed.). McGraw-Hill Education.
 * PostgreSQL Global Development Group. (2023). *PostgreSQL 15.0 Documentation: Data Definition*. PostgreSQL Documentation. https://www.postgresql.org/docs/15/ddl.html
