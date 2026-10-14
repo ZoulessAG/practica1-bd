@@ -46,3 +46,38 @@ INSERT INTO OrdenMedica VALUES (101, '1234567890', 1, '2026-11-15');
 INSERT INTO Estudio VALUES (1, 'Biometria Hematica'), (2, 'Examen General de Orina');
 INSERT INTO CitaLaboratorio VALUES (1001, '1234567890', 101, '2026-10-01 08:30:00', '2026-10-25 07:00:00', TRUE);
 INSERT INTO Cita_Estudio VALUES (1001, 1), (1001, 2);
+
+CREATE TABLE IF NOT EXISTS resultado (
+    id_resultado SERIAL PRIMARY KEY,
+    valor_obtenido VARCHAR(100) NOT NULL,
+    observaciones TEXT,
+    unidad_de_medida VARCHAR(50),
+    fecha_hora_de_emision TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tipo_de_prueba VARCHAR(50),
+    id_cita INT REFERENCES CitaLaboratorio(id_cita)
+);
+
+INSERT INTO resultado (id_resultado, valor_obtenido, observaciones, unidad_de_medida, fecha_hora_de_emision, tipo_de_prueba, id_cita)
+VALUES 
+(501, '14.5', 'Niveles de hemoglobina dentro del rango normal.', 'g/dL', '2026-10-12 12:00:00', 'Cuantitativa', 1001),
+(502, '7,200', 'Leucocitos sin alteraciones.', '/mm3', '2026-10-12 12:05:00', 'Cuantitativa', 1001);
+
+CREATE OR REPLACE VIEW cita AS 
+SELECT 
+    id_cita, 
+    nss_paciente, 
+    id_orden AS folio_orden, 
+    fecha_agendamiento AS fecha_hora_agendamiento, 
+    fecha_programada AS fecha_hora_laboratorio, 
+    CASE WHEN asistio THEN 'ASISTIÓ' ELSE 'PENDIENTE' END AS estatus_asistencia, 
+    asistio 
+FROM CitaLaboratorio;
+
+CREATE OR REPLACE VIEW orden_medica AS 
+SELECT 
+    id_orden,
+    id_orden::text AS folio_orden, 
+    nss_paciente, 
+    id_medico, 
+    fecha_cita_doctor AS fecha_de_cita_con_su_medico 
+FROM OrdenMedica;

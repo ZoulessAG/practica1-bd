@@ -28,8 +28,9 @@
 
 ### 1. Proyecto Asignado (Ejercicio 5)
 - [Documento de Levantamiento de Requerimientos y Abstracción](./proyecto-asignado/levantamiento.md)
-- [Tabla de Correspondencia entre Modelo EER y Esquema Publicado](./proyecto-asignado/correspondencia.md)
-- [Diagrama Conceptual EER (Imagen PNG)](./proyecto-asignado/diagrama-chen.png)
+- [Tabla de Correspondencia entre Modelo EER y Esquema Publicado (PDF)](./proyecto-asignado/correspondencia-con-el-esquema.pdf)
+- [Tabla de Correspondencia (Markdown)](./proyecto-asignado/correspondencia.md)
+- [Diagrama Conceptual EER (Imagen PNG)](./proyecto-asignado/eer.png)
 
 ### 2. Clonar y poner en funcionamiento el proyecto asignado
 - [Repositorio Fork](https://github.com/AlooXoX/Seismic-Data-Visualization-System)
@@ -41,13 +42,15 @@
 
 ### 4. Proyecto Propio
 - [Requisitos Ampliados y Modelo EER (PDF)](./proyecto-propio/requisitos-ampliados.pdf)
+- [Diagrama Peter Chen (PNG)](./proyecto-propio/eer-chen.png)
+- [Diagrama Crow's Feet (PNG)](./proyecto-propio/eer-crows-feet.png)
 - [Landing Page en GitHub Pages](https://zoulessag.github.io/practica1-bd/practica2/proyecto-propio/landing/index.html)
-- [Requisitos Ampliados y Modelo EER (PDF)](./proyecto-propio/requisitos-ampliados.pdf)
 
 ### 5. Exposición
 - [Presentación de la Práctica (PDF)](./exposicion/presentacion.pdf)
 
 ### 6. Propuestas de mejora
+- [Documento Consolidado de Propuestas de Mejora (PDF)](./propuestas/propuestas-de-mejora.pdf)
 
 - [Issue #2: Sistema de Alerta Temprana en Tiempo Real para Sismos de Alta Magnitud](https://github.com/ZoulessAG/practica1-bd/issues/2)
 - [Issue #3: Cálculo de la Pata de Buey Geográfica y Zonificación Sísmica Dinámica](https://github.com/ZoulessAG/practica1-bd/issues/3)
