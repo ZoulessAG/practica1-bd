@@ -1,51 +1,48 @@
 # Ejercicio 8: Cambio de Esquema por Integrante
 
-* **Alumno:** Sanchez Palma Joel
+* **Alumno:** Sánchez Palma Joel
 * **Usuario de GitHub:** `alcatel04`
-* **Issue Vinculado:** [#6 - [Propuesta] Registro Histórico de Daños Estructurales](https://github.com/ZoulessAG/practica1-bd/issues/6)
+* **Issue Vinculado:** [#6 - [Propuesta] Registro histórico de daños estructurales](https://github.com/ZoulessAG/practica1-bd/issues/6)
 * **Área:** Requisito de Ingeniería en Inteligencia Artificial
 
 ---
 
-## 1. Justificación Técnica y Reglas de Transformación (Media Cuartilla)
+## 1. Justificación Técnica y Reglas de Transformación
 
 ### Regla de Transformación Aplicada
-Se aplicó la **Regla 1 (Entidad Fuerte)** para la entidad `unidad_economica` y la **Regla 5 (Relación N:M con Atributos Propios / Tabla Asociativa)** para `reporte_dano`. La tabla `reporte_dano` conecta la ocurrencia sísmica con la infraestructura afectada y hospeda los campos derivados de modelos de Aprendizaje Automático supervisado (redes neuronales convolucionales y árboles de decisión) entrenados para estimar probabilidad de colapso y clasificar anomalías de vulnerabilidad estructural pos-evento.
+Para implementar esta propuesta sobre el modelo relacional preexistente del proyecto, se aplicó la regla de traducción de una relación de Muchos a Muchos (M:N) entre entidades independientes (Sismo y Unidad_Economica). Dado que una relación M:N no puede coexistir de forma directa en tablas relacionales sin normalizar, se transformó mediante la creación de una entidad asociativa (tabla intermedia) denominada reporte_daño. Esta entidad absorbe las llaves primarias de ambas tablas como llaves foráneas compuestas y almacena los atributos descriptivos propios de la interacción (nivel de colapso, víctimas y costo estimado). Asimismo, se estableció una relación de Uno a Muchos (1:N) entre la entidad Municipio (del esquema original) y la nueva entidad Unidad_Economica mediante una llave foránea (id_municipio).
 
-### Justificación de la Estrategia y Tipos de Datos Elegidos
-1. **Modelado relacional asociativo:** Una unidad económica o edificio público puede experimentar múltiples eventos sísmicos a lo largo de su vida útil, y un sismo mayor afecta a cientos de inmuebles simultáneamente. La tabla intermedia `reporte_dano` con clave primaria compuesta `(id_sismo, id_unidad)` garantiza unicidad del reporte sin generar redundancia.
-2. **Requisitos de Inteligencia Artificial y MLOps:**
-   * `probabilidad_colapso NUMERIC(5, 4)`: Almacena valores continuos en el intervalo $[0.0000, 1.0000]$ con cuatro posiciones decimales fijas, eliminando discrepancias de redondeo en aritmética flotante.
-   * `es_anomalia_estructural BOOLEAN`: Indicador booleano para priorizar inmuebles con deformación imprevista no explicable por la distancia epicentral.
-   * `version_modelo VARCHAR(50)`: Registro del modelo exacto inferido (ej. `damage-eval-ann-v1.0`).
-   * `fecha_prediccion TIMESTAMP WITH TIME ZONE`: Marca temporal exacta para auditoría de protección civil.
+### Elección de la Estrategia y Requisito de Inteligencia Artificial
+Se eligió esta arquitectura normalizada (en lugar de añadir columnas planas en la tabla de sismos o de unidades) porque preserva la flexibilidad y la escalabilidad del sistema. Permite que un mismo edificio o negocio pueda acumular historial de afectaciones a lo largo del tiempo ante múltiples sismos, y a su vez, que un sismo afecte de manera independiente a múltiples unidades económicas sin redundancia de datos ni pérdida de integridad referencial. Para el requisito de Inteligencia Artificial, la tabla asociativa prevé la incorporación de métricas analíticas de predicción de colapso y anomalías estructurales pos-evento calculadas por modelos de Machine Learning: `probabilidad_colapso NUMERIC(5, 4)`, `es_anomalia_estructural BOOLEAN`, `version_modelo VARCHAR(50)` y `fecha_prediccion TIMESTAMP WITH TIME ZONE`.
 
-### Impacto en los Datos Existentes
-La creación de las tablas `unidad_economica` y `reporte_dano` es puramente aditiva (*non-breaking schema evolution*). No modifica la estructura de las tablas base preexistentes del repositorio sísmico ni interrumpe consultas en ejecución.
+### Comportamiento con los Datos Existentes
+Al tratarse de tablas de nueva creación (unidad_economica y reporte_daño) y de la adición de restricciones con tablas maestras ya pobladas, los datos históricos que ya existían en el proyecto base (como los sismos y los municipios anteriores) no sufren alteraciones destructivas (*zero-downtime*). Las tablas nuevas se inicializan vacías; por lo tanto, no se pierden registros previos.
 
 ---
 
-## 2. Consulta Demostrativa
+## 2. Script DDL y Consulta Demostrativa
 
+El script DDL se encuentra disponible en [`cambio-alcatel04.sql`](./cambio-alcatel04.sql).
+
+### Consulta Demostrativa (Ejecutable en Clase)
 ```sql
 SELECT 
-    r.id_sismo,
-    u.nombre AS unidad_economica,
-    u.giro_comercial,
-    r.nivel_colapso,
-    ROUND(r.probabilidad_colapso * 100, 2) AS probabilidad_colapso_pct,
-    r.costo_estimado,
-    r.es_anomalia_estructural,
-    r.version_modelo,
-    r.fecha_prediccion
-FROM reporte_dano r
-JOIN unidad_economica u ON r.id_unidad = u.id_unidad
-WHERE r.probabilidad_colapso >= 0.70
-ORDER BY r.probabilidad_colapso DESC;
+    m.nombre_municipio,
+    COUNT(DISTINCT s.id_sismo) AS total_sismos_afectantes,
+    COUNT(rd.id_unidad) AS unidades_afectadas_historico,
+    SUM(rd.victimas_registradas) AS total_victimas_infraestructura,
+    SUM(rd.costo_estimado) AS costo_total_perdidas
+FROM municipio m
+JOIN unidad_economica ue ON m.id_municipio = ue.id_municipio
+JOIN reporte_daño rd ON ue.id_unidad = rd.id_unidad
+JOIN sismo s ON rd.id_sismo = s.id_sismo
+WHERE s.magnitud > 6.0
+GROUP BY m.id_municipio, m.nombre_municipio
+ORDER BY costo_total_perdidas DESC;
 ```
 
 ### Resultado de la Consulta
-| id_sismo | unidad_economica | giro_comercial | nivel_colapso | probabilidad_colapso_pct | costo_estimado | es_anomalia_estructural | version_modelo | fecha_prediccion |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 301 | Escuela Secundaria Tecnica 14 | Educacion | Total | 94.20 | 8500000.00 | true | damage-eval-ann-v1.0 | 2026-10-14 23:15:00-06 |
-| 301 | Hospital General Regional | Salud Publica | Moderado | 78.50 | 1500000.00 | true | damage-eval-ann-v1.0 | 2026-10-14 23:15:00-06 |
+
+| nombre_municipio | total_sismos_afectantes | unidades_afectadas_historico | total_victimas_infraestructura | costo_total_perdidas ($ MXN) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Cuauhtémoc (CDMX)** | 2 | 15 | 42 | $145,500,000.00 |
