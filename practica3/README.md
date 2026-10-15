@@ -17,7 +17,7 @@
 | **Aguilar Garcia Ian Andrew** | `ZoulessAG` | [Propuesta] Sistema de alertas tempranas y cálculo de réplicas en tiempo real *(Área IA)* | [#2](https://github.com/ZoulessAG/practica1-bd/issues/2) |
 | **Vega Treviño Kevin Edu** | `Elslowee` | [Propuesta] Intersección Espacial con Infraestructura Crítica | [#14](https://github.com/ZoulessAG/practica1-bd/issues/14) |
 | **Quintanar Sanchez Alondra** | `AlooXoX` | [Propuesta] Identificación y Visualización de Enjambres Sísmicos | [#8](https://github.com/ZoulessAG/practica1-bd/issues/8) |
-| **Sanchez Palma Joel** | `alcatel04` | [Propuesta] Registro Histórico de Daños Estructurales | [#7](https://github.com/ZoulessAG/practica1-bd/issues/6) |
+| **Sanchez Palma Joel** | `alcatel04` | [Propuesta] Registro Histórico de Daños Estructurales | [#6](https://github.com/ZoulessAG/practica1-bd/issues/6) |
 
 ---
 
