@@ -36,3 +36,18 @@ CREATE TABLE reporte_daño (
         REFERENCES unidad_economica(id_unidad) 
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+SELECT 
+    p.id_prediccion, 
+    p.id_evento_origen, 
+    p.nivel_alerta,
+    ROUND(p.probabilidad_replica * 100, 2) AS probabilidad_porcentaje, 
+    p.magnitud_estimada AS replica_magnitud_esperada, 
+    p.ventana_tiempo_horas,
+    p.es_anomalia, 
+    p.version_modelo, 
+    p.fecha_generacion
+FROM replica_ai_predictions p
+WHERE p.nivel_alerta IN ('ROJO', 'CRITICO') 
+  AND p.probabilidad_replica >= 0.75 
+ORDER BY p.probabilidad_replica DESC;
