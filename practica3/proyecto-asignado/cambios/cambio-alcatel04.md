@@ -34,25 +34,24 @@ El script DDL se encuentra disponible en [`cambio-alcatel04.sql`](./cambio-alcat
 ### Consulta Demostrativa (Ejecutable en Clase)
 ```sql
 SELECT 
-    p.id_prediccion, 
-    p.id_evento_origen, 
-    p.nivel_alerta,
-    ROUND(p.probabilidad_replica * 100, 2) AS probabilidad_porcentaje, 
-    p.magnitud_estimada AS replica_magnitud_esperada, 
-    p.ventana_tiempo_horas,
-    p.es_anomalia, 
-    p.version_modelo, 
-    p.fecha_generacion
-FROM replica_ai_predictions p
-WHERE p.nivel_alerta IN ('ROJO', 'CRITICO') 
-  AND p.probabilidad_replica >= 0.75 
-ORDER BY p.probabilidad_replica DESC;
+    m.nombre_municipio,
+    COUNT(DISTINCT s.id_sismo) AS total_sismos_afectantes,
+    COUNT(rd.id_unidad) AS unidades_afectadas_historico,
+    SUM(rd.victimas_registradas) AS total_victimas_infraestructura,
+    SUM(rd.costo_estimado) AS costo_total_perdidas
+FROM municipio m
+JOIN unidad_economica ue ON m.id_municipio = ue.id_municipio
+JOIN reporte_daño rd ON ue.id_unidad = rd.id_unidad
+JOIN sismo s ON rd.id_sismo = s.id_sismo
+WHERE s.magnitud > 6.0
+GROUP BY m.id_municipio, m.nombre_municipio
+ORDER BY costo_total_perdidas DESC;
 ```
 
 ### Resultado de la Consulta
 
-| id_prediccion | id_evento_origen | nivel_alerta | probabilidad_porcentaje | replica_magnitud_esperada | ventana_tiempo_horas | es_anomalia | version_modelo | fecha_generacion |
+### Resultado de la consulta 
 
-|---|---|---|---|---|---|---|---|---|
-
-| 1 | 101 | CRITICO | 88.50 | 6.2 | 24 | true | aftershock-net-v1.4.2 | 2026-10-13 15:52:00-06 |
+| nombre_municipio | total_sismos_afectantes | unidades_afectadas_historico | total_victimas_infraestructura | costo_total_perdidas ($ MXN) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Cuauhtémoc (CDMX)** | 2 | 15 | 42 | $145,500,000.00 |
