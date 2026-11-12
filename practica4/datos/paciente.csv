@@ -1,0 +1,221 @@
+nss,nombre,estatus_vigencia,unidad_medica_adscripcion,nss_titular
+11000000001,Sofía Vega Torres,true,HGR No. 2 Villa Coapa,
+11000000002,Diego López Treviño,true,HGZ No. 1 Gabriel Mancera,
+11000000003,Sebastián García Morales,true,UMF No. 41 Magdalena,
+11000000004,Sofía Treviño Morales,true,HGZ No. 1 Gabriel Mancera,
+11000000005,Andrés Sánchez Palma,true,HGZ No. 24 Insurgentes,
+11000000006,Diego López Mendoza,true,HGR No. 2 Villa Coapa,
+11000000007,Carlos López Mendoza,true,UMF No. 10 Chuviscar,
+11000000008,Andrés Torres Palma,true,HGZ No. 24 Insurgentes,
+11000000009,Mariana Flores Quintanar,true,UMF No. 10 Chuviscar,
+11000000010,Andrés Pérez Vega,true,HGR No. 2 Villa Coapa,
+11000000011,Juan Mendoza Flores,true,UMF No. 20 Vallejo,
+11000000012,Diego Palma Treviño,true,HGR No. 2 Villa Coapa,
+11000000013,Kevin Sánchez López,true,UMF No. 41 Magdalena,
+11000000014,Diego Morales Cruz,true,HGZ No. 1 Gabriel Mancera,
+11000000015,Mariana Flores Aguilar,false,UMF No. 20 Vallejo,
+11000000016,Alondra Pérez Flores,true,UMF No. 10 Chuviscar,
+11000000017,Luis Aguilar Treviño,true,HGR No. 2 Villa Coapa,
+11000000018,Luis García Aguilar,true,HGR No. 2 Villa Coapa,
+11000000019,Alondra Pérez Aguilar,true,HGZ No. 24 Insurgentes,
+11000000020,Diego Mendoza Palma,true,HGZ No. 1 Gabriel Mancera,
+11000000021,Sebastián Aguilar Flores,true,HGZ No. 24 Insurgentes,
+11000000022,Luis Treviño Treviño,true,UMF No. 41 Magdalena,
+11000000023,Mariana Aguilar Pérez,true,UMF No. 20 Vallejo,
+11000000024,Andrés Cruz Palma,true,UMF No. 20 Vallejo,
+11000000025,Fernanda Ruiz Pérez,true,HGZ No. 1 Gabriel Mancera,
+11000000026,Kevin Sánchez Vega,true,UMF No. 20 Vallejo,
+11000000027,Luis Palma Ramírez,true,HGR No. 2 Villa Coapa,
+11000000028,Sebastián Mendoza Aguilar,true,HGZ No. 24 Insurgentes,
+11000000029,Luis Palma García,true,UMF No. 41 Magdalena,
+11000000030,Mariana López Morales,false,UMF No. 20 Vallejo,
+11000000031,Sofía Cruz Morales,true,HGR No. 2 Villa Coapa,
+11000000032,Andrés Flores Mendoza,true,UMF No. 20 Vallejo,
+11000000033,Mateo Ramírez Quintanar,true,UMF No. 41 Magdalena,
+11000000034,Camila Quintanar García,true,HGR No. 2 Villa Coapa,
+11000000035,Mariana Mendoza Ramírez,true,UMF No. 20 Vallejo,
+11000000036,Diego López Flores,true,UMF No. 41 Magdalena,
+11000000037,Luis Cruz López,true,UMF No. 10 Chuviscar,
+11000000038,Diego Flores Cruz,true,HGZ No. 24 Insurgentes,
+11000000039,Luis Ruiz Aguilar,true,UMF No. 41 Magdalena,
+11000000040,Kevin García Morales,true,HGZ No. 24 Insurgentes,
+11000000041,Fernanda Mendoza García,true,HGZ No. 1 Gabriel Mancera,
+11000000042,Carlos Sánchez Cruz,true,HGR No. 2 Villa Coapa,
+11000000043,Juan Morales López,true,HGZ No. 1 Gabriel Mancera,
+11000000044,Carlos Aguilar Mendoza,true,HGR No. 2 Villa Coapa,
+11000000045,Sebastián Ramírez Treviño,false,HGZ No. 24 Insurgentes,
+11000000046,Joel Treviño López,true,HGR No. 2 Villa Coapa,
+11000000047,Kevin Ruiz Mendoza,true,HGR No. 2 Villa Coapa,
+11000000048,Diego Palma Ramírez,true,HGR No. 2 Villa Coapa,
+11000000049,Diego Mendoza Flores,true,HGZ No. 1 Gabriel Mancera,
+11000000050,Joel Vega Morales,true,UMF No. 10 Chuviscar,
+11000000051,Sofía Vega Morales,true,UMF No. 41 Magdalena,
+11000000052,Sebastián Flores Treviño,true,HGZ No. 1 Gabriel Mancera,
+11000000053,Valeria Ruiz Pérez,true,HGR No. 2 Villa Coapa,
+11000000054,Mariana Ruiz Torres,true,UMF No. 20 Vallejo,
+11000000055,Juan Ramírez Quintanar,true,HGZ No. 24 Insurgentes,
+11000000056,Kevin Pérez Ruiz,true,UMF No. 41 Magdalena,
+11000000057,Camila Sánchez Torres,true,UMF No. 41 Magdalena,
+11000000058,Sofía Ramírez Torres,true,UMF No. 20 Vallejo,
+11000000059,Kevin Aguilar López,true,HGR No. 2 Villa Coapa,
+11000000060,Mariana Morales Quintanar,false,UMF No. 41 Magdalena,
+11000000061,Sofía Sánchez Aguilar,true,UMF No. 10 Chuviscar,
+11000000062,Lucía Sánchez Mendoza,true,HGZ No. 1 Gabriel Mancera,
+11000000063,Andrés García Quintanar,true,HGZ No. 24 Insurgentes,
+11000000064,Diego Aguilar Vega,true,HGZ No. 24 Insurgentes,
+11000000065,Luis Cruz Morales,true,HGZ No. 1 Gabriel Mancera,
+11000000066,Joel Aguilar Torres,true,HGR No. 2 Villa Coapa,
+11000000067,Mateo Torres Ruiz,true,HGZ No. 24 Insurgentes,
+11000000068,Camila Ramírez Ramírez,true,HGZ No. 24 Insurgentes,
+11000000069,Sebastián Torres Vega,true,HGZ No. 1 Gabriel Mancera,
+11000000070,Camila Pérez García,true,HGR No. 2 Villa Coapa,
+11000000071,Fernanda Sánchez Flores,true,HGZ No. 24 Insurgentes,
+11000000072,Diego Vega Mendoza,true,UMF No. 10 Chuviscar,
+11000000073,Luis López García,true,HGZ No. 1 Gabriel Mancera,
+11000000074,Camila Sánchez Morales,true,HGZ No. 1 Gabriel Mancera,
+11000000075,Juan Mendoza Torres,false,HGR No. 2 Villa Coapa,
+11000000076,Mariana Treviño Morales,true,UMF No. 20 Vallejo,
+11000000077,Mariana Cruz Vega,true,HGZ No. 24 Insurgentes,
+11000000078,Valeria Quintanar Sánchez,true,UMF No. 10 Chuviscar,
+11000000079,Carlos Mendoza Ramírez,true,UMF No. 41 Magdalena,
+11000000080,Valeria Ruiz Sánchez,true,HGZ No. 1 Gabriel Mancera,
+11000000081,Joel Pérez Torres,true,HGZ No. 1 Gabriel Mancera,
+11000000082,Valeria Cruz Mendoza,true,HGZ No. 24 Insurgentes,
+11000000083,Mariana Sánchez Mendoza,true,UMF No. 41 Magdalena,
+11000000084,Fernanda Morales Mendoza,true,UMF No. 10 Chuviscar,
+11000000085,Sebastián Mendoza Ramírez,true,HGZ No. 1 Gabriel Mancera,
+11000000086,Lucía Cruz López,true,HGZ No. 1 Gabriel Mancera,
+11000000087,Lucía Vega Treviño,true,UMF No. 41 Magdalena,
+11000000088,Fernanda Vega Ruiz,true,UMF No. 20 Vallejo,
+11000000089,Carlos Quintanar Ramírez,true,UMF No. 10 Chuviscar,
+11000000090,Camila Ruiz Vega,false,UMF No. 41 Magdalena,
+11000000091,Lucía Aguilar Sánchez,true,HGZ No. 24 Insurgentes,
+11000000092,Sebastián Treviño Treviño,true,UMF No. 20 Vallejo,
+11000000093,Juan Mendoza Vega,true,UMF No. 41 Magdalena,
+11000000094,Mateo Mendoza Flores,true,HGR No. 2 Villa Coapa,
+11000000095,Carlos Mendoza Morales,true,HGZ No. 24 Insurgentes,
+11000000096,Lucía Ruiz Treviño,true,HGZ No. 1 Gabriel Mancera,
+11000000097,Juan Sánchez Aguilar,true,UMF No. 41 Magdalena,
+11000000098,Valeria Quintanar Ruiz,true,UMF No. 41 Magdalena,
+11000000099,Carlos Palma Mendoza,true,UMF No. 10 Chuviscar,
+11000000100,Mariana Ramírez Cruz,true,HGZ No. 1 Gabriel Mancera,
+11000000101,Sofía Ruiz Aguilar,true,UMF No. 20 Vallejo,
+11000000102,Luis Ruiz Vega,true,HGR No. 2 Villa Coapa,
+11000000103,Diego López López,true,HGR No. 2 Villa Coapa,
+11000000104,Alondra Treviño Sánchez,true,HGZ No. 24 Insurgentes,
+11000000105,Diego Vega Ramírez,false,HGZ No. 24 Insurgentes,
+11000000106,Alondra Treviño Pérez,true,HGR No. 2 Villa Coapa,
+11000000107,Diego López Pérez,true,HGR No. 2 Villa Coapa,
+11000000108,Kevin García Vega,true,HGZ No. 1 Gabriel Mancera,
+11000000109,Sofía Ruiz Palma,true,HGZ No. 24 Insurgentes,
+11000000110,Mateo Cruz López,true,UMF No. 20 Vallejo,
+11000000111,Mateo Quintanar Ruiz,true,UMF No. 20 Vallejo,
+11000000112,Diego Torres Flores,true,HGZ No. 24 Insurgentes,
+11000000113,Andrés Sánchez Pérez,true,HGR No. 2 Villa Coapa,
+11000000114,Andrés Pérez López,true,UMF No. 20 Vallejo,
+11000000115,Fernanda Torres Palma,true,HGZ No. 1 Gabriel Mancera,
+11000000116,Juan Aguilar Ramírez,true,UMF No. 20 Vallejo,
+11000000117,Luis Morales Treviño,true,HGZ No. 24 Insurgentes,
+11000000118,Joel Torres Mendoza,true,UMF No. 41 Magdalena,
+11000000119,Sofía Ruiz Aguilar,true,UMF No. 41 Magdalena,
+11000000120,Sebastián Torres Palma,false,HGR No. 2 Villa Coapa,
+11000000121,Mateo Mendoza Mendoza,true,HGZ No. 24 Insurgentes,11000000001
+11000000122,Valeria Mendoza Sánchez,true,UMF No. 10 Chuviscar,11000000002
+11000000123,Luis Quintanar Mendoza,true,HGZ No. 24 Insurgentes,11000000003
+11000000124,Sofía Torres Torres,true,UMF No. 41 Magdalena,11000000004
+11000000125,Mateo Treviño García,true,UMF No. 20 Vallejo,11000000005
+11000000126,Fernanda Treviño Aguilar,true,HGR No. 2 Villa Coapa,11000000006
+11000000127,Mateo Vega Pérez,true,HGZ No. 1 Gabriel Mancera,11000000007
+11000000128,Sebastián Morales Morales,true,UMF No. 20 Vallejo,11000000008
+11000000129,Lucía Sánchez Aguilar,true,HGZ No. 1 Gabriel Mancera,11000000009
+11000000130,Camila García Mendoza,true,UMF No. 41 Magdalena,11000000010
+11000000131,Sebastián Quintanar Pérez,true,UMF No. 10 Chuviscar,11000000011
+11000000132,Lucía Palma Sánchez,true,HGZ No. 1 Gabriel Mancera,11000000012
+11000000133,Joel Vega García,true,HGZ No. 24 Insurgentes,11000000013
+11000000134,Luis Flores Aguilar,true,UMF No. 20 Vallejo,11000000014
+11000000135,Mariana Aguilar López,false,UMF No. 20 Vallejo,11000000015
+11000000136,Mateo Flores Sánchez,true,UMF No. 10 Chuviscar,11000000016
+11000000137,Juan Treviño García,true,UMF No. 10 Chuviscar,11000000017
+11000000138,Fernanda Mendoza Torres,true,UMF No. 41 Magdalena,11000000018
+11000000139,Andrés Vega Flores,true,HGZ No. 1 Gabriel Mancera,11000000019
+11000000140,Juan Mendoza Palma,true,HGR No. 2 Villa Coapa,11000000020
+11000000141,Camila Flores Ramírez,true,HGZ No. 1 Gabriel Mancera,11000000021
+11000000142,Sofía Palma Cruz,true,HGZ No. 24 Insurgentes,11000000022
+11000000143,Carlos Cruz Torres,true,HGZ No. 24 Insurgentes,11000000023
+11000000144,Valeria Ramírez Morales,true,UMF No. 10 Chuviscar,11000000024
+11000000145,Alondra Palma López,true,HGZ No. 1 Gabriel Mancera,11000000025
+11000000146,Diego Ruiz Sánchez,true,UMF No. 10 Chuviscar,11000000026
+11000000147,Camila Cruz Pérez,true,UMF No. 41 Magdalena,11000000027
+11000000148,Juan Treviño Pérez,true,HGR No. 2 Villa Coapa,11000000028
+11000000149,Lucía Ramírez Vega,true,UMF No. 10 Chuviscar,11000000029
+11000000150,Alondra Mendoza Sánchez,false,HGR No. 2 Villa Coapa,11000000030
+11000000151,Valeria Palma García,true,HGR No. 2 Villa Coapa,11000000031
+11000000152,Sofía Vega Quintanar,true,HGR No. 2 Villa Coapa,11000000032
+11000000153,Diego Torres Quintanar,true,HGR No. 2 Villa Coapa,11000000033
+11000000154,Andrés García Sánchez,true,UMF No. 41 Magdalena,11000000034
+11000000155,Fernanda Vega Pérez,true,UMF No. 20 Vallejo,11000000035
+11000000156,Carlos Treviño Ruiz,true,HGZ No. 1 Gabriel Mancera,11000000036
+11000000157,Andrés Morales Flores,true,HGZ No. 1 Gabriel Mancera,11000000037
+11000000158,Alondra Quintanar Ruiz,true,HGZ No. 24 Insurgentes,11000000038
+11000000159,Mateo Sánchez Treviño,true,HGR No. 2 Villa Coapa,11000000039
+11000000160,Sofía Vega Ramírez,true,HGZ No. 1 Gabriel Mancera,11000000040
+11000000161,Sebastián Ramírez Aguilar,true,HGR No. 2 Villa Coapa,11000000041
+11000000162,Kevin Ramírez García,true,HGZ No. 1 Gabriel Mancera,11000000042
+11000000163,Mariana López Pérez,true,HGZ No. 24 Insurgentes,11000000043
+11000000164,Diego Flores Sánchez,true,HGR No. 2 Villa Coapa,11000000044
+11000000165,Andrés Vega Aguilar,false,HGZ No. 24 Insurgentes,11000000045
+11000000166,Camila Palma Palma,true,HGR No. 2 Villa Coapa,11000000046
+11000000167,Andrés Treviño Treviño,true,HGZ No. 24 Insurgentes,11000000047
+11000000168,Alondra Cruz Quintanar,true,HGZ No. 1 Gabriel Mancera,11000000048
+11000000169,Diego Aguilar Palma,true,HGZ No. 24 Insurgentes,11000000049
+11000000170,Lucía Flores Ramírez,true,HGZ No. 24 Insurgentes,11000000050
+11000000171,Sofía Flores Aguilar,true,UMF No. 10 Chuviscar,11000000051
+11000000172,Carlos Treviño Mendoza,true,UMF No. 20 Vallejo,11000000052
+11000000173,Diego Ramírez Sánchez,true,UMF No. 10 Chuviscar,11000000053
+11000000174,Sebastián Vega Sánchez,true,UMF No. 10 Chuviscar,11000000054
+11000000175,Juan Ramírez Cruz,true,UMF No. 10 Chuviscar,11000000055
+11000000176,Luis García Torres,true,UMF No. 10 Chuviscar,11000000056
+11000000177,Fernanda Aguilar Flores,true,UMF No. 10 Chuviscar,11000000057
+11000000178,Juan Torres Aguilar,true,UMF No. 20 Vallejo,11000000058
+11000000179,Mateo Mendoza Cruz,true,HGZ No. 24 Insurgentes,11000000059
+11000000180,Carlos Torres López,false,HGZ No. 24 Insurgentes,11000000060
+11000000181,Luis Sánchez Vega,true,HGZ No. 24 Insurgentes,11000000061
+11000000182,Mateo Sánchez Sánchez,true,HGZ No. 1 Gabriel Mancera,11000000062
+11000000183,Valeria Torres Palma,true,HGZ No. 24 Insurgentes,11000000063
+11000000184,Carlos Treviño Vega,true,HGR No. 2 Villa Coapa,11000000064
+11000000185,Camila Sánchez Ramírez,true,HGZ No. 24 Insurgentes,11000000065
+11000000186,Luis Morales Quintanar,true,UMF No. 10 Chuviscar,11000000066
+11000000187,Camila Pérez Vega,true,HGR No. 2 Villa Coapa,11000000067
+11000000188,Sebastián García Sánchez,true,HGZ No. 1 Gabriel Mancera,11000000068
+11000000189,Alondra Morales Mendoza,true,HGZ No. 24 Insurgentes,11000000069
+11000000190,Andrés Torres Quintanar,true,HGR No. 2 Villa Coapa,11000000070
+11000000191,Valeria Cruz Mendoza,true,HGZ No. 24 Insurgentes,11000000071
+11000000192,Andrés Sánchez Ramírez,true,UMF No. 41 Magdalena,11000000072
+11000000193,Valeria Palma Palma,true,HGR No. 2 Villa Coapa,11000000073
+11000000194,Sebastián Morales Aguilar,true,HGZ No. 1 Gabriel Mancera,11000000074
+11000000195,Mariana Pérez Ruiz,false,UMF No. 10 Chuviscar,11000000075
+11000000196,Valeria Quintanar Aguilar,true,HGR No. 2 Villa Coapa,11000000076
+11000000197,Alondra García Morales,true,UMF No. 41 Magdalena,11000000077
+11000000198,Sofía Treviño Ruiz,true,UMF No. 20 Vallejo,11000000078
+11000000199,Fernanda Ramírez Palma,true,HGZ No. 1 Gabriel Mancera,11000000079
+11000000200,Mariana Morales Torres,true,UMF No. 41 Magdalena,11000000080
+11000000201,Lucía Vega Flores,true,UMF No. 41 Magdalena,11000000081
+11000000202,Carlos Flores Sánchez,true,UMF No. 20 Vallejo,11000000082
+11000000203,Fernanda Ruiz Pérez,true,HGZ No. 24 Insurgentes,11000000083
+11000000204,Alondra Pérez Aguilar,true,HGR No. 2 Villa Coapa,11000000084
+11000000205,Lucía Mendoza Cruz,true,HGR No. 2 Villa Coapa,11000000085
+11000000206,Fernanda Mendoza Flores,true,UMF No. 41 Magdalena,11000000086
+11000000207,Luis Palma Ramírez,true,UMF No. 10 Chuviscar,11000000087
+11000000208,Andrés Quintanar López,true,UMF No. 10 Chuviscar,11000000088
+11000000209,Alondra Ruiz Cruz,true,UMF No. 10 Chuviscar,11000000089
+11000000210,Camila Mendoza Mendoza,false,HGZ No. 1 Gabriel Mancera,11000000090
+11000000211,Kevin Ruiz Pérez,true,UMF No. 41 Magdalena,11000000091
+11000000212,Diego Cruz Treviño,true,UMF No. 41 Magdalena,11000000092
+11000000213,Valeria Palma Vega,true,UMF No. 10 Chuviscar,11000000093
+11000000214,Fernanda Torres Torres,true,HGZ No. 1 Gabriel Mancera,11000000094
+11000000215,Valeria Mendoza García,true,UMF No. 10 Chuviscar,11000000095
+11000000216,Lucía Flores Vega,true,HGR No. 2 Villa Coapa,11000000096
+11000000217,Lucía Palma Vega,true,UMF No. 41 Magdalena,11000000097
+11000000218,Carlos Ruiz Torres,true,UMF No. 41 Magdalena,11000000098
+11000000219,Luis Quintanar Vega,true,HGZ No. 1 Gabriel Mancera,11000000099
+11000000220,Sebastián Treviño Treviño,true,HGZ No. 24 Insurgentes,11000000100

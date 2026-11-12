@@ -63,5 +63,5 @@
 
 1. Clonar el repositorio y acceder a la carpeta de configuración:
    ```bash
-   git clone [https://github.com/ZoulessAG/practica1-bd.git](https://github.com/ZoulessAG/practica1-bd.git)
+   git clone https://github.com/ZoulessAG/practica1-bd.git
    cd practica1-bd/entorno

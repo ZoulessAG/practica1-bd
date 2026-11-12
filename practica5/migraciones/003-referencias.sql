@@ -1,0 +1,1 @@
+-- Migración 003: Claves foráneas y acciones referenciales (Ej. 2.1 y 2.2)
