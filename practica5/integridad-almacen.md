@@ -14,6 +14,8 @@ A diferencia de algunos almacenes que omiten FKs, `00-datawarehouse_tables.sql` 
 - `fact_impacto_sismos_imputed_id_economia_fkey` → `dim_economia(id_economia)`
 - `fact_impacto_sismos_imputed_id_tiempo_fkey` → `dim_tiempo(id_tiempo)`
 
+Al ejecutar la consulta de hechos huérfanos sobre las **196,576** filas de `fact_impacto_sismos_imputed` en `sismos_p4_5`, el resultado fue **`0 rows`** (integridad referencial al 100%).
+
 ## 3. Por qué un almacén a veces las omite a propósito y qué riesgo corre
 - **Por qué se omiten:** Para acelerar cargas masivas ETL (`COPY`/batch) evitando verificar cada fila contra 4 dimensiones durante la ingesta y permitiendo cargas paralelas desordenadas.
 - **Riesgo:** Si falla el ETL o falta un registro en una dimensión, quedan **hechos huérfanos** que desaparecen silenciosamente al hacer `INNER JOIN` en los tableros analíticos, distorsionando sumas y promedios.
