@@ -25,8 +25,8 @@ GRANT USAGE ON SCHEMA public TO rol_app;
 GRANT SELECT, INSERT, UPDATE ON
     paciente, paciente_telefono, orden_medica, cita, orden_estudio, resultado
     TO rol_app;
-GRANT SELECT ON estudio, prueba_sangre, prueba_orina, prueba_fecal TO rol_app;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rol_app;
+GRANT SELECT, INSERT ON estudio, prueba_sangre, prueba_orina, prueba_fecal TO rol_app;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO rol_app;
 
 -- 3. Privilegios de rol_consulta: únicamente lectura
 GRANT USAGE ON SCHEMA public TO rol_consulta;

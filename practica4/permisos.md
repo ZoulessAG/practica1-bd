@@ -44,7 +44,7 @@ ERROR:  permission denied for table resultado
 | `cita` | `SELECT` | `SELECT, INSERT, UPDATE` | `ALL PRIVILEGES` |
 | `orden_estudio` | `SELECT` | `SELECT, INSERT, UPDATE` | `ALL PRIVILEGES` |
 | `resultado` | `SELECT` | `SELECT, INSERT, UPDATE` | `ALL PRIVILEGES` |
-| `estudio` | `SELECT` | `SELECT` | `ALL PRIVILEGES` |
-| `prueba_sangre` | `SELECT` | `SELECT` | `ALL PRIVILEGES` |
-| `prueba_orina` | `SELECT` | `SELECT` | `ALL PRIVILEGES` |
-| `prueba_fecal` | `SELECT` | `SELECT` | `ALL PRIVILEGES` |
+| `estudio` | `SELECT` | `SELECT, INSERT` | `ALL PRIVILEGES` |
+| `prueba_sangre` | `SELECT` | `SELECT, INSERT` | `ALL PRIVILEGES` |
+| `prueba_orina` | `SELECT` | `SELECT, INSERT` | `ALL PRIVILEGES` |
+| `prueba_fecal` | `SELECT` | `SELECT, INSERT` | `ALL PRIVILEGES` |

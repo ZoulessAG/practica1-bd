@@ -75,5 +75,10 @@ DO (Time: 60.702 ms)
 COMMIT (Time: 11.062 ms)
 ```
 
+### Comparación de rendimiento (`\copy` vs `INSERT` fila por fila)
+En una prueba comparativa sobre 220 renglones en `citas_medicas_p4`:
+- `\copy` (carga masiva): **2.035 ms**
+- 220 sentencias `INSERT` individuales en ciclo: **4.149 ms** (~2× más lento incluso con solo 220 filas, brecha que crece linealmente con miles de registros).
+
 ### Incidencia detectada durante la carga inicial (zona horaria)
 En el primer intento de carga masiva, el trigger `fn_validar_anticipacion_cita()` rechazó una cita con `anticipación actual: 14 días` aunque los datos tenían 15 días de diferencia, debido a que el contenedor corre en `UTC` y `NEW.fecha_hora_laboratorio::DATE` convertía `19:00:00-06` al día siguiente en UTC. Se corrigió el trigger usando `(NEW.fecha_hora_laboratorio AT TIME ZONE 'America/Mexico_City')::DATE`.

@@ -57,6 +57,12 @@
   - [Documento PDF: Planteamiento del problema, entrevista y requerimientos](docs/caso-de-estudio.pdf)
   - [Diagrama Entidad-Relación: Esquema conceptual (PNG)](modelo/diagrama-er.png)
 
+### Entregas posteriores
+- [Práctica 2: Modelo Entidad-Relación Extendido](./practica2/README.md)
+- [Práctica 3: Transformación al Modelo Relacional](./practica3/README.md)
+- [Práctica 4: Implementación DDL, Dominios y Permisos](./practica4/README.md)
+- [Práctica 5: Edición DML e Integridad Referencial](./practica5/README.md)
+
 ---
 
 ## Instrucciones para levantar el entorno

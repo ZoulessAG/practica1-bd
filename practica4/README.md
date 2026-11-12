@@ -7,12 +7,12 @@
 ## Comando único de carga (Ejercicio 1.4)
 
 ```powershell
-$env:PGHOST="localhost"; $env:PGPORT="5433"; $env:PGDATABASE="citas_medicas_p4"; $env:PGUSER="admin_lab"; $env:PGPASSWORD="<tu_password>"
+$env:PGHOST="localhost"; $env:PGPORT="5433"; $env:PGDATABASE="citas_medicas_p4"; $env:PGUSER="usr_app"; $env:PGPASSWORD="<tu_password>"
 .\poblar\poblar.ps1
 ```
 En Linux/macOS/Git Bash:
 ```bash
-PGHOST=localhost PGPORT=5433 PGDATABASE=citas_medicas_p4 PGUSER=admin_lab PGPASSWORD="<tu_password>" ./poblar/poblar.sh
+PGHOST=localhost PGPORT=5433 PGDATABASE=citas_medicas_p4 PGUSER=usr_app PGPASSWORD="<tu_password>" ./poblar/poblar.sh
 ```
 
 ## Entregables

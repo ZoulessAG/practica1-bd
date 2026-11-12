@@ -38,7 +38,20 @@ UPDATE resultado
  WHERE id_resultado <= 10;
 
 -- 3. DELETE con subconsulta vs borrado lógico
--- Borrado lógico (preferido en historial clínico para no perder trazabilidad):
+-- 3a. DELETE físico con subconsulta (sobre registro temporal de prueba)
+INSERT INTO paciente (nss, nombre, unidad_medica_adscripcion)
+VALUES ('99000000099', 'Paciente Prueba Delete Subquery', 'UMF No. 10');
+
+DELETE FROM paciente
+ WHERE nss IN (
+     SELECT p.nss
+       FROM paciente p
+       LEFT JOIN orden_medica o ON p.nss = o.nss_paciente
+      WHERE o.folio_orden IS NULL
+        AND p.nss = '99000000099'
+ );
+
+-- 3b. Borrado lógico (preferido en historial clínico para no perder trazabilidad):
 UPDATE paciente
    SET estatus_vigencia = FALSE
  WHERE nss IN (
