@@ -9,3 +9,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Graphify
+graphify.exe
+graphify-out/

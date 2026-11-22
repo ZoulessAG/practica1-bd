@@ -18,15 +18,16 @@ VALUES
 ('1122334455', '5598765432');
 
 INSERT INTO orden_medica (folio_orden, fecha_cita_medico, medico_emisor, nss_paciente)
-VALUES ('ORD-2026-001', '2026-10-10', 'Dr. Roberto Gomez (Ced. 12345678)', '1122334455');
+VALUES ('ORD-2026-001', '2026-11-15', 'Dr. Roberto Gomez (Ced. 12345678)', '1122334455');
 
 INSERT INTO cita (fecha_hora_agendamiento, fecha_hora_laboratorio, estatus_asistencia, folio_orden)
-VALUES ('2026-10-10 10:00:00-06', '2026-10-15 07:30:00-06', 'PROGRAMADA', 'ORD-2026-001');
+VALUES ('2026-10-10 10:00:00-06', '2026-10-25 07:30:00-06', 'PROGRAMADA', 'ORD-2026-001');
 
 INSERT INTO estudio (nombre_estudio, indicaciones_previas)
 VALUES 
 ('Química Sanguínea 6 Elementos', 'Ayuno estricto de 8 a 12 horas.'),
-('Examen General de Orina (EGO)', 'Primer chorro de la primera orina de la mañana.');
+('Examen General de Orina (EGO)', 'Primer chorro de la primera orina de la mañana.'),
+('Biometría Hemática Completa', 'No requiere ayuno estricto.');
 
 INSERT INTO prueba_sangre (id_estudio, tipo_tubo, color_tapon, ayuno_horas)
 VALUES (1, 'Tubo con gel separador', 'Rojo / Oro', 8);
@@ -67,7 +68,7 @@ VALUES ('0000000000', '5500000000');
 -- ------------------------------------------------------------------------------
 -- ERROR ESPERADO: new row for relation "prueba_sangre" violates check constraint "chk_ayuno_horas"
 INSERT INTO prueba_sangre (id_estudio, tipo_tubo, color_tapon, ayuno_horas)
-VALUES (1, 'Tubo EDTA', 'Lila', 35);
+VALUES (3, 'Tubo EDTA', 'Lila', 35);
 
 
 -- ------------------------------------------------------------------------------
@@ -76,4 +77,25 @@ VALUES (1, 'Tubo EDTA', 'Lila', 35);
 -- ------------------------------------------------------------------------------
 -- ERROR ESPERADO: duplicate key value violates unique constraint "uq_cita_orden"
 INSERT INTO cita (fecha_hora_agendamiento, fecha_hora_laboratorio, estatus_asistencia, folio_orden)
-VALUES ('2026-10-11 11:00:00-06', '2026-10-18 08:00:00-06', 'PROGRAMADA', 'ORD-2026-001');
+VALUES ('2026-10-11 11:00:00-06', '2026-10-26 08:00:00-06', 'PROGRAMADA', 'ORD-2026-001');
+
+
+-- ------------------------------------------------------------------------------
+-- CASO 5: Violación de Restricción CHECK (Auto-referencia en Paciente)
+-- Intento de registrar un paciente cuyo nss_titular es igual a su propio nss
+-- ------------------------------------------------------------------------------
+-- ERROR ESPERADO: new row for relation "paciente" violates check constraint "chk_paciente_no_auto_titular"
+INSERT INTO paciente (nss, nombre, estatus_vigencia, unidad_medica_adscripcion, nss_titular)
+VALUES ('5544332211', 'Paciente Auto Titular', TRUE, 'UMF No. 10', '5544332211');
+
+
+-- ------------------------------------------------------------------------------
+-- CASO 6: Violación de Regla de Negocio (Anticipación fuera de 15 a 30 días)
+-- Intento de agendar cita de laboratorio con solo 5 días de anticipación a la consulta médica
+-- ------------------------------------------------------------------------------
+INSERT INTO orden_medica (folio_orden, fecha_cita_medico, medico_emisor, nss_paciente)
+VALUES ('ORD-2026-002', '2026-11-15', 'Dr. Roberto Gomez (Ced. 12345678)', '9988776655');
+
+-- ERROR ESPERADO: La cita de laboratorio debe programarse entre 15 y 30 días antes de la consulta médica
+INSERT INTO cita (fecha_hora_agendamiento, fecha_hora_laboratorio, estatus_asistencia, folio_orden)
+VALUES ('2026-10-10 10:00:00-06', '2026-11-10 07:30:00-06', 'PROGRAMADA', 'ORD-2026-002');

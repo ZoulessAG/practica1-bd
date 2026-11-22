@@ -6,6 +6,7 @@
 -- ==============================================================================
 
 -- Limpieza en orden inverso de dependencias
+DROP FUNCTION IF EXISTS fn_validar_anticipacion_cita() CASCADE;
 DROP TABLE IF EXISTS resultado CASCADE;
 DROP TABLE IF EXISTS prueba_fecal CASCADE;
 DROP TABLE IF EXISTS prueba_orina CASCADE;
@@ -31,7 +32,8 @@ CREATE TABLE paciente (
     CONSTRAINT fk_paciente_titular FOREIGN KEY (nss_titular)
         REFERENCES paciente (nss)
         ON DELETE RESTRICT
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT chk_paciente_no_auto_titular CHECK (nss_titular IS NULL OR nss_titular <> nss)
 );
 
 -- ------------------------------------------------------------------------------
@@ -176,3 +178,32 @@ CREATE TABLE resultado (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+
+-- ------------------------------------------------------------------------------
+-- 9. REGLA DE NEGOCIO: Anticipación de 15 a 30 días respecto a la consulta médica
+-- ------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION fn_validar_anticipacion_cita()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_fecha_cita_medico DATE;
+    v_dias_anticipacion INT;
+BEGIN
+    SELECT fecha_cita_medico
+      INTO v_fecha_cita_medico
+      FROM orden_medica
+     WHERE folio_orden = NEW.folio_orden;
+
+    v_dias_anticipacion := v_fecha_cita_medico - (NEW.fecha_hora_laboratorio AT TIME ZONE 'America/Mexico_City')::DATE;
+
+    IF v_dias_anticipacion < 15 OR v_dias_anticipacion > 30 THEN
+        RAISE EXCEPTION 'La cita de laboratorio debe programarse entre 15 y 30 días antes de la consulta médica (anticipación actual: % días)', v_dias_anticipacion;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_validar_anticipacion_cita
+    BEFORE INSERT OR UPDATE ON cita
+    FOR EACH ROW
+    EXECUTE FUNCTION fn_validar_anticipacion_cita();

@@ -10,7 +10,7 @@ const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME || 'laboratorio_db',
     password: process.env.DB_PASSWORD || 'password123',
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5433,
 });
 
 app.use(express.json());

@@ -1,0 +1,16 @@
+id_estudio,nombre_estudio,indicaciones_previas
+1,Química Sanguínea 6 Elementos,Ayuno estricto de 8 a 12 horas.
+2,Biometría Hemática Completa,No requiere ayuno estricto.
+3,Perfil Lipídico Completo,Ayuno de 12 horas; evitar alcohol 24h.
+4,Hemoglobina Glucosilada (HbA1c),No requiere ayuno.
+5,Pruebas de Función Hepática,Ayuno de 8 horas.
+6,"Electrolitos Séricos (Na, K, Cl)",Ayuno de 8 horas.
+7,Examen General de Orina (EGO),Primer chorro de la primera orina de la mañana.
+8,Urocultivo con Antibiograma,Aseo previo; chorro medio.
+9,Depuración de Creatinina 24h,Recolectar toda la orina de 24 horas.
+10,Microalbuminuria en Orina,Primera orina de la mañana.
+11,Prueba de Embarazo en Orina,Primera orina matutina.
+12,Coproparasitoscópico Seriado (3 muestras),Recolectar en días consecutivos.
+13,Coprocultivo,Muestra reciente sin contaminación de orina.
+14,Sangre Oculta en Heces,Dieta sin carnes rojas 48h previas.
+15,Rotavirus en Heces,Muestra diarreica fresca.

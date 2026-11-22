@@ -1,0 +1,5 @@
+id_estudio,tipo_frasco,requiere_medio_transporte
+12,Frasco estéril con conservador,true
+13,Frasco con medio Cary-Blair,true
+14,Frasco recolector con espátula,false
+15,Frasco estéril hermético,false
