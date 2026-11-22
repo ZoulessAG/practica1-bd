@@ -1,6 +1,3 @@
-"""Genera datos sintéticos reproducibles para Práctica 4 (Ej. 1.3 y 1.4).
-Cumple todas las restricciones de esquema.sql y 001-dominios.sql (>=200 filas por tabla principal).
-"""
 import csv
 import datetime
 import pathlib
