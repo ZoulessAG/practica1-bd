@@ -1,25 +1,41 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Base de Datos Clínica (EER Sandbox)</title>
+    <title>CitasMed — Sistema Clínico y Laboratorio de Análisis</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter, Newsreader & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
                     colors: {
+                        cream: {
+                            50: '#FAF8F5',
+                            100: '#F6F3EC',
+                            200: '#EFEAE0',
+                            300: '#E5DECf',
+                            400: '#D5CBB9',
+                            700: '#645B4E',
+                            800: '#423B31',
+                            900: '#231E18',
+                        },
                         clinical: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                            500: '#2A6F84',
+                            600: '#1F5263',
+                            700: '#163E4B',
+                            800: '#0E2831',
                         }
                     }
                 }
@@ -27,1152 +43,1239 @@
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
+        /* Paleta Crema Cálida Pastel: descansada para la vista, natural, cero deslumbramiento y cero neón de IA */
+        :root {
+            --bg-page: #FAF8F5;        /* Fondo crema suave editorial / papel natural */
+            --bg-card: #FFFFFF;        /* Tarjeta marfil limpia */
+            --bg-subtle: #F4EFE6;      /* Fondo tenue para inputs y cabeceras */
+            --bg-hover: #F8F5EE;       /* Hover cálido */
+            --border-card: #E5DFD3;    /* Borde suave tono arena */
+            --border-subtle: #EDE7DC;  /* Separadores delicados */
+            --text-heading: #1F1C18;   /* Espresso suave (no negro puro punzante) */
+            --text-body: #423B31;      /* Grafito cálido para lectura descansada */
+            --text-muted: #7A7265;     /* Gris cálido secundario */
+            --accent-teal: #1F5263;    /* Azul clínico profundo */
+        }
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-body);
+            font-variant-numeric: tabular-nums;
+        }
+        .clinic-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+        }
+        .clinic-card:hover {
+            border-color: #D5CBB9;
+        }
+        table, .font-mono, [id^="kpi-"] {
+            font-variant-numeric: tabular-nums;
+        }
+        .custom-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #F4EFE6;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #D5CBB9;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #B8AC98;
+        }
+        button, a, input, select, textarea {
+            transition: all 0.15s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+<body class="min-h-full flex flex-col font-sans antialiased selection:bg-[#EAE1D2] selection:text-[#1F1C18]">
 
-
-<header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
-    <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center space-x-3">
-            <div class="bg-clinical-600 text-white p-2 rounded-lg shadow-lg">
-                <i class="fa-solid fa-hospital-user text-xl"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-lg leading-tight text-white flex items-center gap-2">
-                    Sistema Clínico - Sandbox EER
-                    <span id="system-version-badge" class="text-xs font-normal bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Docker BD
-                    </span>
-                </h1>
-                <p class="text-xs text-slate-400">Base de Datos PostgreSQL (Docker) + Express</p>
-            </div>
-        </div>
-
-        
-        <div id="db-status-banner" class="flex-1 max-w-2xl bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-emerald-300">
-            <i id="db-status-icon" class="fa-solid fa-server text-emerald-400 text-base shrink-0"></i>
-            <div>
-                <strong id="db-status-title" class="font-semibold text-emerald-200">PostgreSQL (Docker) Conectado:</strong>
-                <span id="db-status-desc">Conexión activa a laboratorio_db en puerto 5433.</span>
-            </div>
-        </div>
-
-        
-        <div class="flex items-center gap-2">
-            <button onclick="syncDatabaseWithBackend()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition" title="Sincronizar datos con PostgreSQL">
-                <i class="fa-solid fa-arrows-rotate"></i>
-                Sincronizar BD
-            </button>
-            <button onclick="resetDatabaseConfirm()" class="bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition">
-                <i class="fa-solid fa-rotate-left"></i>
-                Restablecer
-            </button>
-        </div>
-    </div>
-</header>
-
-
-<div class="flex flex-1 overflow-hidden">
-
-    
-    <aside class="w-64 bg-slate-800/80 border-r border-slate-700 flex flex-col shrink-0">
-        <div class="p-4 border-b border-slate-700/60">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Módulos del Sistema</p>
-        </div>
-
-        <nav class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1 text-sm">
-
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <i class="fa-solid fa-chart-line text-clinical-400 w-5"></i>
-                <span>Panel de Control</span>
-            </button>
-
-            <button onclick="switchTab('eer-diagram')" id="nav-eer-diagram" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <i class="fa-solid fa-diagram-project text-purple-400 w-5"></i>
-                <span>Diagrama EER & Esquema</span>
-            </button>
-
-            <button onclick="switchTab('sql-console')" id="nav-sql-console" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <i class="fa-solid fa-terminal text-emerald-400 w-5"></i>
-                <span>Consola SQL (Playground)</span>
-            </button>
-
-            <div class="pt-4 pb-1">
-                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tablas de la Base de Datos</p>
-            </div>
-
-            <button onclick="switchTable('paciente')" id="nav-table-paciente" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-hospital-user text-blue-400 w-4"></i>
-                    <span>PACIENTE</span>
-                </div>
-                <span id="badge-count-paciente" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
-            </button>
-
-            <button onclick="switchTable('orden_medica')" id="nav-table-orden_medica" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-file-invoice text-indigo-400 w-4"></i>
-                    <span>ORDEN_MEDICA</span>
-                </div>
-                <span id="badge-count-orden_medica" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
-            </button>
-
-            <button onclick="switchTable('estudio')" id="nav-table-estudio" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-microscope text-cyan-400 w-4"></i>
-                    <span>ESTUDIO</span>
-                </div>
-                <span id="badge-count-estudio" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
-            </button>
-
+    <!-- BARRA SUPERIOR INSTITUCIONAL (ANCHO COMPLETO - CREMA SUAVE Y LIMPIO) -->
+    <header class="border-b border-[#E5DFD3] bg-white sticky top-0 z-30 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+        <div class="w-full px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
             
-            <div class="ml-4 pl-2 border-l border-slate-700 space-y-1">
-                <button onclick="switchTable('prueba_sangre')" id="nav-table-prueba_sangre" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
-                    <span>PRUEBA_SANGRE</span>
-                    <span id="badge-count-prueba_sangre" class="font-mono">0</span>
-                </button>
-                <button onclick="switchTable('prueba_orina')" id="nav-table-prueba_orina" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
-                    <span>PRUEBA_ORINA</span>
-                    <span id="badge-count-prueba_orina" class="font-mono">0</span>
-                </button>
-                <button onclick="switchTable('prueba_fecal')" id="nav-table-prueba_fecal" class="nav-btn w-full flex items-center justify-between px-2 py-1.5 rounded-lg transition text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/30">
-                    <span>PRUEBA_FECAL</span>
-                    <span id="badge-count-prueba_fecal" class="font-mono">0</span>
-                </button>
+            <!-- Marca Clínica Institucional -->
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-[#1F5263] text-white flex items-center justify-center font-bold text-lg shadow-xs">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-lg tracking-tight text-[#1F1C18]">
+                            Citas<span class="text-[#1F5263]">Med</span>
+                        </h1>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[#F4EFE6] text-[#423B31] border border-[#E5DFD3] font-semibold">
+                            Laboratorio Clínico
+                        </span>
+                    </div>
+                    <p class="text-xs text-[#7A7265] font-medium hidden sm:block">
+                        ESCOM IPN • Sistema de Citas Médicas y Análisis de Muestras
+                    </p>
+                </div>
             </div>
 
-            <button onclick="switchTable('orden_medica_estudio')" id="nav-table-orden_medica_estudio" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-link text-teal-400 w-4"></i>
-                    <span>ORDEN_ESTUDIO (N:M)</span>
+            <!-- Telemetría y Acciones Primarias -->
+            <div class="flex items-center gap-3">
+                
+                <!-- Telemetría silenciosa y descansada -->
+                <div id="telemetry-badge" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] text-xs font-mono">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    <span id="telemetry-db" class="font-semibold text-[#1F1C18]">citas_medicas_p4</span>
+                    <span class="text-[#D5CBB9]">|</span>
+                    <span id="telemetry-ping" class="font-medium text-emerald-700">-- ms</span>
                 </div>
-                <span id="badge-count-orden_medica_estudio" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
-            </button>
 
-            <button onclick="switchTable('cita')" id="nav-table-cita" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-regular fa-calendar-check text-amber-400 w-4"></i>
-                    <span>CITA</span>
-                </div>
-                <span id="badge-count-cita" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
-            </button>
+                <!-- Botones Operativos Clínicos -->
+                <button onclick="openModal('modal-paciente')" class="px-3.5 py-2 rounded-lg border border-[#D5CBB9] bg-white hover:bg-[#F4EFE6] text-[#1F1C18] text-xs font-semibold flex items-center gap-2 shadow-xs transition">
+                    <i class="fa-solid fa-user-plus text-[#1F5263]"></i>
+                    <span>+ Nuevo Paciente</span>
+                </button>
 
-            <button onclick="switchTable('resultado')" id="nav-table-resultado" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg transition text-slate-300 hover:bg-slate-700/50">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-square-poll-vertical text-emerald-400 w-4"></i>
-                    <span>RESULTADO</span>
+                <button onclick="openModal('modal-cita')" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white text-xs font-semibold flex items-center gap-2 shadow-xs transition">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <span>+ Agendar Cita</span>
+                </button>
+
+                <!-- Botón de Refrescar -->
+                <button onclick="loadAllData()" class="p-2 rounded-lg border border-[#D5CBB9] bg-white hover:bg-[#F4EFE6] text-[#7A7265] hover:text-[#1F1C18] transition" title="Refrescar base de datos">
+                    <i class="fa-solid fa-arrows-rotate text-xs" id="refresh-icon"></i>
+                </button>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL (EXPANDIDO A TODO EL ANCHO - PALETA CREMA PASTEL) -->
+    <main class="w-full px-6 lg:px-10 py-6 flex-1 flex flex-col gap-6">
+
+        <!-- RESUMEN DE INDICADORES (MÉTRICAS CLÍNICAS SOBRE BLANCO CÁLIDO) -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="clinic-card rounded-xl p-4 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span class="text-sm font-semibold text-[#7A7265]">Derechohabientes</span>
+                <div class="mt-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-pacientes" class="text-3xl font-extrabold font-mono text-[#1F1C18] tabular-nums">221</span>
+                        <span class="text-xs text-[#7A7265] font-medium">registrados</span>
+                    </div>
+                    <p class="text-xs text-emerald-800 mt-1 font-mono flex items-center gap-1.5 font-medium tabular-nums">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
+                        <span id="kpi-vigentes">206</span> con vigencia activa
+                    </p>
                 </div>
-                <span id="badge-count-resultado" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full font-mono text-slate-300">0</span>
+            </div>
+
+            <div class="clinic-card rounded-xl p-4 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span class="text-sm font-semibold text-[#7A7265]">Citas programadas</span>
+                <div class="mt-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-citas" class="text-3xl font-extrabold font-mono text-[#1F1C18] tabular-nums">220</span>
+                        <span class="text-xs text-[#7A7265] font-medium">en agenda</span>
+                    </div>
+                    <p class="text-xs text-[#7A7265] mt-1 font-mono tabular-nums">
+                        Ventana médica: <strong class="text-[#1F5263] font-semibold">15 a 30 días</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="clinic-card rounded-xl p-4 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span class="text-sm font-semibold text-[#7A7265]">Catálogo de pruebas</span>
+                <div class="mt-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-estudios" class="text-3xl font-extrabold font-mono text-[#1F1C18] tabular-nums">15</span>
+                        <span class="text-xs text-[#7A7265] font-medium">estudios clínicos</span>
+                    </div>
+                    <p class="text-xs text-[#7A7265] mt-1 font-mono">
+                        Sangre (6) • Orina (5) • Coprológico (4)
+                    </p>
+                </div>
+            </div>
+
+            <div class="clinic-card rounded-xl p-4 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span class="text-sm font-semibold text-[#7A7265]">Resultados de laboratorio</span>
+                <div class="mt-2">
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpi-resultados" class="text-3xl font-extrabold font-mono text-[#1F1C18] tabular-nums">220</span>
+                        <span class="text-xs text-[#7A7265] font-medium">emitidos</span>
+                    </div>
+                    <p class="text-xs text-[#7A7265] mt-1 font-mono">
+                        Trazabilidad e integridad referencial 100%
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- BARRA DE PESTAÑAS (SEGMENTADA CON TONO CÁLIDO ORGÁNICO) -->
+        <nav class="flex items-center gap-1.5 border-b border-[#E5DFD3] pb-2 text-xs font-semibold overflow-x-auto custom-scroll">
+            <button onclick="switchTab('pacientes')" id="tab-pacientes" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 bg-[#1F5263] text-white shadow-xs">
+                <i class="fa-solid fa-users"></i>
+                <span>Directorio de Pacientes</span>
+            </button>
+            <button onclick="switchTab('citas')" id="tab-citas" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6]">
+                <i class="fa-solid fa-calendar-days text-[#A39989]"></i>
+                <span>Agenda de Citas</span>
+            </button>
+            <button onclick="switchTab('estudios')" id="tab-estudios" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6]">
+                <i class="fa-solid fa-vials text-[#A39989]"></i>
+                <span>Catálogo de Estudios</span>
+            </button>
+            <button onclick="switchTab('resultados')" id="tab-resultados" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6]">
+                <i class="fa-solid fa-clipboard-check text-[#A39989]"></i>
+                <span>Resultados de Laboratorio</span>
+            </button>
+            <button onclick="switchTab('sql')" id="tab-sql" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6]">
+                <i class="fa-solid fa-terminal text-[#A39989]"></i>
+                <span>Consola SQL en Vivo</span>
+            </button>
+            <button onclick="switchTab('reglas')" id="tab-reglas" class="tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6]">
+                <i class="fa-solid fa-shield-halved text-[#A39989]"></i>
+                <span>Restricciones & Triggers</span>
             </button>
         </nav>
 
-        <div class="p-3 border-t border-slate-700/60 bg-slate-900/30">
-            <div class="text-xs text-slate-400 flex items-center justify-between">
-                <span>Estado BD: <span class="text-emerald-400 font-semibold">En Línea</span></span>
-                <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i>
-            </div>
-        </div>
-    </aside>
-
-    
-    <main class="flex-1 bg-slate-900 overflow-y-auto custom-scrollbar p-6">
-
-        
-        <section id="view-dashboard" class="space-y-6">
-            <div>
-                <h2 class="text-2xl font-bold text-white">Panel de Control General</h2>
-                <p class="text-sm text-slate-400">Resumen y métricas del modelo de datos clínico</p>
-            </div>
-
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 1: DIRECTORIO DE PACIENTES                                        -->
+        <!-- ========================================================================= -->
+        <section id="view-pacientes" class="tab-view flex flex-col gap-4">
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400">Pacientes Registrados</p>
-                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-pacientes">0</p>
-                    </div>
-                    <div class="bg-blue-500/20 text-blue-400 p-3 rounded-lg"><i class="fa-solid fa-users text-xl"></i></div>
+            <!-- Barra de Filtros -->
+            <div class="clinic-card rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="relative flex-1 min-w-[300px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-[#A39989] text-xs"></i>
+                    <input type="text" id="search-paciente" onkeyup="filterPacientes()" placeholder="Buscar paciente por NSS, nombre, unidad o teléfono..." class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg pl-9 pr-3 py-2 text-xs text-[#1F1C18] placeholder-[#A39989] focus:outline-none focus:border-[#1F5263] focus:bg-white font-mono transition">
                 </div>
-
-                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400">Órdenes Médicas</p>
-                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-ordenes">0</p>
-                    </div>
-                    <div class="bg-indigo-500/20 text-indigo-400 p-3 rounded-lg"><i class="fa-solid fa-file-medical text-xl"></i></div>
-                </div>
-
-                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400">Citas Agendadas</p>
-                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-citas">0</p>
-                    </div>
-                    <div class="bg-amber-500/20 text-amber-400 p-3 rounded-lg"><i class="fa-solid fa-calendar-days text-xl"></i></div>
-                </div>
-
-                <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400">Resultados Emitidos</p>
-                        <p class="text-2xl font-bold text-white mt-1" id="dash-stat-resultados">0</p>
-                    </div>
-                    <div class="bg-emerald-500/20 text-emerald-400 p-3 rounded-lg"><i class="fa-solid fa-square-check text-xl"></i></div>
+                <div class="flex items-center gap-2.5">
+                    <select id="filter-vigencia" onchange="filterPacientes()" class="bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-xs font-medium text-[#423B31] focus:outline-none focus:border-[#1F5263]">
+                        <option value="todos">Todos los estatus</option>
+                        <option value="vigente">Solo Vigentes</option>
+                        <option value="no_vigente">No Vigentes</option>
+                    </select>
+                    <span id="badge-total-pacientes" class="px-3 py-2 rounded-lg bg-[#F4EFE6] text-[#423B31] font-mono text-xs font-semibold border border-[#E5DFD3]">
+                        Cargando...
+                    </span>
                 </div>
             </div>
 
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-bolt text-amber-400"></i> Acciones Rápidas
+            <!-- Tabla de Pacientes a Pantalla Completa -->
+            <div class="clinic-card rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="overflow-x-auto custom-scroll max-h-[640px]">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-semibold font-mono text-xs sticky top-0 z-10">
+                            <tr>
+                                <th class="py-3 px-4 text-right">NSS (dom_nss)</th>
+                                <th class="py-3 px-4 font-sans">Nombre Completo</th>
+                                <th class="py-3 px-4 font-sans">Estatus Vigencia</th>
+                                <th class="py-3 px-4 font-sans">Unidad de Adscripción</th>
+                                <th class="py-3 px-4">Teléfono(s)</th>
+                                <th class="py-3 px-4 font-sans">Condición Titular</th>
+                                <th class="py-3 px-4 text-center font-sans">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-pacientes" class="divide-y divide-[#EDE7DC] font-sans">
+                            <tr>
+                                <td colspan="7" class="py-12 text-center text-[#7A7265] font-mono">
+                                    <i class="fa-solid fa-spinner fa-spin text-lg mb-2 text-[#1F5263]"></i>
+                                    <p>Consultando catálogo de pacientes en PostgreSQL...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 2: AGENDA DE CITAS                                                -->
+        <!-- ========================================================================= -->
+        <section id="view-citas" class="tab-view hidden flex flex-col gap-4">
+            <div class="clinic-card rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="relative flex-1 min-w-[300px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-[#A39989] text-xs"></i>
+                    <input type="text" id="search-cita" onkeyup="filterCitas()" placeholder="Filtrar por folio de orden (ORD-...), NSS o nombre..." class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg pl-9 pr-3 py-2 text-xs text-[#1F1C18] placeholder-[#A39989] focus:outline-none focus:border-[#1F5263] focus:bg-white font-mono transition">
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="filter-estatus-cita" onchange="filterCitas()" class="bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-xs font-medium text-[#423B31] focus:outline-none focus:border-[#1F5263]">
+                        <option value="todos">Todos los estados</option>
+                        <option value="PROGRAMADA">PROGRAMADA</option>
+                        <option value="CONFIRMADA">CONFIRMADA</option>
+                        <option value="ASISTIO">ASISTIÓ</option>
+                        <option value="NO_ASISTIO">NO ASISTIÓ</option>
+                        <option value="CANCELADA">CANCELADA</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="clinic-card rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="overflow-x-auto custom-scroll max-h-[640px]">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-semibold font-mono text-xs sticky top-0 z-10">
+                            <tr>
+                                <th class="py-3 px-4">Folio Orden</th>
+                                <th class="py-3 px-4 font-sans">Derechohabiente</th>
+                                <th class="py-3 px-4 font-sans">Toma en Laboratorio</th>
+                                <th class="py-3 px-4 font-sans">Cita Médico</th>
+                                <th class="py-3 px-4 text-center font-sans">Anticipación</th>
+                                <th class="py-3 px-4 font-sans">Estudio(s)</th>
+                                <th class="py-3 px-4 font-sans">Estatus</th>
+                                <th class="py-3 px-4 text-center font-sans">Gestión</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-citas" class="divide-y divide-[#EDE7DC] font-sans">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 3: CATÁLOGO DE ESTUDIOS (JERARQUÍA SUBTIPOS EER)                  -->
+        <!-- ========================================================================= -->
+        <section id="view-estudios" class="tab-view hidden flex flex-col gap-4">
+            <div class="clinic-card rounded-xl p-4 flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div>
+                    <h3 class="font-bold text-sm text-[#1F1C18]">
+                        Especialización de Estudios Clínicos (Estrategia A)
                     </h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="switchTable('paciente')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
-                            <i class="fa-solid fa-user-plus text-blue-400 mb-1 block text-base"></i>
-                            <span class="font-medium text-slate-200">Gestionar Pacientes</span>
+                    <p class="text-xs text-[#7A7265] mt-0.5">
+                        Supertipo general <span class="font-mono text-[#423B31]">estudio</span> con tres subtipos excluyentes y completos: sangre, orina y fecal.
+                    </p>
+                </div>
+                <span class="text-xs font-mono px-3 py-1 rounded-md bg-[#F4EFE6] text-[#423B31] border border-[#E5DFD3] font-semibold">
+                    15 pruebas activas
+                </span>
+            </div>
+
+            <div id="grid-estudios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Se puebla dinámicamente con JS -->
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 4: RESULTADOS CLÍNICOS                                            -->
+        <!-- ========================================================================= -->
+        <section id="view-resultados" class="tab-view hidden flex flex-col gap-4">
+            <div class="clinic-card rounded-xl p-4 flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div>
+                    <h3 class="font-bold text-sm text-[#1F1C18]">
+                        Bitácora de Resultados Clínicos Validados
+                    </h3>
+                    <p class="text-xs text-[#7A7265] mt-0.5">
+                        Valores vinculados con clave foránea a Cita y Estudio (Prácticas 3, 4 y 5).
+                    </p>
+                </div>
+                <button onclick="openModal('modal-resultado')" class="px-3.5 py-1.5 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>+ Emitir Resultado</span>
+                </button>
+            </div>
+
+            <div class="clinic-card rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="overflow-x-auto custom-scroll max-h-[640px]">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-semibold font-mono text-xs sticky top-0 z-10">
+                            <tr>
+                                <th class="py-3 px-4 text-right">ID</th>
+                                <th class="py-3 px-4 font-sans">Derechohabiente</th>
+                                <th class="py-3 px-4 font-sans">Prueba Analizada</th>
+                                <th class="py-3 px-4 font-sans">Valor Obtenido</th>
+                                <th class="py-3 px-4 font-sans">Rango Referencial</th>
+                                <th class="py-3 px-4 font-sans">Fecha Emisión</th>
+                                <th class="py-3 px-4 font-sans">Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-resultados" class="divide-y divide-[#EDE7DC] font-sans">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 5: CONSOLA SQL INTERACTIVA                                        -->
+        <!-- ========================================================================= -->
+        <section id="view-sql" class="tab-view hidden flex flex-col gap-4">
+            <div class="clinic-card rounded-xl p-4 flex flex-col gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <h3 class="font-bold text-sm text-[#1F1C18]">
+                            Consola Interactiva SQL (Solo Lectura)
+                        </h3>
+                        <p class="text-xs text-[#7A7265] mt-0.5">
+                            Ejecuta sentencias SELECT directas contra PostgreSQL en Docker para verificar integridad referencial y disparadores.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="setQueryPreset(1)" class="px-3 py-1 rounded bg-[#F4EFE6] hover:bg-[#EAE1D2] text-[#423B31] text-xs font-mono font-medium transition border border-[#E5DFD3]">
+                            1. Join Citas
                         </button>
-                        <button onclick="switchTable('orden_medica')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
-                            <i class="fa-solid fa-plus-square text-indigo-400 mb-1 block text-base"></i>
-                            <span class="font-medium text-slate-200">Crear Orden Médica</span>
+                        <button onclick="setQueryPreset(2)" class="px-3 py-1 rounded bg-[#F4EFE6] hover:bg-[#EAE1D2] text-[#423B31] text-xs font-mono font-medium transition border border-[#E5DFD3]">
+                            2. Anticipación
                         </button>
-                        <button onclick="switchTab('sql-console')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
-                            <i class="fa-solid fa-terminal text-emerald-400 mb-1 block text-base"></i>
-                            <span class="font-medium text-slate-200">Probar Consultas SQL</span>
-                        </button>
-                        <button onclick="switchTab('eer-diagram')" class="p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600/50 text-left transition text-sm">
-                            <i class="fa-solid fa-sitemap text-purple-400 mb-1 block text-base"></i>
-                            <span class="font-medium text-slate-200">Ver Estructura EER</span>
+                        <button onclick="setQueryPreset(3)" class="px-3 py-1 rounded bg-[#F4EFE6] hover:bg-[#EAE1D2] text-[#423B31] text-xs font-mono font-medium transition border border-[#E5DFD3]">
+                            3. Por Subtipo
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-5">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-info text-clinical-400"></i> Resumen de Entidades Principales
-                    </h3>
-                    <ul class="text-xs text-slate-300 space-y-2">
-                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
-                            <span class="text-slate-400">PACIENTE (Jerarquía Titular)</span>
-                            <span class="font-mono text-clinical-300">Relación 1:N (Depende De)</span>
+                <div class="relative">
+                    <textarea id="sql-input" rows="3" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg p-3 text-xs font-mono text-[#1F1C18] placeholder-[#A39989] focus:outline-none focus:border-[#1F5263] focus:bg-white resize-none" placeholder="Escribe tu consulta SELECT aquí...">SELECT p.nss, p.nombre, c.fecha_hora_laboratorio, o.fecha_cita_medico, (o.fecha_cita_medico - (c.fecha_hora_laboratorio AT TIME ZONE 'America/Mexico_City')::DATE) AS dias_anticipacion FROM cita c JOIN orden_medica o ON c.folio_orden = o.folio_orden JOIN paciente p ON o.nss_paciente = p.nss LIMIT 10;</textarea>
+                    <button onclick="executeSQL()" class="absolute right-3 bottom-3 px-3.5 py-1.5 rounded-md bg-[#1F5263] hover:bg-[#163E4B] text-white font-medium text-xs flex items-center gap-1.5 transition shadow-xs">
+                        <i class="fa-solid fa-play text-[10px]"></i>
+                        <span>Ejecutar</span>
+                    </button>
+                </div>
+
+                <div id="sql-result-container" class="mt-2 hidden">
+                    <div class="flex items-center justify-between text-xs font-mono text-[#7A7265] mb-1.5">
+                        <span id="sql-meta-rows">Filas devueltas: 0</span>
+                        <span id="sql-meta-time">Tiempo: 0 ms</span>
+                    </div>
+                    <div class="overflow-x-auto custom-scroll max-h-80 rounded-lg border border-[#E5DFD3] bg-white">
+                        <table id="sql-table" class="w-full text-left text-xs whitespace-nowrap font-mono">
+                            <!-- Inyectado dinámicamente -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECCIÓN 6: REGLAS, DOMINIOS Y TRIGGERS                                    -->
+        <!-- ========================================================================= -->
+        <section id="view-reglas" class="tab-view hidden flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <div class="clinic-card rounded-xl p-4 flex flex-col gap-2 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                    <div class="flex items-center gap-2 text-[#1F1C18] font-bold text-sm">
+                        <i class="fa-solid fa-code text-[#1F5263]"></i>
+                        <span>Dominios & Enum (Práctica 4)</span>
+                    </div>
+                    <ul class="text-xs space-y-2 text-[#423B31] font-mono mt-1">
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">dom_nss:</strong> <span class="text-[#7A7265]">^[0-9]{10,11}$</span>
                         </li>
-                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
-                            <span class="text-slate-400">ORDEN_MEDICA - ESTUDIO</span>
-                            <span class="font-mono text-clinical-300">Relación N:M (CONTIENE)</span>
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">dom_telefono:</strong> <span class="text-[#7A7265]">^[0-9]{8,15}$</span>
                         </li>
-                        <li class="flex justify-between border-b border-slate-700/60 pb-1.5">
-                            <span class="text-slate-400">ORDEN_MEDICA - CITA</span>
-                            <span class="font-mono text-clinical-300">Relación 1:1 (GENERA)</span>
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">dom_folio_orden:</strong> <span class="text-[#7A7265]">^ORD-[0-9]{4}-[0-9]{3,6}$</span>
                         </li>
-                        <li class="flex justify-between pb-1">
-                            <span class="text-slate-400">CITA - RESULTADO</span>
-                            <span class="font-mono text-clinical-300">Relación 1:1 / 1:N (ARROJA)</span>
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">enum_estatus_asistencia:</strong> 5 estados
                         </li>
                     </ul>
                 </div>
-            </div>
-        </section>
 
-        
-        <section id="view-table" class="hidden space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
-                <div>
-                    <h2 id="table-title" class="text-xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                        
-                    </h2>
-                    <p id="table-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="openModalAddRecord()" class="bg-clinical-600 hover:bg-clinical-700 text-white px-3.5 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-lg transition">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Nuevo Registro</span>
-                    </button>
-                </div>
-            </div>
-
-            
-            <div class="flex items-center gap-3">
-                <div class="relative flex-1">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="table-search-input" onkeyup="filterCurrentTable()" placeholder="Buscar en esta tabla..." class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-clinical-500">
-                </div>
-            </div>
-
-            
-            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900/80 text-xs uppercase font-semibold text-slate-400 border-b border-slate-700" id="table-head">
-                        
-                        </thead>
-                        <tbody id="table-body" class="divide-y divide-slate-700/60">
-                        
-                        </tbody>
-                    </table>
-                </div>
-                <div id="table-empty-msg" class="hidden p-8 text-center text-slate-500">
-                    <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
-                    <p class="text-sm">No hay registros almacenados en esta tabla.</p>
-                </div>
-            </div>
-        </section>
-
-        
-        <section id="view-eer-diagram" class="hidden space-y-6">
-            <div>
-                <h2 class="text-2xl font-bold text-white">Diagrama EER y Esquema Relacional</h2>
-                <p class="text-sm text-slate-400">Modelado conceptual Entidad-Relación Extendido y su correspondencia a Tablas</p>
-            </div>
-
-            
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
-                <h3 class="text-base font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-project-diagram text-clinical-400"></i> Diagrama de Estructura Entidad-Relación
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-blue-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>PACIENTE</span>
-                            <span class="text-[10px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded">Entidad</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑 <span class="text-amber-400 font-semibold">nss</span> (PK)</li>
-                            <li>🔹 nombre</li>
-                            <li>🔹 estatus/vigencia</li>
-                            <li>🔹 teléfono</li>
-                            <li>🔹 unidad médica adscripción</li>
-                            <li>🔗 <span class="text-cyan-400">nss_titular</span> (FK -> PACIENTE)</li>
-                        </ul>
+                <div class="clinic-card rounded-xl p-4 flex flex-col gap-2 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                    <div class="flex items-center gap-2 text-[#1F1C18] font-bold text-sm">
+                        <i class="fa-solid fa-bolt text-amber-700"></i>
+                        <span>Disparador de Anticipación</span>
                     </div>
-
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-indigo-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>ORDEN_MEDICA</span>
-                            <span class="text-[10px] bg-indigo-950 text-indigo-300 px-1.5 py-0.5 rounded">Entidad</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑 <span class="text-amber-400 font-semibold">folio_orden</span> (PK)</li>
-                            <li>🔹 cédula profesional</li>
-                            <li>🔹 fecha de cita con su médico</li>
-                            <li>🔗 <span class="text-cyan-400">nss_paciente</span> (FK -> PACIENTE)</li>
-                        </ul>
-                    </div>
-
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-cyan-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>ESTUDIO</span>
-                            <span class="text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded">Superclase</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑 <span class="text-amber-400 font-semibold">id_estudio</span> (PK)</li>
-                            <li>🔹 nombre de estudio</li>
-                            <li>🔹 indicaciones previas</li>
-                        </ul>
-                        <div class="mt-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
-                            ⚡ Subclases: Sangre, Orina, Fecal
+                    <div class="text-xs text-[#423B31] space-y-2 mt-1">
+                        <p class="leading-relaxed">
+                            <strong class="text-[#1F1C18] font-mono">fn_validar_anticipacion_cita()</strong> se ejecuta antes de insertar o modificar en <span class="font-mono text-[#1F1C18]">cita</span>.
+                        </p>
+                        <div class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3] font-mono text-[11px] text-emerald-800 leading-relaxed">
+                            v_dias := fecha_cita_medico - fecha_laboratorio;<br>
+                            IF v_dias &lt; 15 OR v_dias &gt; 30 THEN<br>
+                            &nbsp;&nbsp;RAISE EXCEPTION 'Anticipación fuera de rango';...
                         </div>
                     </div>
+                </div>
 
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-amber-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>CITA</span>
-                            <span class="text-[10px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded">Entidad</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑 <span class="text-amber-400 font-semibold">id_cita</span> (PK)</li>
-                            <li>🔹 fecha hora agendamiento</li>
-                            <li>🔹 fecha hora laboratorio</li>
-                            <li>🔹 estatus asistencia</li>
-                            <li>🔗 <span class="text-cyan-400">folio_orden</span> (FK -> ORDEN)</li>
-                        </ul>
+                <div class="clinic-card rounded-xl p-4 flex flex-col gap-2 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                    <div class="flex items-center gap-2 text-[#1F1C18] font-bold text-sm">
+                        <i class="fa-solid fa-user-lock text-[#1F5263]"></i>
+                        <span>Seguridad & Permisos (RBAC)</span>
                     </div>
-
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-emerald-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>RESULTADO</span>
-                            <span class="text-[10px] bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded">Entidad</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑 <span class="text-amber-400 font-semibold">id_resultado</span> (PK)</li>
-                            <li>🔹 valor obtenido</li>
-                            <li>🔹 observaciones</li>
-                            <li>🔹 unidad de medida</li>
-                            <li>🔹 fecha/hora de emisión</li>
-                            <li>🔹 tipo de prueba</li>
-                            <li>🔗 <span class="text-cyan-400">id_cita</span> (FK -> CITA)</li>
-                        </ul>
-                    </div>
-
-                    
-                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-3">
-                        <div class="font-bold text-teal-400 border-b border-slate-800 pb-1 mb-2 flex justify-between">
-                            <span>ORDEN_MEDICA_ESTUDIO</span>
-                            <span class="text-[10px] bg-teal-950 text-teal-300 px-1.5 py-0.5 rounded">Relación N:M</span>
-                        </div>
-                        <ul class="space-y-1 text-slate-300 font-mono">
-                            <li>🔑🔗 <span class="text-amber-400 font-semibold">folio_orden</span> (PK, FK)</li>
-                            <li>🔑🔗 <span class="text-amber-400 font-semibold">id_estudio</span> (PK, FK)</li>
-                        </ul>
-                    </div>
+                    <ul class="text-xs space-y-2 text-[#423B31] mt-1 font-mono">
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">rol_app:</strong> Lectura/Escritura sin DELETE ni DDL.
+                        </li>
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">rol_consulta:</strong> Exclusivamente SELECT de auditoría.
+                        </li>
+                        <li class="bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E5DFD3]">
+                            <strong class="text-[#1F1C18]">rol_admin_bd:</strong> Privilegios totales de administración.
+                        </li>
+                    </ul>
                 </div>
-            </div>
 
-            
-            <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-5 text-sm text-slate-300 space-y-3">
-                <h3 class="font-bold text-white text-base">Reglas del Modelo Clínico</h3>
-                <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
-                    <li><strong class="text-slate-200">Depende de (Recursiva 1:N):</strong> Un paciente puede ser titular de otros pacientes beneficiarios (`nss_titular`).</li>
-                    <li><strong class="text-slate-200">Presenta (1:N):</strong> Un Paciente presenta una o más Órdenes Médicas.</li>
-                    <li><strong class="text-slate-200">Contiene (N:M):</strong> Una Orden Médica puede incluir múltiples Estudios y un Estudio estar en múltiples órdenes.</li>
-                    <li><strong class="text-slate-200">Especialización de ESTUDIO:</strong> La entidad `ESTUDIO` se especializa según el tipo de muestra: `PRUEBA_SANGRE` (tubo, aditivo, ayuno), `PRUEBA_ORINA` (frasco, vol) y `PRUEBA_FECAL` (frasco, medio).</li>
-                    <li><strong class="text-slate-200">Genera (1:1):</strong> Una Orden Médica genera una Cita de Laboratorio.</li>
-                    <li><strong class="text-slate-200">Arroja (1:N):</strong> Una Cita genera uno o varios Resultados de laboratorio.</li>
-                </ul>
-            </div>
-        </section>
-
-        
-        <section id="view-sql-console" class="hidden space-y-4">
-            <div>
-                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-terminal text-emerald-400"></i> Consola SQL PostgreSQL
-                    <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">Motor: PostgreSQL 15</span>
-                </h2>
-                <p class="text-sm text-slate-400">Ejecuta consultas SQL interactivas en vivo contra el contenedor Docker de PostgreSQL</p>
-            </div>
-
-            
-            <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 space-y-2">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultas Frecuentes / Demostración en Vivo</p>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="runPredefinedQuery('demo_completa')" class="bg-indigo-600 hover:bg-indigo-500 text-xs text-white px-3 py-1.5 rounded-lg border border-indigo-400 font-semibold transition shadow">
-                        <i class="fa-solid fa-star text-amber-300 mr-1"></i> Demo Práctica 2 (JOINs + Fechas)
-                    </button>
-                    <button onclick="runPredefinedQuery('pacientes_ordenes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Pacientes con Órdenes
-                    </button>
-                    <button onclick="runPredefinedQuery('citas_pendientes')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Citas y Estatus
-                    </button>
-                    <button onclick="runPredefinedQuery('resultados_completos')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Resultados Obtenidos
-                    </button>
-                    <button onclick="runPredefinedQuery('estudios_sangre')" class="bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
-                        <i class="fa-solid fa-play text-emerald-400 mr-1"></i> Estudios Registrados
-                    </button>
-                </div>
-            </div>
-
-            
-            <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-                <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
-                    <span class="text-xs font-mono text-slate-400"><i class="fa-solid fa-code text-clinical-400 mr-1"></i> Editor SQL</span>
-                    <button onclick="executeCustomSql()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1 rounded font-medium transition flex items-center gap-1">
-                        <i class="fa-solid fa-bolt"></i> Ejecutar SQL
-                    </button>
-                </div>
-                <textarea id="sql-input" rows="4" class="w-full bg-slate-950 text-emerald-400 font-mono text-xs p-4 focus:outline-none resize-y" placeholder="Escribe una consulta, ejemplo: SELECT * FROM PACIENTE"></textarea>
-            </div>
-
-            
-            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg">
-                <div class="bg-slate-900/60 px-4 py-2.5 border-b border-slate-700 flex justify-between items-center">
-                    <span class="text-xs font-semibold text-slate-300">Resultado de la Consulta</span>
-                    <span id="sql-result-count" class="text-xs font-mono text-slate-400">0 filas devueltas</span>
-                </div>
-                <div class="overflow-x-auto custom-scrollbar max-h-96">
-                    <table class="w-full text-left text-xs text-slate-300 font-mono">
-                        <thead class="bg-slate-900 text-slate-400 uppercase border-b border-slate-700" id="sql-result-head">
-                        <tr><th class="p-3">Info</th></tr>
-                        </thead>
-                        <tbody id="sql-result-body" class="divide-y divide-slate-700/60">
-                        <tr><td class="p-4 text-slate-500 italic">Ejecuta una consulta SQL para visualizar los registros aquí.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </section>
 
     </main>
-</div>
 
+    <!-- ========================================================================= -->
+    <!-- MODAL 1: NUEVO PACIENTE                                                   -->
+    <!-- ========================================================================= -->
+    <div id="modal-paciente" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 border border-[#E5DFD3] shadow-2xl relative text-[#423B31]">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E5DFD3]">
+                <h3 class="font-bold text-[#1F1C18] text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-[#1F5263]"></i>
+                    <span>Registrar Nuevo Derechohabiente</span>
+                </h3>
+                <button onclick="closeModal('modal-paciente')" class="text-[#A39989] hover:text-[#1F1C18] transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
 
-<div id="modal-record" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden">
-        <div class="bg-slate-900 px-5 py-4 border-b border-slate-700 flex justify-between items-center">
-            <h3 id="modal-title" class="font-bold text-white text-base">Nuevo Registro</h3>
-            <button onclick="closeRecordModal()" class="text-slate-400 hover:text-white transition">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+            <form onsubmit="handleCreatePaciente(event)" class="mt-4 space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Número de Seguridad Social (NSS) *</label>
+                    <input type="text" id="form-p-nss" required pattern="[0-9]{10,11}" maxlength="11" placeholder="Ej. 11000000221 (10 u 11 dígitos)" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Nombre Completo *</label>
+                    <input type="text" id="form-p-nombre" required minlength="3" placeholder="Nombre y Apellidos" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Unidad Médica *</label>
+                        <select id="form-p-unidad" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-2.5 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                            <option value="HGZ No. 24 Insurgentes">HGZ No. 24 Insurgentes</option>
+                            <option value="UMF No. 10 Chuviscar">UMF No. 10 Chuviscar</option>
+                            <option value="UMF No. 20 Vallejo">UMF No. 20 Vallejo</option>
+                            <option value="HGZ No. 1 Gabriel Mancera">HGZ No. 1 Gabriel Mancera</option>
+                            <option value="UMF No. 41 Magdalena">UMF No. 41 Magdalena</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Teléfono Móvil</label>
+                        <input type="text" id="form-p-telefono" pattern="[0-9]{8,15}" placeholder="Ej. 5512345678" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">NSS del Titular (Opcional si es beneficiario)</label>
+                    <input type="text" id="form-p-titular" pattern="[0-9]{10,11}" placeholder="Dejar vacío si es titular propio" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="form-p-vigente" checked class="rounded border-[#D5CBB9] text-[#1F5263] focus:ring-0">
+                    <label for="form-p-vigente" class="text-[#423B31] font-medium">Paciente con vigencia de derechos activa</label>
+                </div>
+
+                <div class="flex justify-end gap-2.5 pt-4 border-t border-[#E5DFD3]">
+                    <button type="button" onclick="closeModal('modal-paciente')" class="px-3.5 py-2 rounded-lg bg-[#FAF8F5] hover:bg-[#F4EFE6] text-[#423B31] font-medium transition border border-[#D5CBB9]">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Guardar en PostgreSQL</button>
+                </div>
+            </form>
         </div>
-
-        <form id="record-form" onsubmit="saveRecord(event)" class="p-5 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
-            <div id="modal-form-fields" class="space-y-3">
-                
-            </div>
-
-            <div class="pt-3 border-t border-slate-700 flex justify-end gap-2">
-                <button type="button" onclick="closeRecordModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition">Cancelar</button>
-                <button type="submit" class="px-4 py-2 bg-clinical-600 hover:bg-clinical-700 text-white rounded-lg text-xs font-medium transition shadow-md">Guardar Registro</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<script>
+    <!-- ========================================================================= -->
+    <!-- MODAL 2: AGENDAR CITA                                                     -->
+    <!-- ========================================================================= -->
+    <div id="modal-cita" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 border border-[#E5DFD3] shadow-2xl relative text-[#423B31]">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E5DFD3]">
+                <h3 class="font-bold text-[#1F1C18] text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-[#1F5263]"></i>
+                    <span>Agendar Cita en Laboratorio Clínico</span>
+                </h3>
+                <button onclick="closeModal('modal-cita')" class="text-[#A39989] hover:text-[#1F1C18] transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
 
+            <form onsubmit="handleCreateCita(event)" class="mt-4 space-y-3.5 text-xs">
+                <div class="grid grid-cols-2 gap-3 font-mono">
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold font-sans">Folio de Orden *</label>
+                        <input type="text" id="form-c-folio" required placeholder="ORD-2026-0301" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold font-sans">NSS Paciente *</label>
+                        <input type="text" id="form-c-nss" required placeholder="11000000001" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                </div>
 
-    const DEFAULT_DATABASE = {
-        paciente: [
-            { nss: "1122334455", nombre: "Carlos Mendoza Silva", estatus_vigencia: "VIGENTE", telefono: "5551234567", unidad_medica_adscripcion: "UMF 10", nss_titular: null },
-            { nss: "1122334456", nombre: "María Mendoza López", estatus_vigencia: "VIGENTE", telefono: "5551234567", unidad_medica_adscripcion: "UMF 10", nss_titular: "1122334455" },
-            { nss: "9988776655", nombre: "Ana Gómez Morales", estatus_vigencia: "VIGENTE", telefono: "5559876543", unidad_medica_adscripcion: "HGZ 32", nss_titular: null }
-        ],
-        orden_medica: [
-            { folio_orden: "ORD-2026-001", cedula_profesional: "CED-884920", fecha_de_cita_con_su_medico: "2026-10-10", nss_paciente: "1122334455" },
-            { folio_orden: "ORD-2026-002", cedula_profesional: "CED-993012", fecha_de_cita_con_su_medico: "2026-10-11", nss_paciente: "9988776655" }
-        ],
-        estudio: [
-            { id_estudio: "EST-01", nombre_de_estudio: "Biometría Hemática Completa", indicaciones_previas: "8 horas de ayuno" },
-            { id_estudio: "EST-02", nombre_de_estudio: "Examen General de Orina", indicaciones_previas: "Primera orina de la mañana" },
-            { id_estudio: "EST-03", nombre_de_estudio: "Coproparasitoscópico", indicaciones_previas: "Muestra fresca en frasco estéril" }
-        ],
-        prueba_sangre: [
-            { id_estudio: "EST-01", tipo_de_tubo: "Tubo Tapón Morado (EDTA)", aditivo: "Anticoagulante EDTA K2", ayuno_horas: 8 }
-        ],
-        prueba_orina: [
-            { id_estudio: "EST-02", tipo_de_frasco: "Frasco Estéril 100ml", volumen_min: "20 ml" }
-        ],
-        prueba_fecal: [
-            { id_estudio: "EST-03", tipo_de_frasco: "Frasco Recolector con Espátula", requiere_medio_transporte: "No" }
-        ],
-        orden_medica_estudio: [
-            { folio_orden: "ORD-2026-001", id_estudio: "EST-01" },
-            { folio_orden: "ORD-2026-001", id_estudio: "EST-02" },
-            { folio_orden: "ORD-2026-002", id_estudio: "EST-03" }
-        ],
-        cita: [
-            { id_cita: "CIT-101", fecha_hora_agendamiento: "2026-10-10 14:00", fecha_hora_laboratorio: "2026-10-12 07:30", estatus_asistencia: "ASISTIÓ", folio_orden: "ORD-2026-001" },
-            { id_cita: "CIT-102", fecha_hora_agendamiento: "2026-10-11 11:15", fecha_hora_laboratorio: "2026-10-13 08:00", estatus_asistencia: "PENDIENTE", folio_orden: "ORD-2026-002" }
-        ],
-        resultado: [
-            { id_resultado: "RES-501", valor_obtenido: "14.5", observaciones: "Niveles de hemoglobina dentro del rango normal.", unidad_de_medida: "g/dL", fecha_hora_de_emision: "2026-10-12 12:00", tipo_de_prueba: "Cuantitativa", id_cita: "CIT-101" },
-            { id_resultado: "RES-502", valor_obtenido: "7,200", observaciones: "Leucocitos sin alteraciones.", unidad_de_medida: "/mm3", fecha_hora_de_emision: "2026-10-12 12:05", tipo_de_prueba: "Cuantitativa", id_cita: "CIT-101" }
-        ]
-    };
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Médico Emisor</label>
+                    <input type="text" id="form-c-medico" placeholder="Dr. Roberto Gómez (Céd. 12345678)" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                </div>
 
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Cita con Médico Tratante *</label>
+                        <input type="date" id="form-c-fmedico" onchange="checkAnticipacionPreview()" required class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Toma de Muestra (Laboratorio) *</label>
+                        <input type="datetime-local" id="form-c-flab" onchange="checkAnticipacionPreview()" required class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                </div>
 
-    const TABLE_SCHEMAS = {
-        paciente: {
-            title: "Pacientes",
-            pk: "nss",
-            fields: [
-                { name: "nss", label: "NSS (PK)", type: "text", required: true, isPk: true },
-                { name: "nombre", label: "Nombre Completo", type: "text", required: true },
-                { name: "estatus_vigencia", label: "Estatus / Vigencia", type: "select", options: ["VIGENTE", "NO VIGENTE", "PENDIENTE"] },
-                { name: "telefono", label: "Teléfono", type: "text" },
-                { name: "unidad_medica_adscripcion", label: "Unidad Médica Adscripción", type: "text" },
-                { name: "nss_titular", label: "NSS Titular (FK)", type: "fk", fkTable: "paciente", fkKey: "nss" }
-            ]
-        },
-        orden_medica: {
-            title: "Órdenes Médicas",
-            pk: "folio_orden",
-            fields: [
-                { name: "folio_orden", label: "Folio Orden (PK)", type: "text", required: true, isPk: true },
-                { name: "cedula_profesional", label: "Cédula Profesional", type: "text", required: true },
-                { name: "fecha_de_cita_con_su_medico", label: "Fecha Cita Médico", type: "date" },
-                { name: "nss_paciente", label: "Paciente NSS (FK)", type: "fk", fkTable: "paciente", fkKey: "nss", required: true }
-            ]
-        },
-        estudio: {
-            title: "Estudios Generales",
-            pk: "id_estudio",
-            fields: [
-                { name: "id_estudio", label: "ID Estudio (PK)", type: "text", required: true, isPk: true },
-                { name: "nombre_de_estudio", label: "Nombre del Estudio", type: "text", required: true },
-                { name: "indicaciones_previas", label: "Indicaciones Previas", type: "textarea" }
-            ]
-        },
-        prueba_sangre: {
-            title: "Prueba de Sangre (Especialización)",
-            pk: "id_estudio",
-            fields: [
-                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
-                { name: "tipo_de_tubo", label: "Tipo de Tubo", type: "text" },
-                { name: "aditivo", label: "Aditivo", type: "text" },
-                { name: "ayuno_horas", label: "Horas de Ayuno", type: "number" }
-            ]
-        },
-        prueba_orina: {
-            title: "Prueba de Orina (Especialización)",
-            pk: "id_estudio",
-            fields: [
-                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
-                { name: "tipo_de_frasco", label: "Tipo de Frasco", type: "text" },
-                { name: "volumen_min", label: "Volumen Mínimo", type: "text" }
-            ]
-        },
-        prueba_fecal: {
-            title: "Prueba Fecal (Especialización)",
-            pk: "id_estudio",
-            fields: [
-                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true },
-                { name: "tipo_de_frasco", label: "Tipo de Frasco", type: "text" },
-                { name: "requiere_medio_transporte", label: "Requiere Medio Transporte", type: "select", options: ["Sí", "No"] }
-            ]
-        },
-        orden_medica_estudio: {
-            title: "Orden - Estudio (Relación N:M)",
-            pk: ["folio_orden", "id_estudio"],
-            fields: [
-                { name: "folio_orden", label: "Folio Orden (PK/FK)", type: "fk", fkTable: "orden_medica", fkKey: "folio_orden", required: true, isPk: true },
-                { name: "id_estudio", label: "ID Estudio (PK/FK)", type: "fk", fkTable: "estudio", fkKey: "id_estudio", required: true, isPk: true }
-            ]
-        },
-        cita: {
-            title: "Citas de Laboratorio",
-            pk: "id_cita",
-            fields: [
-                { name: "id_cita", label: "ID Cita (PK)", type: "text", required: true, isPk: true },
-                { name: "fecha_hora_agendamiento", label: "Agendamiento", type: "text" },
-                { name: "fecha_hora_laboratorio", label: "Fecha/Hora Cita Lab", type: "text" },
-                { name: "estatus_asistencia", label: "Estatus Asistencia", type: "select", options: ["PENDIENTE", "ASISTIÓ", "CANCELADA", "REPROGRAMADA"] },
-                { name: "folio_orden", label: "Folio Orden (FK/1:1)", type: "fk", fkTable: "orden_medica", fkKey: "folio_orden", required: true }
-            ]
-        },
-        resultado: {
-            title: "Resultados de Laboratorio",
-            pk: "id_resultado",
-            fields: [
-                { name: "id_resultado", label: "ID Resultado (PK)", type: "text", required: true, isPk: true },
-                { name: "valor_obtenido", label: "Valor Obtenido", type: "text", required: true },
-                { name: "observaciones", label: "Observaciones", type: "textarea" },
-                { name: "unidad_de_medida", label: "Unidad de Medida", type: "text" },
-                { name: "fecha_hora_de_emision", label: "Fecha/Hora Emisión", type: "text" },
-                { name: "tipo_de_prueba", label: "Tipo de Prueba", type: "text" },
-                { name: "id_cita", label: "ID Cita (FK)", type: "fk", fkTable: "cita", fkKey: "id_cita", required: true }
-            ]
-        }
-    };
+                <!-- Preview de anticipación en tiempo real -->
+                <div id="preview-anticipacion" class="p-3 rounded-lg bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] flex items-center justify-between text-xs">
+                    <span class="font-medium">Ventana de Anticipación:</span>
+                    <span id="preview-dias-val" class="font-semibold text-[#7A7265] font-mono">Selecciona fechas (15–30 días)</span>
+                </div>
 
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Estudio Prescrito *</label>
+                    <select id="form-c-estudio" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                        <!-- Inyectado dinámicamente -->
+                    </select>
+                </div>
 
-    let dbState = {};
-    let currentActiveTable = 'paciente';
-    let editingIndex = null;
-    let isConnectedToPostgres = false;
+                <div class="flex justify-end gap-2.5 pt-4 border-t border-[#E5DFD3]">
+                    <button type="button" onclick="closeModal('modal-cita')" class="px-3.5 py-2 rounded-lg bg-[#FAF8F5] hover:bg-[#F4EFE6] text-[#423B31] font-medium transition border border-[#D5CBB9]">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Agendar en PostgreSQL</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    async function initDatabase() {
-        const savedState = sessionStorage.getItem("CLINICAL_DB_RAM");
-        if (savedState) {
-            try {
-                dbState = JSON.parse(savedState);
-            } catch(e) {
-                dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
-            }
-        } else {
-            dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
-        }
-        updateAllBadges();
-        updateDashboardStats();
+    <!-- ========================================================================= -->
+    <!-- MODAL 3: REGISTRAR RESULTADO                                              -->
+    <!-- ========================================================================= -->
+    <div id="modal-resultado" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 border border-[#E5DFD3] shadow-2xl relative text-[#423B31]">
+            <div class="flex items-center justify-between pb-3 border-b border-[#E5DFD3]">
+                <h3 class="font-bold text-[#1F1C18] text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-microscope text-[#1F5263]"></i>
+                    <span>Emitir Resultado de Laboratorio</span>
+                </h3>
+                <button onclick="closeModal('modal-resultado')" class="text-[#A39989] hover:text-[#1F1C18] transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
 
-        await syncDatabaseWithBackend();
-    }
+            <form onsubmit="handleCreateResultado(event)" class="mt-4 space-y-3.5 text-xs">
+                <div class="grid grid-cols-2 gap-3 font-mono">
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold font-sans">ID Cita *</label>
+                        <input type="number" id="form-r-cita" required placeholder="Ej. 1" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold font-sans">Prueba Realizada *</label>
+                        <select id="form-r-estudio" required class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-2.5 py-2 text-[#1F1C18] font-sans focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                            <!-- Inyectado dinámicamente -->
+                        </select>
+                    </div>
+                </div>
 
-    async function syncDatabaseWithBackend() {
-        try {
-            const statusRes = await fetch('/api/status');
-            if (statusRes.ok) {
-                const statusData = await statusRes.json();
-                isConnectedToPostgres = statusData.db_connected;
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Valor Clínico Obtenido *</label>
+                    <input type="text" id="form-r-valor" required placeholder="Ej. 95.4 ó Negativo" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                </div>
 
-                const banner = document.getElementById('db-status-banner');
-                const title = document.getElementById('db-status-title');
-                const desc = document.getElementById('db-status-desc');
-                const icon = document.getElementById('db-status-icon');
-                const badge = document.getElementById('system-version-badge');
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Unidad de Medida</label>
+                        <input type="text" id="form-r-unidad" placeholder="mg/dL, g/dL, %" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[#423B31] mb-1 font-semibold">Rango de Referencia</label>
+                        <input type="text" id="form-r-rango" placeholder="70.0 - 100.0" class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg px-3 py-2 text-[#1F1C18] font-mono focus:outline-none focus:border-[#1F5263] focus:bg-white">
+                    </div>
+                </div>
 
-                if (isConnectedToPostgres) {
-                    banner.className = "flex-1 max-w-2xl bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-emerald-300";
-                    icon.className = "fa-solid fa-server text-emerald-400 text-base shrink-0";
-                    title.textContent = "PostgreSQL (Docker) Conectado:";
-                    desc.textContent = `Base: ${statusData.database} en puerto 5433 | Sincronizado en vivo.`;
-                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Docker BD Activa`;
-                }
+                <div>
+                    <label class="block text-[#423B31] mb-1 font-semibold">Observaciones Clínicas</label>
+                    <textarea id="form-r-obs" rows="2" placeholder="Notas de validación..." class="w-full bg-[#FAF8F5] border border-[#E5DFD3] rounded-lg p-2.5 text-[#1F1C18] focus:outline-none focus:border-[#1F5263] focus:bg-white resize-none"></textarea>
+                </div>
 
-                const dumpRes = await fetch('/api/db-dump');
-                if (dumpRes.ok) {
-                    const dumpData = await dumpRes.json();
-                    if (dumpData.paciente && dumpData.paciente.length > 0) dbState.paciente = dumpData.paciente;
-                    if (dumpData.orden_medica && dumpData.orden_medica.length > 0) dbState.orden_medica = dumpData.orden_medica;
-                    if (dumpData.estudio && dumpData.estudio.length > 0) dbState.estudio = dumpData.estudio;
-                    if (dumpData.cita && dumpData.cita.length > 0) dbState.cita = dumpData.cita;
-                    if (dumpData.resultado && dumpData.resultado.length > 0) dbState.resultado = dumpData.resultado;
+                <div class="flex justify-end gap-2.5 pt-4 border-t border-[#E5DFD3]">
+                    <button type="button" onclick="closeModal('modal-resultado')" class="px-3.5 py-2 rounded-lg bg-[#FAF8F5] hover:bg-[#F4EFE6] text-[#423B31] font-medium transition border border-[#D5CBB9]">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Emitir Resultado</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                    saveStateToSession();
-                    updateAllBadges();
-                    updateDashboardStats();
-                    if (!document.getElementById('view-table').classList.contains('hidden')) {
-                        renderTable(currentActiveTable);
-                    }
-                }
-            }
-        } catch (err) {
-            console.warn("Backend no disponible en este momento. Operando en modo local.", err);
-            const banner = document.getElementById('db-status-banner');
-            const title = document.getElementById('db-status-title');
-            const desc = document.getElementById('db-status-desc');
-            const icon = document.getElementById('db-status-icon');
-            if (banner) {
-                banner.className = "flex-1 max-w-2xl bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 flex items-center gap-3 text-xs text-amber-300";
-                icon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0";
-                title.textContent = "Modo Local Temporal:";
-                desc.textContent = "Sin conexión al backend Express. Cambios retenidos en memoria de sesión.";
-            }
-        }
-    }
+    <!-- TOAST DE NOTIFICACIONES -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    function saveStateToSession() {
-        sessionStorage.setItem("CLINICAL_DB_RAM", JSON.stringify(dbState));
-    }
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="border-t border-[#E5DFD3] bg-white py-4 px-6 lg:px-10 text-center text-xs text-[#7A7265] font-medium">
+        Escuela Superior de Cómputo (ESCOM IPN) • Laboratorio de Bases de Datos • Equipo: Ian Aguilar, Kevin Vega, Alondra Quintanar, Joel Palma.
+    </footer>
 
-    async function resetDatabaseConfirm() {
-        if (confirm("¿Estás seguro de restablecer los datos? Se sincronizarán nuevamente desde la base de datos PostgreSQL.")) {
-            sessionStorage.removeItem("CLINICAL_DB_RAM");
-            dbState = JSON.parse(JSON.stringify(DEFAULT_DATABASE));
-            await syncDatabaseWithBackend();
-            updateAllBadges();
-            updateDashboardStats();
-            if (document.getElementById('view-table').classList.contains('hidden') === false) {
-                renderTable(currentActiveTable);
-            }
-            alert("Base de datos sincronizada con PostgreSQL correctamente.");
-        }
-    }
+    <!-- CLIENT SCRIPT -->
+    <script>
+        let state = {
+            pacientes: [],
+            citas: [],
+            estudios: [],
+            resultados: []
+        };
 
-    function switchTab(tabId) {
-        document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-700', 'text-white'));
-
-        const activeView = document.getElementById(`view-${tabId}`);
-        if (activeView) activeView.classList.remove('hidden');
-
-        const activeNav = document.getElementById(`nav-${tabId}`);
-        if (activeNav) activeNav.classList.add('bg-slate-700', 'text-white');
-    }
-
-    function switchTable(tableName) {
-        currentActiveTable = tableName;
-        switchTab('table');
-
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-700', 'text-white'));
-        const activeNav = document.getElementById(`nav-table-${tableName}`);
-        if (activeNav) activeNav.classList.add('bg-slate-700', 'text-white');
-
-        renderTable(tableName);
-    }
-
-    function updateAllBadges() {
-        Object.keys(dbState).forEach(tableKey => {
-            const badge = document.getElementById(`badge-count-${tableKey}`);
-            if (badge) {
-                badge.textContent = dbState[tableKey].length;
-            }
-        });
-    }
-
-    function updateDashboardStats() {
-        document.getElementById('dash-stat-pacientes').textContent = dbState.paciente.length;
-        document.getElementById('dash-stat-ordenes').textContent = dbState.orden_medica.length;
-        document.getElementById('dash-stat-citas').textContent = dbState.cita.length;
-        document.getElementById('dash-stat-resultados').textContent = dbState.resultado.length;
-    }
-
-    function renderTable(tableName) {
-        const schema = TABLE_SCHEMAS[tableName];
-        if (!schema) return;
-
-        document.getElementById('table-title').innerHTML = `
-                <i class="fa-solid fa-database text-clinical-400"></i> ${schema.title}
-            `;
-        document.getElementById('table-subtitle').textContent = `Tabla: ${tableName.toUpperCase()} | Clave Primaria: ${Array.isArray(schema.pk) ? schema.pk.join(' + ') : schema.pk}`;
-
-        const thead = document.getElementById('table-head');
-        const tbody = document.getElementById('table-body');
-        const emptyMsg = document.getElementById('table-empty-msg');
-
-        let headHTML = '<tr>';
-        schema.fields.forEach(f => {
-            const badge = f.isPk ? '<span class="ml-1 text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded border border-amber-500/30">PK</span>' :
-                (f.type === 'fk' ? '<span class="ml-1 text-[10px] bg-cyan-500/20 text-cyan-300 px-1 py-0.5 rounded border border-cyan-500/30">FK</span>' : '');
-            headHTML += `<th class="p-3">${f.label} ${badge}</th>`;
-        });
-        headHTML += '<th class="p-3 text-right">Acciones</th></tr>';
-        thead.innerHTML = headHTML;
-
-        const rows = dbState[tableName] || [];
-        if (rows.length === 0) {
-            tbody.innerHTML = '';
-            emptyMsg.classList.remove('hidden');
-            return;
-        }
-        emptyMsg.classList.add('hidden');
-
-        let bodyHTML = '';
-        rows.forEach((row, index) => {
-            bodyHTML += `<tr class="hover:bg-slate-700/40 transition">`;
-            schema.fields.forEach(f => {
-                const val = row[f.name] !== null && row[f.name] !== undefined ? row[f.name] : '<span class="text-slate-600 italic">NULL</span>';
-                const isPkCol = f.isPk ? 'font-mono font-semibold text-amber-300' : (f.type === 'fk' ? 'font-mono text-cyan-300' : '');
-                bodyHTML += `<td class="p-3 ${isPkCol}">${val}</td>`;
+        // Cambiar pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = 'tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 text-[#7A7265] hover:text-[#1F1C18] hover:bg-[#F4EFE6] font-medium';
             });
-            bodyHTML += `
-                    <td class="p-3 text-right space-x-1">
-                        <button onclick="editRecord(${index})" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 p-1.5 rounded border border-slate-600 transition" title="Editar">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button onclick="deleteRecord(${index})" class="text-xs bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 p-1.5 rounded border border-rose-500/30 transition" title="Eliminar">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>`;
-        });
-        tbody.innerHTML = bodyHTML;
-    }
 
-    function filterCurrentTable() {
-        const query = document.getElementById('table-search-input').value.toLowerCase();
-        const rows = document.querySelectorAll('#table-body tr');
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(query) ? '' : 'none';
-        });
-    }
-
-    function openModalAddRecord() {
-        editingIndex = null;
-        document.getElementById('modal-title').textContent = `Nuevo Registro en ${TABLE_SCHEMAS[currentActiveTable].title}`;
-        buildModalFields({});
-        document.getElementById('modal-record').classList.remove('hidden');
-    }
-
-    function editRecord(index) {
-        editingIndex = index;
-        const record = dbState[currentActiveTable][index];
-        document.getElementById('modal-title').textContent = `Editar Registro en ${TABLE_SCHEMAS[currentActiveTable].title}`;
-        buildModalFields(record);
-        document.getElementById('modal-record').classList.remove('hidden');
-    }
-
-    function closeRecordModal() {
-        document.getElementById('modal-record').classList.add('hidden');
-    }
-
-    function buildModalFields(currentValues) {
-        const schema = TABLE_SCHEMAS[currentActiveTable];
-        const container = document.getElementById('modal-form-fields');
-        let html = '';
-
-        schema.fields.forEach(field => {
-            const val = currentValues[field.name] !== undefined ? currentValues[field.name] : '';
-            const isPkLocked = (editingIndex !== null && field.isPk);
-            const inputClass = isPkLocked 
-                ? 'readonly class="w-full bg-slate-900/60 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-400 cursor-not-allowed"' 
-                : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-clinical-500"';
-
-            html += `<div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">
-                        ${field.label} ${field.required ? '<span class="text-rose-400">*</span>' : ''}
-                    </label>`;
-
-            if (field.type === 'select') {
-                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${inputClass}>
-                        <option value="">-- Seleccionar --</option>
-                        ${field.options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                    </select>`;
-            } else if (field.type === 'fk') {
-                const fkOptions = dbState[field.fkTable] || [];
-                html += `<select name="${field.name}" ${field.required ? 'required' : ''} ${inputClass}>
-                        <option value="">-- Seleccionar de ${field.fkTable.toUpperCase()} --</option>
-                        ${fkOptions.map(item => {
-                    const optVal = item[field.fkKey];
-                    return `<option value="${optVal}" ${val === optVal ? 'selected' : ''}>${optVal}</option>`;
-                }).join('')}
-                    </select>`;
-            } else if (field.type === 'textarea') {
-                html += `<textarea name="${field.name}" rows="2" ${field.required ? 'required' : ''} ${inputClass}>${val}</textarea>`;
-            } else {
-                html += `<input type="${field.type || 'text'}" name="${field.name}" value="${val}" ${field.required ? 'required' : ''} ${inputClass}>`;
+            const activeView = document.getElementById(`view-${tabId}`);
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.className = 'tab-btn px-4 py-2 rounded-lg transition flex items-center gap-2 bg-[#1F5263] text-white shadow-xs font-semibold';
             }
+        }
 
-            html += `</div>`;
-        });
+        // Modales
+        function openModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.classList.remove('hidden');
+        }
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.classList.add('hidden');
+        }
 
-        container.innerHTML = html;
-    }
+        // Toasts clínicos descansados
+        function showToast(title, msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const border = type === 'success' ? 'border-[#C2E4CB] bg-[#EAF5EC] text-[#1E5D36]' : 'border-[#F7CBC6] bg-[#FDF0EE] text-[#A63A2B]';
+            const icon = type === 'success' ? 'fa-circle-check text-emerald-700' : 'fa-circle-exclamation text-rose-700';
+            
+            toast.className = `clinic-card ${border} p-3.5 rounded-xl border shadow-lg flex items-start gap-2.5 max-w-sm pointer-events-auto transition duration-200`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-sm mt-0.5"></i>
+                <div class="text-xs">
+                    <strong class="block font-bold text-[#1F1C18]">${title}</strong>
+                    <span class="opacity-90 font-mono text-[11px]">${msg}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 250);
+            }, 4000);
+        }
 
-    async function saveRecord(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const newRecord = {};
+        // Cargar todo
+        async function loadAllData() {
+            const spin = document.getElementById('refresh-icon');
+            if (spin) spin.classList.add('fa-spin');
+            
+            await Promise.all([
+                fetchStatus(),
+                fetchStats(),
+                fetchPacientes(),
+                fetchCitas(),
+                fetchEstudios(),
+                fetchResultados()
+            ]);
 
-        TABLE_SCHEMAS[currentActiveTable].fields.forEach(field => {
-            let val = formData.get(field.name);
-            if ((val === null || val === undefined || val === "") && editingIndex !== null) {
-                const existingVal = dbState[currentActiveTable][editingIndex]?.[field.name];
-                if (existingVal !== undefined) val = existingVal;
+            if (spin) setTimeout(() => spin.classList.remove('fa-spin'), 400);
+        }
+
+        // 1. Estado y telemetría
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                if (data.db_connected) {
+                    document.getElementById('telemetry-db').textContent = data.database;
+                    document.getElementById('telemetry-ping').textContent = `${data.latency_ms} ms`;
+                    document.getElementById('telemetry-badge').className = "hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] text-xs font-mono";
+                }
+            } catch (err) {
+                document.getElementById('telemetry-ping').textContent = 'Desconectado';
+                document.getElementById('telemetry-badge').className = "hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FDF0EE] border border-[#F7CBC6] text-[#A63A2B] text-xs font-mono";
             }
-            if (val === "" && !field.required) val = null;
-            newRecord[field.name] = val;
-        });
+        }
 
-        if (currentActiveTable === 'paciente') {
-            if (!newRecord.nss && editingIndex !== null) {
-                newRecord.nss = dbState.paciente[editingIndex]?.nss;
+        // 2. Stats
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                document.getElementById('kpi-pacientes').textContent = data.total_pacientes || 220;
+                document.getElementById('kpi-vigentes').textContent = data.pacientes_vigentes || 205;
+                document.getElementById('kpi-citas').textContent = data.total_citas || 220;
+                document.getElementById('kpi-estudios').textContent = data.total_estudios || 15;
+                document.getElementById('kpi-resultados').textContent = data.total_resultados || 220;
+            } catch (err) {
+                console.warn("Usando conteos locales", err);
             }
-            if (!newRecord.nss || String(newRecord.nss).trim() === '') {
-                alert("Error: El campo NSS es obligatorio para registrar o actualizar un paciente.");
+        }
+
+        // 3. Pacientes
+        async function fetchPacientes() {
+            try {
+                const res = await fetch('/api/pacientes');
+                state.pacientes = await res.json();
+                renderPacientes(state.pacientes);
+            } catch (err) {
+                console.error("Error al cargar pacientes:", err);
+            }
+        }
+
+        function renderPacientes(list) {
+            const tbody = document.getElementById('tbody-pacientes');
+            document.getElementById('badge-total-pacientes').textContent = `${list.length} derechohabientes`;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-[#7A7265] font-mono">No se encontraron pacientes registrados.</td></tr>`;
                 return;
             }
+
+            tbody.innerHTML = list.map(p => {
+                const vigBadge = p.estatus_vigencia 
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-[#EAF5EC] text-[#1E5D36] border border-[#C2E4CB] text-xs font-mono font-semibold">VIGENTE</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full bg-[#FDF0EE] text-[#A63A2B] border border-[#F7CBC6] text-xs font-mono font-semibold">NO VIGENTE</span>`;
+                
+                let rawTels = [];
+                if (Array.isArray(p.telefonos)) {
+                    rawTels = p.telefonos;
+                } else if (typeof p.telefonos === 'string' && p.telefonos.length > 2) {
+                    rawTels = p.telefonos.replace(/[{}"\s]/g, '').split(',').filter(Boolean);
+                }
+
+                const tels = rawTels.length > 0 
+                    ? rawTels.map(t => `<span class="bg-[#FAF8F5] text-[#3D3830] px-2 py-0.5 rounded border border-[#E5DFD3] font-mono text-xs font-medium">${t}</span>`).join(' ')
+                    : `<span class="text-[#A39989] font-mono text-xs">—</span>`;
+
+                const titular = p.nss_titular 
+                    ? `<span class="text-[#7A7265] font-mono text-xs">Beneficiario de: <strong class="text-[#1F1C18]">${p.nss_titular}</strong></span>`
+                    : `<span class="text-[#1F5263] font-mono text-xs bg-[#FAF8F5] px-2.5 py-0.5 rounded border border-[#E5DFD3] font-semibold">TITULAR DIRECTO</span>`;
+
+                const safeNombre = (p.nombre || '').replace(/'/g, "\'");
+
+                return `
+                    <tr class="hover:bg-[#FAF8F5] transition">
+                        <td class="py-3 px-4 font-mono font-bold text-[#1F5263] text-right">${p.nss}</td>
+                        <td class="py-3 px-4 font-semibold text-[#1F1C18]">${p.nombre}</td>
+                        <td class="py-3 px-4">${vigBadge}</td>
+                        <td class="py-3 px-4 text-[#423B31] font-sans text-xs">${p.unidad_medica_adscripcion}</td>
+                        <td class="py-3 px-4">${tels}</td>
+                        <td class="py-3 px-4">${titular}</td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <button onclick="prefillCita('${p.nss}')" class="text-[#1F5263] hover:text-[#163E4B] bg-[#FAF8F5] hover:bg-[#F4EFE6] border border-[#D5CBB9] px-2.5 py-1 rounded text-xs transition inline-flex items-center gap-1 font-semibold" title="Agendar cita para este paciente">
+                                <i class="fa-solid fa-calendar-plus text-xs"></i> Cita
+                            </button>
+                            <button onclick="eliminarPaciente('${p.nss}', '${safeNombre}')" class="text-[#7A7265] hover:text-rose-700 hover:bg-[#FDF0EE] px-2 py-1 rounded text-xs transition inline-flex items-center ml-1" title="Eliminar derechohabiente">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
-        if (editingIndex === null) {
-            dbState[currentActiveTable].push(newRecord);
-        } else {
-            dbState[currentActiveTable][editingIndex] = newRecord;
+        function filterPacientes() {
+            const q = document.getElementById('search-paciente').value.trim().toLowerCase();
+            const vig = document.getElementById('filter-vigencia').value;
+
+            const filtered = state.pacientes.filter(p => {
+                const matchTel = Array.isArray(p.telefonos)
+                    ? p.telefonos.some(t => String(t).toLowerCase().includes(q))
+                    : (typeof p.telefonos === 'string' && p.telefonos.toLowerCase().includes(q));
+
+                const matchQ = !q
+                    || (p.nss && p.nss.toLowerCase().includes(q))
+                    || (p.nombre && p.nombre.toLowerCase().includes(q))
+                    || (p.unidad_medica_adscripcion && p.unidad_medica_adscripcion.toLowerCase().includes(q))
+                    || (p.nss_titular && p.nss_titular.toLowerCase().includes(q))
+                    || matchTel;
+
+                const matchVig = vig === 'todos' ? true : (vig === 'vigente' ? p.estatus_vigencia : !p.estatus_vigencia);
+                return matchQ && matchVig;
+            });
+            renderPacientes(filtered);
         }
 
-        try {
-            if (currentActiveTable === 'paciente') {
+        async function handleCreatePaciente(e) {
+            e.preventDefault();
+            const payload = {
+                nss: document.getElementById('form-p-nss').value,
+                nombre: document.getElementById('form-p-nombre').value,
+                unidad_medica_adscripcion: document.getElementById('form-p-unidad').value,
+                telefono: document.getElementById('form-p-telefono').value,
+                nss_titular: document.getElementById('form-p-titular').value,
+                estatus_vigencia: document.getElementById('form-p-vigente').checked
+            };
+
+            try {
                 const res = await fetch('/api/pacientes', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newRecord)
+                    body: JSON.stringify(payload)
                 });
-                if (!res.ok) {
-                    const errInfo = await res.json();
-                    console.error("Error al persistir paciente en PostgreSQL:", errInfo);
-                    alert(`Aviso de BD: ${errInfo.error || 'Error al guardar en PostgreSQL'}`);
-                }
-            } else if (currentActiveTable === 'cita') {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al guardar');
+                
+                showToast('Derechohabiente Registrado', `NSS: ${payload.nss} guardado en PostgreSQL`, 'success');
+                closeModal('modal-paciente');
+                e.target.reset();
+                await loadAllData();
+            } catch (err) {
+                showToast('Rechazo de Integridad', err.message, 'error');
+            }
+        }
+
+        async function eliminarPaciente(nss, nombre) {
+            if (!confirm(`¿Deseas eliminar al derechohabiente?
+
+Nombre: ${nombre}
+NSS: ${nss}
+
+Si tiene órdenes médicas o citas activas, la base de datos rechazará la eliminación por la restricción ON DELETE RESTRICT (Práctica 5).`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/pacientes/${encodeURIComponent(nss)}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al eliminar');
+
+                showToast('Derechohabiente Eliminado', data.message || `NSS ${nss} eliminado de PostgreSQL`, 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Restricción de Integridad', err.message, 'error');
+            }
+        }
+
+        // 4. Citas
+        async function fetchCitas() {
+            try {
+                const res = await fetch('/api/citas');
+                state.citas = await res.json();
+                renderCitas(state.citas);
+            } catch (err) {
+                console.error("Error al cargar citas:", err);
+            }
+        }
+
+        function renderCitas(list) {
+            const tbody = document.getElementById('tbody-citas');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-[#7A7265] font-mono">No hay citas registradas.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(c => {
+                let badgeClass = "bg-[#FAF8F5] text-[#423B31] border-[#E5DFD3]";
+                if (c.estatus_asistencia === 'PROGRAMADA') badgeClass = "bg-[#EFF5F8] text-[#1C546B] border-[#CFE1EB]";
+                if (c.estatus_asistencia === 'CONFIRMADA') badgeClass = "bg-[#EBF7F5] text-[#1D6052] border-[#C2E9E0]";
+                if (c.estatus_asistencia === 'ASISTIO') badgeClass = "bg-[#EAF5EC] text-[#1E5D36] border-[#C2E4CB] font-bold";
+                if (c.estatus_asistencia === 'CANCELADA') badgeClass = "bg-[#FDF0EE] text-[#A63A2B] border-[#F7CBC6]";
+
+                const dias = c.dias_anticipacion !== null ? c.dias_anticipacion : '--';
+                const fLab = new Date(c.fecha_hora_laboratorio).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
+                const fMed = c.fecha_cita_medico ? c.fecha_cita_medico.split('T')[0] : '--';
+
+                return `
+                    <tr class="hover:bg-[#FAF8F5] transition">
+                        <td class="py-3 px-4 font-mono font-bold text-[#1F1C18]">${c.folio_orden}</td>
+                        <td class="py-3 px-4">
+                            <span class="font-semibold text-[#1F1C18] block">${c.nombre_paciente}</span>
+                            <span class="text-[#7A7265] font-mono text-xs">${c.nss_paciente}</span>
+                        </td>
+                        <td class="py-3 px-4 font-mono text-[#423B31] text-xs font-medium">${fLab}</td>
+                        <td class="py-3 px-4 font-mono text-[#7A7265] text-xs">${fMed}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-0.5 rounded-full font-mono font-semibold text-xs ${dias >= 15 && dias <= 30 ? 'bg-[#EAF5EC] text-[#1E5D36] border border-[#C2E4CB]' : 'bg-[#FDF0EE] text-[#A63A2B] border border-[#F7CBC6]'}">
+                                ${dias} días
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-[#423B31] font-sans text-xs max-w-xs truncate" title="${c.estudios}">${c.estudios}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded text-xs font-mono font-semibold ${badgeClass}">
+                                ${c.estatus_asistencia}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <select onchange="updateEstatusCita(${c.id_cita}, this.value)" class="bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] text-xs rounded px-2 py-1 focus:outline-none focus:border-[#1F5263] font-medium">
+                                <option value="" disabled selected>Cambiar</option>
+                                <option value="CONFIRMADA">CONFIRMADA</option>
+                                <option value="ASISTIO">ASISTIÓ</option>
+                                <option value="NO_ASISTIO">NO ASISTIÓ</option>
+                                <option value="CANCELADA">CANCELADA</option>
+                            </select>
+                            <button onclick="prefillResultado(${c.id_cita})" class="text-[#1F5263] hover:text-[#163E4B] bg-[#FAF8F5] hover:bg-[#F4EFE6] border border-[#D5CBB9] px-2 py-1 rounded text-xs transition inline-flex items-center gap-1 ml-1 font-semibold" title="Emitir resultado para esta cita">
+                                <i class="fa-solid fa-microscope text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterCitas() {
+            const q = document.getElementById('search-cita').value.toLowerCase();
+            const st = document.getElementById('filter-estatus-cita').value;
+
+            const filtered = state.citas.filter(c => {
+                const matchQ = c.folio_orden.toLowerCase().includes(q) || c.nss_paciente.toLowerCase().includes(q) || c.nombre_paciente.toLowerCase().includes(q);
+                const matchSt = st === 'todos' ? true : c.estatus_asistencia === st;
+                return matchQ && matchSt;
+            });
+            renderCitas(filtered);
+        }
+
+        function prefillCita(nss) {
+            document.getElementById('form-c-nss').value = nss;
+            const rndNum = Math.floor(Math.random() * 800) + 200;
+            document.getElementById('form-c-folio').value = `ORD-2026-0${rndNum}`;
+            openModal('modal-cita');
+        }
+
+        function prefillResultado(idCita) {
+            document.getElementById('form-r-cita').value = idCita;
+            openModal('modal-resultado');
+        }
+
+        function checkAnticipacionPreview() {
+            const fMedVal = document.getElementById('form-c-fmedico').value;
+            const fLabVal = document.getElementById('form-c-flab').value;
+            const previewEl = document.getElementById('preview-dias-val');
+
+            if (!fMedVal || !fLabVal) return;
+
+            const dMed = new Date(fMedVal);
+            const dLab = new Date(fLabVal);
+            const diffTime = dMed.getTime() - dLab.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+            if (diffDays >= 15 && diffDays <= 30) {
+                previewEl.className = "font-semibold text-emerald-800 font-mono";
+                previewEl.innerHTML = `<i class="fa-solid fa-check"></i> ${diffDays} días (Válido en rango)`;
+            } else {
+                previewEl.className = "font-semibold text-rose-800 font-mono";
+                previewEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${diffDays} días (Trigger rechazará: 15–30)`;
+            }
+        }
+
+        async function handleCreateCita(e) {
+            e.preventDefault();
+            const payload = {
+                folio_orden: document.getElementById('form-c-folio').value,
+                nss_paciente: document.getElementById('form-c-nss').value,
+                medico_emisor: document.getElementById('form-c-medico').value,
+                fecha_cita_medico: document.getElementById('form-c-fmedico').value,
+                fecha_hora_laboratorio: document.getElementById('form-c-flab').value,
+                id_estudios: [parseInt(document.getElementById('form-c-estudio').value, 10)]
+            };
+
+            try {
                 const res = await fetch('/api/citas', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newRecord)
+                    body: JSON.stringify(payload)
                 });
-                if (!res.ok) {
-                    const errInfo = await res.json();
-                    console.error("Error al persistir cita en PostgreSQL:", errInfo);
-                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detalle || data.error || 'Error agendando');
+
+                showToast('Cita Agendada', `Folio: ${payload.folio_orden} guardado exitosamente`, 'success');
+                closeModal('modal-cita');
+                e.target.reset();
+                await loadAllData();
+            } catch (err) {
+                showToast('Validación de Trigger / Restricción', err.message, 'error');
             }
-        } catch (apiErr) {
-            console.warn("No se pudo persistir en backend:", apiErr);
         }
 
-        saveStateToSession();
-        updateAllBadges();
-        updateDashboardStats();
-        renderTable(currentActiveTable);
-        closeRecordModal();
-    }
+        async function updateEstatusCita(idCita, nuevoEstatus) {
+            try {
+                const res = await fetch(`/api/citas/${idCita}/estatus`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estatus_asistencia: nuevoEstatus })
+                });
+                if (!res.ok) throw new Error('Error actualizando estatus');
+                showToast('Cita Actualizada', `Cita #${idCita} cambiada a ${nuevoEstatus}`, 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Error', err.message, 'error');
+            }
+        }
 
-    async function deleteRecord(index) {
-        const record = dbState[currentActiveTable][index];
-        if (confirm("¿Deseas eliminar este registro de la base de datos?")) {
-            if (currentActiveTable === 'cita' && record.id_cita) {
-                try {
-                    const res = await fetch(`/api/citas/${record.id_cita}`, { method: 'DELETE' });
-                    if (!res.ok) {
-                        const errData = await res.json();
-                        alert(`Aviso de BD: ${errData.error || 'No se pudo eliminar en el servidor'}`);
-                    }
-                } catch (e) {
-                    console.warn("Fallo al eliminar en backend:", e);
-                }
+        // 5. Estudios
+        async function fetchEstudios() {
+            try {
+                const res = await fetch('/api/estudios');
+                state.estudios = await res.json();
+                renderEstudios(state.estudios);
+            } catch (err) {
+                console.error("Error al cargar estudios:", err);
+            }
+        }
+
+        function renderEstudios(list) {
+            const grid = document.getElementById('grid-estudios');
+            
+            // Poblar dinámicamente los selects de estudios en los modales
+            const selectCita = document.getElementById('form-c-estudio');
+            if (selectCita && list.length > 0) {
+                selectCita.innerHTML = list.map(e => `<option value="${e.id_estudio}">${e.nombre_estudio} (${e.tipo_categoria})</option>`).join('');
+            }
+            const selectResultado = document.getElementById('form-r-estudio');
+            if (selectResultado && list.length > 0) {
+                selectResultado.innerHTML = list.map(e => `<option value="${e.id_estudio}">ID #${e.id_estudio} - ${e.nombre_estudio} (${e.tipo_categoria})</option>`).join('');
             }
 
-            dbState[currentActiveTable].splice(index, 1);
-            saveStateToSession();
-            updateAllBadges();
-            updateDashboardStats();
-            renderTable(currentActiveTable);
+            grid.innerHTML = list.map(e => {
+                let badgeClass = "bg-[#FAF8F5] text-[#423B31] border-[#E5DFD3]";
+                let extraDetalle = "";
+
+                if (e.tipo_categoria === 'Sangre') {
+                    badgeClass = "bg-[#FDECEB] text-[#9E2A2B] border border-[#F8C8C6]";
+                    extraDetalle = `Tubo: <strong class="text-[#1F1C18]">${e.tipo_tubo || 'N/A'}</strong> (${e.color_tapon}) • Ayuno: <strong class="text-[#1F1C18]">${e.ayuno_horas || 0}h</strong>`;
+                } else if (e.tipo_categoria === 'Orina') {
+                    badgeClass = "bg-[#FEF7EC] text-[#9A5B13] border border-[#FBE3B8]";
+                    extraDetalle = `Frasco: <strong class="text-[#1F1C18]">${e.frasco_orina || 'Frasco estéril'}</strong> • Vol. Mín: <strong class="text-[#1F1C18]">${e.volumen_minimo || '30 ml'}</strong>`;
+                } else if (e.tipo_categoria === 'Fecal') {
+                    badgeClass = "bg-[#EAF5EC] text-[#1E5D36] border border-[#C2E4CB]";
+                    extraDetalle = `Frasco: <strong class="text-[#1F1C18]">${e.frasco_fecal || 'Frasco hermético'}</strong> • Medio transporte: <strong class="text-[#1F1C18]">${e.requiere_medio_transporte ? 'Sí' : 'No'}</strong>`;
+                }
+
+                return `
+                    <div class="clinic-card rounded-xl p-4 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold ${badgeClass}">
+                                    ${e.tipo_categoria.toUpperCase()}
+                                </span>
+                                <span class="text-xs font-mono text-[#7A7265] font-semibold">ID #${e.id_estudio}</span>
+                            </div>
+                            <h4 class="font-bold text-[#1F1C18] text-sm mb-1">
+                                ${e.nombre_estudio}
+                            </h4>
+                            <p class="text-[#7A7265] text-xs mt-1.5 leading-relaxed font-sans">${e.indicaciones_previas || 'Sin indicaciones especiales.'}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-[#EDE7DC] text-[11px] font-mono text-[#7A7265]">
+                            ${extraDetalle}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
-    }
 
-    async function executeCustomSql() {
-        const query = document.getElementById('sql-input').value.trim();
-        const head = document.getElementById('sql-result-head');
-        const body = document.getElementById('sql-result-body');
-        const count = document.getElementById('sql-result-count');
+        // 6. Resultados
+        async function fetchResultados() {
+            try {
+                const res = await fetch('/api/resultados');
+                state.resultados = await res.json();
+                renderResultados(state.resultados);
+            } catch (err) {
+                console.error("Error al cargar resultados:", err);
+            }
+        }
 
-        if (!query) return;
+        function renderResultados(list) {
+            const tbody = document.getElementById('tbody-resultados');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-[#7A7265] font-mono">No hay resultados clínicos emitidos aún.</td></tr>`;
+                return;
+            }
 
-        count.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Consultando PostgreSQL...`;
+            tbody.innerHTML = list.map(r => {
+                const fEmision = new Date(r.fecha_hora_emision).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
+                return `
+                    <tr class="hover:bg-[#FAF8F5] transition">
+                        <td class="py-3 px-4 font-mono font-bold text-[#1F5263] text-right">#${r.id_resultado}</td>
+                        <td class="py-3 px-4">
+                            <span class="font-semibold text-[#1F1C18] block">${r.nombre_paciente}</span>
+                            <span class="text-[#7A7265] font-mono text-xs">${r.nss}</span>
+                        </td>
+                        <td class="py-3 px-4 font-semibold text-[#423B31]">${r.nombre_estudio}</td>
+                        <td class="py-3 px-4 font-mono font-bold text-amber-800">
+                            ${r.valor_obtenido} <span class="text-xs text-[#7A7265] font-normal font-sans">${r.unidad_medida || ''}</span>
+                        </td>
+                        <td class="py-3 px-4 font-mono text-[#7A7265] text-xs">${r.rango_referencia || '—'}</td>
+                        <td class="py-3 px-4 font-mono text-[#7A7265] text-xs">${fEmision}</td>
+                        <td class="py-3 px-4 text-[#423B31] font-sans text-xs max-w-xs truncate" title="${r.observaciones}">${r.observaciones || '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
-        try {
-            const response = await fetch('/api/query', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sql: query })
-            });
+        async function handleCreateResultado(e) {
+            e.preventDefault();
+            const payload = {
+                id_cita: parseInt(document.getElementById('form-r-cita').value, 10),
+                id_estudio: parseInt(document.getElementById('form-r-estudio').value, 10),
+                valor_obtenido: document.getElementById('form-r-valor').value,
+                unidad_medida: document.getElementById('form-r-unidad').value,
+                rango_referencia: document.getElementById('form-r-rango').value,
+                observaciones: document.getElementById('form-r-obs').value
+            };
 
-            const data = await response.json();
+            try {
+                const res = await fetch('/api/resultados', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al emitir');
 
-            if (response.ok && data.rows) {
+                showToast('Resultado Emitido', `Resultado guardado para Cita #${payload.id_cita}`, 'success');
+                closeModal('modal-resultado');
+                e.target.reset();
+                await loadAllData();
+            } catch (err) {
+                showToast('Error de Inserción', err.message, 'error');
+            }
+        }
+
+        // 7. Consola SQL
+        function setQueryPreset(n) {
+            const input = document.getElementById('sql-input');
+            if (n === 1) {
+                input.value = `SELECT c.id_cita, c.folio_orden, p.nombre AS paciente, c.estatus_asistencia, e.nombre_estudio FROM cita c JOIN orden_medica o ON c.folio_orden = o.folio_orden JOIN paciente p ON o.nss_paciente = p.nss LEFT JOIN orden_estudio oe ON o.folio_orden = oe.folio_orden LEFT JOIN estudio e ON oe.id_estudio = e.id_estudio LIMIT 15;`;
+            } else if (n === 2) {
+                input.value = `SELECT o.folio_orden, o.nss_paciente, c.fecha_hora_laboratorio::date, o.fecha_cita_medico, (o.fecha_cita_medico - c.fecha_hora_laboratorio::date) AS dias_anticipacion FROM cita c JOIN orden_medica o ON c.folio_orden = o.folio_orden WHERE (o.fecha_cita_medico - c.fecha_hora_laboratorio::date) BETWEEN 15 AND 30 LIMIT 15;`;
+            } else if (n === 3) {
+                input.value = `SELECT e.nombre_estudio, ps.tipo_tubo, ps.ayuno_horas, po.volumen_minimo, pf.requiere_medio_transporte FROM estudio e LEFT JOIN prueba_sangre ps ON e.id_estudio = ps.id_estudio LEFT JOIN prueba_orina po ON e.id_estudio = po.id_estudio LEFT JOIN prueba_fecal pf ON e.id_estudio = pf.id_estudio;`;
+            }
+            executeSQL();
+        }
+
+        async function executeSQL() {
+            const sql = document.getElementById('sql-input').value;
+            const container = document.getElementById('sql-result-container');
+            const table = document.getElementById('sql-table');
+
+            try {
+                const res = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sql })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error al ejecutar SQL');
+
+                container.classList.remove('hidden');
+                document.getElementById('sql-meta-rows').textContent = `Filas devueltas: ${data.rowCount}`;
+                document.getElementById('sql-meta-time').textContent = `Tiempo de ejecución: ${data.execution_time_ms} ms`;
+
                 if (data.rows.length === 0) {
-                    head.innerHTML = '<tr><th class="p-3">Resultado</th></tr>';
-                    body.innerHTML = '<tr><td class="p-4 text-amber-400">PostgreSQL ejecutó la consulta pero devolvió 0 filas.</td></tr>';
-                    count.textContent = '0 filas en PostgreSQL';
+                    table.innerHTML = `<tr><td class="p-4 text-center text-[#7A7265]">La consulta no devolvió registros.</td></tr>`;
                     return;
                 }
 
-                const columns = data.fields && data.fields.length > 0 ? data.fields : Object.keys(data.rows[0]);
-                let headHTML = '<tr>';
-                columns.forEach(col => headHTML += `<th class="p-3">${col}</th>`);
-                headHTML += '</tr>';
-                head.innerHTML = headHTML;
+                const ths = data.fields.map(f => `<th class="py-2.5 px-3 bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-bold">${f}</th>`).join('');
+                const trs = data.rows.map(row => {
+                    const tds = data.fields.map(f => `<td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18]">${row[f] !== null ? row[f] : '<span class="text-[#A39989]">NULL</span>'}</td>`).join('');
+                    return `<tr class="hover:bg-[#FAF8F5]">${tds}</tr>`;
+                }).join('');
 
-                let bodyHTML = '';
-                data.rows.forEach(row => {
-                    bodyHTML += `<tr class="hover:bg-slate-800 transition">`;
-                    columns.forEach(col => {
-                        const cellVal = row[col] !== null && row[col] !== undefined ? row[col] : '<span class="text-slate-600 italic">NULL</span>';
-                        bodyHTML += `<td class="p-3">${cellVal}</td>`;
-                    });
-                    bodyHTML += `</tr>`;
-                });
-                body.innerHTML = bodyHTML;
-                count.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> PostgreSQL Docker: ${data.rows.length} filas</span>`;
-                return;
-            } else if (data.error) {
-                head.innerHTML = '<tr><th class="p-3 text-rose-400">Error de PostgreSQL</th></tr>';
-                body.innerHTML = `<tr><td class="p-4 text-rose-300 font-mono"><i class="fa-solid fa-circle-xmark mr-2 text-rose-400"></i> ${data.error}</td></tr>`;
-                count.innerHTML = `<span class="text-rose-400 font-semibold">Fallo en PostgreSQL</span>`;
-                return;
+                table.innerHTML = `<thead><tr>${ths}</tr></thead><tbody>${trs}</tbody>`;
+            } catch (err) {
+                showToast('Error en Consulta SQL', err.message, 'error');
             }
-        } catch (netErr) {
-            console.warn("Fallo de red en consola SQL, usando fallback local:", netErr);
         }
 
-        const upper = query.toUpperCase();
-        let targetTable = null;
-
-        Object.keys(dbState).forEach(tbl => {
-            if (upper.includes(`FROM ${tbl.toUpperCase()}`)) {
-                targetTable = tbl;
-            }
+        // Arranque inicial
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+            setInterval(fetchStatus, 10000);
         });
-
-        if (targetTable && dbState[targetTable]) {
-            const data = dbState[targetTable];
-            if (data.length === 0) {
-                head.innerHTML = '<tr><th class="p-3">Resultado</th></tr>';
-                body.innerHTML = '<tr><td class="p-4 text-amber-400">La tabla está vacía.</td></tr>';
-                count.textContent = '0 filas';
-                return;
-            }
-
-            const keys = Object.keys(data[0]);
-            let headHTML = '<tr>';
-            keys.forEach(k => headHTML += `<th class="p-3">${k}</th>`);
-            headHTML += '</tr>';
-            head.innerHTML = headHTML;
-
-            let bodyHTML = '';
-            data.forEach(row => {
-                bodyHTML += `<tr class="hover:bg-slate-800 transition">`;
-                keys.forEach(k => bodyHTML += `<td class="p-3">${row[k]}</td>`);
-                bodyHTML += `</tr>`;
-            });
-            body.innerHTML = bodyHTML;
-            count.textContent = `${data.length} filas (Simulación local)`;
-        } else {
-            head.innerHTML = '<tr><th class="p-3">Mensaje</th></tr>';
-            body.innerHTML = `<tr><td class="p-4 text-emerald-400 font-mono">Consulta procesada localmente.</td></tr>`;
-            count.textContent = 'Consulta procesada';
-        }
-    }
-
-    function runPredefinedQuery(type) {
-        const sqlInput = document.getElementById('sql-input');
-
-        if (type === 'demo_completa') {
-            sqlInput.value = `SELECT 
-    p.nss, 
-    p.nombre AS paciente, 
-    p.esta_vigente, 
-    c.fecha_programada AS cita_laboratorio, 
-    o.fecha_cita_doctor AS cita_doctor, 
-    (o.fecha_cita_doctor - CAST(c.fecha_programada AS DATE)) AS dias_anticipacion, 
-    e.nombre AS estudio_solicitado, 
-    c.asistio 
-FROM Paciente p 
-JOIN CitaLaboratorio c ON p.nss = c.nss_paciente 
-JOIN OrdenMedica o ON c.id_orden = o.id_orden 
-JOIN Cita_Estudio ce ON c.id_cita = ce.id_cita 
-JOIN Estudio e ON ce.id_estudio = e.id_estudio 
-WHERE p.nss = '1234567890';`;
-            executeCustomSql();
-        }
-        else if (type === 'pacientes_ordenes') {
-            sqlInput.value = `SELECT 
-    p.nss, 
-    p.nombre, 
-    o.id_orden AS folio_orden, 
-    o.fecha_cita_doctor 
-FROM Paciente p 
-JOIN OrdenMedica o ON p.nss = o.nss_paciente;`;
-            executeCustomSql();
-        }
-        else if (type === 'citas_pendientes') {
-            sqlInput.value = `SELECT 
-    c.id_cita, 
-    c.fecha_programada, 
-    c.asistio, 
-    c.id_orden AS folio_orden 
-FROM CitaLaboratorio c;`;
-            executeCustomSql();
-        }
-        else if (type === 'resultados_completos') {
-            sqlInput.value = `SELECT 
-    id_resultado, 
-    valor_obtenido, 
-    unidad_de_medida, 
-    observaciones, 
-    id_cita 
-FROM resultado;`;
-            executeCustomSql();
-        }
-        else if (type === 'estudios_sangre') {
-            sqlInput.value = `SELECT 
-    id_estudio, 
-    nombre AS nombre_estudio 
-FROM Estudio;`;
-            executeCustomSql();
-        }
-    }
-
-    window.onload = function() {
-        initDatabase();
-        switchTab('dashboard');
-    };
-</script>
+    </script>
 </body>
 </html>
