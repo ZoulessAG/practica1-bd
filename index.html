@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter, Newsreader & JetBrains Mono -->
+    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
             --bg-hover: #F8F5EE;       /* Hover cálido */
             --border-card: #E5DFD3;    /* Borde suave tono arena */
             --border-subtle: #EDE7DC;  /* Separadores delicados */
-            --text-heading: #1F1C18;   /* Espresso suave (no negro puro punzante) */
+            --text-heading: #1F1C18;   /* Espresso suave */
             --text-body: #423B31;      /* Grafito cálido para lectura descansada */
             --text-muted: #7A7265;     /* Gris cálido secundario */
             --accent-teal: #1F5263;    /* Azul clínico profundo */
@@ -106,7 +106,7 @@
                         <h1 class="font-bold text-lg tracking-tight text-[#1F1C18]">
                             Citas<span class="text-[#1F5263]">Med</span>
                         </h1>
-                        <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[#F4EFE6] text-[#423B31] border border-[#E5DFD3] font-semibold">
+                        <span id="badge-environment" class="text-xs font-mono px-2 py-0.5 rounded-full bg-[#F4EFE6] text-[#423B31] border border-[#E5DFD3] font-semibold">
                             Laboratorio Clínico
                         </span>
                     </div>
@@ -119,10 +119,10 @@
             <!-- Telemetría y Acciones Primarias -->
             <div class="flex items-center gap-3">
                 
-                <!-- Telemetría silenciosa y descansada -->
+                <!-- Telemetría Inteligente (Detecta PostgreSQL Live vs Simulación Demo) -->
                 <div id="telemetry-badge" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] text-xs font-mono">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                    <span id="telemetry-db" class="font-semibold text-[#1F1C18]">citas_medicas_p4</span>
+                    <span id="telemetry-dot" class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    <span id="telemetry-db" class="font-semibold text-[#1F1C18]">Conectando...</span>
                     <span class="text-[#D5CBB9]">|</span>
                     <span id="telemetry-ping" class="font-medium text-emerald-700">-- ms</span>
                 </div>
@@ -138,8 +138,8 @@
                     <span>+ Agendar Cita</span>
                 </button>
 
-                <!-- Botón de Refrescar -->
-                <button onclick="loadAllData()" class="p-2 rounded-lg border border-[#D5CBB9] bg-white hover:bg-[#F4EFE6] text-[#7A7265] hover:text-[#1F1C18] transition" title="Refrescar base de datos">
+                <!-- Botón de Refrescar / Restablecer -->
+                <button onclick="loadAllData()" class="p-2 rounded-lg border border-[#D5CBB9] bg-white hover:bg-[#F4EFE6] text-[#7A7265] hover:text-[#1F1C18] transition" title="Refrescar / Restablecer datos">
                     <i class="fa-solid fa-arrows-rotate text-xs" id="refresh-icon"></i>
                 </button>
 
@@ -275,12 +275,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-pacientes" class="divide-y divide-[#EDE7DC] font-sans">
-                            <tr>
-                                <td colspan="7" class="py-12 text-center text-[#7A7265] font-mono">
-                                    <i class="fa-solid fa-spinner fa-spin text-lg mb-2 text-[#1F5263]"></i>
-                                    <p>Consultando catálogo de pacientes en PostgreSQL...</p>
-                                </td>
-                            </tr>
+                            <!-- Inyectado dinámicamente -->
                         </tbody>
                     </table>
                 </div>
@@ -406,7 +401,7 @@
                             Consola Interactiva SQL (Solo Lectura)
                         </h3>
                         <p class="text-xs text-[#7A7265] mt-0.5">
-                            Ejecuta sentencias SELECT directas contra PostgreSQL en Docker para verificar integridad referencial y disparadores.
+                            Ejecuta sentencias SELECT directas contra PostgreSQL en Docker o contra el motor simulado en memoria.
                         </p>
                     </div>
                     <div class="flex items-center gap-2">
@@ -562,7 +557,7 @@
 
                 <div class="flex justify-end gap-2.5 pt-4 border-t border-[#E5DFD3]">
                     <button type="button" onclick="closeModal('modal-paciente')" class="px-3.5 py-2 rounded-lg bg-[#FAF8F5] hover:bg-[#F4EFE6] text-[#423B31] font-medium transition border border-[#D5CBB9]">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Guardar en PostgreSQL</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Guardar Derechohabiente</button>
                 </div>
             </form>
         </div>
@@ -626,7 +621,7 @@
 
                 <div class="flex justify-end gap-2.5 pt-4 border-t border-[#E5DFD3]">
                     <button type="button" onclick="closeModal('modal-cita')" class="px-3.5 py-2 rounded-lg bg-[#FAF8F5] hover:bg-[#F4EFE6] text-[#423B31] font-medium transition border border-[#D5CBB9]">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Agendar en PostgreSQL</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#1F5263] hover:bg-[#163E4B] text-white font-semibold shadow-xs transition">Agendar Cita</button>
                 </div>
             </form>
         </div>
@@ -698,14 +693,1268 @@
         Escuela Superior de Cómputo (ESCOM IPN) • Laboratorio de Bases de Datos • Equipo: Ian Aguilar, Kevin Vega, Alondra Quintanar, Joel Palma.
     </footer>
 
-    <!-- CLIENT SCRIPT -->
+    <!-- CLIENT SCRIPT (DOBLE MODO: POSTGRESQL LIVE EN LOCALHOST / SIMULACIÓN EN GITHUB PAGES) -->
     <script>
+        // 1. BASE DE DATOS DE SIMULACIÓN POR DEFECTO (RESTAURADA EN GITHUB PAGES AL REFRESCAR)
+        const DEFAULT_SIMULATION = {
+  "stats": {
+    "total_pacientes": 221,
+    "pacientes_vigentes": 206,
+    "total_citas": 220,
+    "total_estudios": 15,
+    "total_resultados": 220
+  },
+  "estudios": [
+    {
+      "id_estudio": 1,
+      "nombre_estudio": "Química Sanguínea 6 Elementos",
+      "indicaciones_previas": "Ayuno estricto de 8 a 12 horas.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo con gel separador",
+      "color_tapon": "Rojo / Oro",
+      "ayuno_horas": 8,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 2,
+      "nombre_estudio": "Biometría Hemática Completa",
+      "indicaciones_previas": "No requiere ayuno estricto.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo EDTA K2",
+      "color_tapon": "Lila",
+      "ayuno_horas": 0,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 3,
+      "nombre_estudio": "Perfil Lipídico Completo",
+      "indicaciones_previas": "Ayuno de 12 horas; evitar alcohol 24h.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo seco con gel",
+      "color_tapon": "Amarillo",
+      "ayuno_horas": 12,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 4,
+      "nombre_estudio": "Hemoglobina Glucosilada (HbA1c)",
+      "indicaciones_previas": "No requiere ayuno.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo EDTA",
+      "color_tapon": "Lila",
+      "ayuno_horas": 0,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 5,
+      "nombre_estudio": "Pruebas de Función Hepática",
+      "indicaciones_previas": "Ayuno de 8 horas.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo con gel separador",
+      "color_tapon": "Rojo",
+      "ayuno_horas": 8,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 6,
+      "nombre_estudio": "Electrolitos Séricos (Na, K, Cl)",
+      "indicaciones_previas": "Ayuno de 8 horas.",
+      "tipo_categoria": "Sangre",
+      "tipo_tubo": "Tubo heparina litio",
+      "color_tapon": "Verde",
+      "ayuno_horas": 8,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 7,
+      "nombre_estudio": "Examen General de Orina (EGO)",
+      "indicaciones_previas": "Primer chorro de la primera orina de la mañana.",
+      "tipo_categoria": "Orina",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": "Frasco estéril boca ancha",
+      "volumen_minimo": "30 ml",
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 8,
+      "nombre_estudio": "Urocultivo con Antibiograma",
+      "indicaciones_previas": "Aseo previo; chorro medio.",
+      "tipo_categoria": "Orina",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": "Frasco estéril sellado",
+      "volumen_minimo": "20 ml",
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 9,
+      "nombre_estudio": "Depuración de Creatinina 24h",
+      "indicaciones_previas": "Recolectar toda la orina de 24 horas.",
+      "tipo_categoria": "Orina",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": "Garrafón recolector 3L",
+      "volumen_minimo": "500 ml",
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "indicaciones_previas": "Primera orina de la mañana.",
+      "tipo_categoria": "Orina",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": "Frasco estéril 100 ml",
+      "volumen_minimo": "15 ml",
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 11,
+      "nombre_estudio": "Prueba de Embarazo en Orina",
+      "indicaciones_previas": "Primera orina matutina.",
+      "tipo_categoria": "Orina",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": "Frasco limpio",
+      "volumen_minimo": "10 ml",
+      "frasco_fecal": null,
+      "requiere_medio_transporte": null
+    },
+    {
+      "id_estudio": 12,
+      "nombre_estudio": "Coproparasitoscópico Seriado (3 muestras)",
+      "indicaciones_previas": "Recolectar en días consecutivos.",
+      "tipo_categoria": "Fecal",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": "Frasco estéril con conservador",
+      "requiere_medio_transporte": true
+    },
+    {
+      "id_estudio": 13,
+      "nombre_estudio": "Coprocultivo",
+      "indicaciones_previas": "Muestra reciente sin contaminación de orina.",
+      "tipo_categoria": "Fecal",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": "Frasco con medio Cary-Blair",
+      "requiere_medio_transporte": true
+    },
+    {
+      "id_estudio": 14,
+      "nombre_estudio": "Sangre Oculta en Heces",
+      "indicaciones_previas": "Dieta sin carnes rojas 48h previas.",
+      "tipo_categoria": "Fecal",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": "Frasco recolector con espátula",
+      "requiere_medio_transporte": false
+    },
+    {
+      "id_estudio": 15,
+      "nombre_estudio": "Rotavirus en Heces",
+      "indicaciones_previas": "Muestra diarreica fresca.",
+      "tipo_categoria": "Fecal",
+      "tipo_tubo": null,
+      "color_tapon": null,
+      "ayuno_horas": null,
+      "frasco_orina": null,
+      "volumen_minimo": null,
+      "frasco_fecal": "Frasco estéril hermético",
+      "requiere_medio_transporte": false
+    }
+  ],
+  "pacientes": [
+    {
+      "nss": "1234567890",
+      "nombre": "Ian Andrew Aguilar Garcia",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "nss_titular": null,
+      "telefonos": [
+        "5572289894"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000001",
+      "nombre": "Sofía Vega Torres",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000037",
+        "5510008177"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000002",
+      "nombre": "Diego López Treviño",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000074",
+        "5510008214"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000003",
+      "nombre": "Sebastián García Morales",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000111",
+        "5510008251"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000004",
+      "nombre": "Sofía Treviño Morales",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000148",
+        "5510008288"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000005",
+      "nombre": "Andrés Sánchez Palma",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000185",
+        "5510008325"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000006",
+      "nombre": "Diego López Mendoza",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000222",
+        "5510008362"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000007",
+      "nombre": "Carlos López Mendoza",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000259",
+        "5510008399"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000008",
+      "nombre": "Andrés Torres Palma",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000296",
+        "5510008436"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000009",
+      "nombre": "Mariana Flores Quintanar",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000333",
+        "5510008473"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000010",
+      "nombre": "Andrés Pérez Vega",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000370",
+        "5510008510"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000011",
+      "nombre": "Juan Mendoza Flores",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000407",
+        "5510008547"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000012",
+      "nombre": "Diego Palma Treviño",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000444",
+        "5510008584"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000013",
+      "nombre": "Kevin Sánchez López",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000481",
+        "5510008621"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000014",
+      "nombre": "Diego Morales Cruz",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000518",
+        "5510008658"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000015",
+      "nombre": "Mariana Flores Aguilar",
+      "estatus_vigencia": false,
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000555",
+        "5510008695"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000016",
+      "nombre": "Alondra Pérez Flores",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000592",
+        "5510008732"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000017",
+      "nombre": "Luis Aguilar Treviño",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000629",
+        "5510008769"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000018",
+      "nombre": "Luis García Aguilar",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000666",
+        "5510008806"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000019",
+      "nombre": "Alondra Pérez Aguilar",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000703",
+        "5510008843"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000020",
+      "nombre": "Diego Mendoza Palma",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000740",
+        "5510008880"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000021",
+      "nombre": "Sebastián Aguilar Flores",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000777",
+        "5510008917"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000022",
+      "nombre": "Luis Treviño Treviño",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000814",
+        "5510008954"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000023",
+      "nombre": "Mariana Aguilar Pérez",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000851",
+        "5510008991"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000024",
+      "nombre": "Andrés Cruz Palma",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000888",
+        "5510009028"
+      ],
+      "total_ordenes": "1"
+    },
+    {
+      "nss": "11000000025",
+      "nombre": "Fernanda Ruiz Pérez",
+      "estatus_vigencia": true,
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "nss_titular": null,
+      "nombre_titular": null,
+      "telefonos": [
+        "5510000925",
+        "5510009065"
+      ],
+      "total_ordenes": "1"
+    }
+  ],
+  "citas": [
+    {
+      "id_cita": 39,
+      "folio_orden": "ORD-2026-0039",
+      "fecha_hora_agendamiento": "2026-10-10T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-19T23:45:00.000Z",
+      "estatus_asistencia": "NO_ASISTIO",
+      "fecha_cita_medico": "2026-11-10T06:00:00.000Z",
+      "medico_emisor": "Dr. Roberto Gómez (Ced. 12345678)",
+      "nss_paciente": "11000000039",
+      "nombre_paciente": "Luis Ruiz Aguilar",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 22,
+      "estudios": "Depuración de Creatinina 24h, Microalbuminuria en Orina",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 79,
+      "folio_orden": "ORD-2026-0079",
+      "fecha_hora_agendamiento": "2026-10-10T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-19T21:45:00.000Z",
+      "estatus_asistencia": "NO_ASISTIO",
+      "fecha_cita_medico": "2026-11-18T06:00:00.000Z",
+      "medico_emisor": "Dra. Patricia Morales (Ced. 45678901)",
+      "nss_paciente": "11000000079",
+      "nombre_paciente": "Carlos Mendoza Ramírez",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 30,
+      "estudios": "Hemoglobina Glucosilada (HbA1c), Pruebas de Función Hepática",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 119,
+      "folio_orden": "ORD-2026-0119",
+      "fecha_hora_agendamiento": "2026-10-10T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-19T19:45:00.000Z",
+      "estatus_asistencia": "NO_ASISTIO",
+      "fecha_cita_medico": "2026-11-10T06:00:00.000Z",
+      "medico_emisor": "Dr. Alejandro Navarro (Ced. 34567890)",
+      "nss_paciente": "11000000119",
+      "nombre_paciente": "Sofía Ruiz Aguilar",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 22,
+      "estudios": "Rotavirus en Heces, Sangre Oculta en Heces",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 159,
+      "folio_orden": "ORD-2026-0159",
+      "fecha_hora_agendamiento": "2026-10-10T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-19T17:45:00.000Z",
+      "estatus_asistencia": "NO_ASISTIO",
+      "fecha_cita_medico": "2026-11-18T06:00:00.000Z",
+      "medico_emisor": "Dr. Alejandro Navarro (Ced. 34567890)",
+      "nss_paciente": "11000000159",
+      "nombre_paciente": "Mateo Sánchez Treviño",
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "dias_anticipacion": 30,
+      "estudios": "Depuración de Creatinina 24h, Microalbuminuria en Orina",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 199,
+      "folio_orden": "ORD-2026-0199",
+      "fecha_hora_agendamiento": "2026-10-10T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-19T15:45:00.000Z",
+      "estatus_asistencia": "NO_ASISTIO",
+      "fecha_cita_medico": "2026-11-10T06:00:00.000Z",
+      "medico_emisor": "Dra. Patricia Morales (Ced. 45678901)",
+      "nss_paciente": "11000000199",
+      "nombre_paciente": "Fernanda Ramírez Palma",
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "dias_anticipacion": 22,
+      "estudios": "Hemoglobina Glucosilada (HbA1c), Pruebas de Función Hepática",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 38,
+      "folio_orden": "ORD-2026-0038",
+      "fecha_hora_agendamiento": "2026-10-09T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-17T22:30:00.000Z",
+      "estatus_asistencia": "CANCELADA",
+      "fecha_cita_medico": "2026-11-07T06:00:00.000Z",
+      "medico_emisor": "Dra. Patricia Morales (Ced. 45678901)",
+      "nss_paciente": "11000000038",
+      "nombre_paciente": "Diego Flores Cruz",
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "dias_anticipacion": 21,
+      "estudios": "Depuración de Creatinina 24h, Urocultivo con Antibiograma",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 78,
+      "folio_orden": "ORD-2026-0078",
+      "fecha_hora_agendamiento": "2026-10-09T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-17T20:30:00.000Z",
+      "estatus_asistencia": "CANCELADA",
+      "fecha_cita_medico": "2026-11-15T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000078",
+      "nombre_paciente": "Valeria Quintanar Sánchez",
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "dias_anticipacion": 29,
+      "estudios": "Hemoglobina Glucosilada (HbA1c), Perfil Lipídico Completo",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 118,
+      "folio_orden": "ORD-2026-0118",
+      "fecha_hora_agendamiento": "2026-10-09T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-17T18:30:00.000Z",
+      "estatus_asistencia": "CANCELADA",
+      "fecha_cita_medico": "2026-11-07T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000118",
+      "nombre_paciente": "Joel Torres Mendoza",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 21,
+      "estudios": "Coprocultivo, Sangre Oculta en Heces",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 158,
+      "folio_orden": "ORD-2026-0158",
+      "fecha_hora_agendamiento": "2026-10-09T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-17T16:30:00.000Z",
+      "estatus_asistencia": "CANCELADA",
+      "fecha_cita_medico": "2026-11-15T06:00:00.000Z",
+      "medico_emisor": "Dr. Alejandro Navarro (Ced. 34567890)",
+      "nss_paciente": "11000000158",
+      "nombre_paciente": "Alondra Quintanar Ruiz",
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "dias_anticipacion": 29,
+      "estudios": "Depuración de Creatinina 24h, Urocultivo con Antibiograma",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 198,
+      "folio_orden": "ORD-2026-0198",
+      "fecha_hora_agendamiento": "2026-10-09T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-17T14:30:00.000Z",
+      "estatus_asistencia": "CANCELADA",
+      "fecha_cita_medico": "2026-11-07T06:00:00.000Z",
+      "medico_emisor": "Dr. Roberto Gómez (Ced. 12345678)",
+      "nss_paciente": "11000000198",
+      "nombre_paciente": "Sofía Treviño Ruiz",
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "dias_anticipacion": 21,
+      "estudios": "Hemoglobina Glucosilada (HbA1c), Perfil Lipídico Completo",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 37,
+      "folio_orden": "ORD-2026-0037",
+      "fecha_hora_agendamiento": "2026-10-08T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-15T21:15:00.000Z",
+      "estatus_asistencia": "ASISTIO",
+      "fecha_cita_medico": "2026-11-04T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000037",
+      "nombre_paciente": "Luis Cruz López",
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "dias_anticipacion": 20,
+      "estudios": "Examen General de Orina (EGO), Urocultivo con Antibiograma",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 77,
+      "folio_orden": "ORD-2026-0077",
+      "fecha_hora_agendamiento": "2026-10-08T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-15T19:15:00.000Z",
+      "estatus_asistencia": "ASISTIO",
+      "fecha_cita_medico": "2026-11-12T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000077",
+      "nombre_paciente": "Mariana Cruz Vega",
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "dias_anticipacion": 28,
+      "estudios": "Biometría Hemática Completa, Perfil Lipídico Completo",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 117,
+      "folio_orden": "ORD-2026-0117",
+      "fecha_hora_agendamiento": "2026-10-08T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-15T17:15:00.000Z",
+      "estatus_asistencia": "ASISTIO",
+      "fecha_cita_medico": "2026-11-04T06:00:00.000Z",
+      "medico_emisor": "Dr. Roberto Gómez (Ced. 12345678)",
+      "nss_paciente": "11000000117",
+      "nombre_paciente": "Luis Morales Treviño",
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "dias_anticipacion": 20,
+      "estudios": "Coprocultivo, Coproparasitoscópico Seriado (3 muestras)",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 157,
+      "folio_orden": "ORD-2026-0157",
+      "fecha_hora_agendamiento": "2026-10-08T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-15T15:15:00.000Z",
+      "estatus_asistencia": "ASISTIO",
+      "fecha_cita_medico": "2026-11-12T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000157",
+      "nombre_paciente": "Andrés Morales Flores",
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "dias_anticipacion": 28,
+      "estudios": "Examen General de Orina (EGO), Urocultivo con Antibiograma",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 197,
+      "folio_orden": "ORD-2026-0197",
+      "fecha_hora_agendamiento": "2026-10-08T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-15T13:15:00.000Z",
+      "estatus_asistencia": "ASISTIO",
+      "fecha_cita_medico": "2026-11-04T06:00:00.000Z",
+      "medico_emisor": "Dra. Elena Martínez (Ced. 23456789)",
+      "nss_paciente": "11000000197",
+      "nombre_paciente": "Alondra García Morales",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 20,
+      "estudios": "Biometría Hemática Completa, Perfil Lipídico Completo",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 36,
+      "folio_orden": "ORD-2026-0036",
+      "fecha_hora_agendamiento": "2026-10-07T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-13T20:00:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-01T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000036",
+      "nombre_paciente": "Diego López Flores",
+      "unidad_medica_adscripcion": "UMF No. 41 Magdalena",
+      "dias_anticipacion": 19,
+      "estudios": "Electrolitos Séricos (Na, K, Cl), Examen General de Orina (EGO)",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 76,
+      "folio_orden": "ORD-2026-0076",
+      "fecha_hora_agendamiento": "2026-10-07T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-13T18:00:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-09T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000076",
+      "nombre_paciente": "Mariana Treviño Morales",
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "dias_anticipacion": 27,
+      "estudios": "Biometría Hemática Completa, Química Sanguínea 6 Elementos",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 116,
+      "folio_orden": "ORD-2026-0116",
+      "fecha_hora_agendamiento": "2026-10-07T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-13T16:00:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-01T06:00:00.000Z",
+      "medico_emisor": "Dr. Alejandro Navarro (Ced. 34567890)",
+      "nss_paciente": "11000000116",
+      "nombre_paciente": "Juan Aguilar Ramírez",
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "dias_anticipacion": 19,
+      "estudios": "Coproparasitoscópico Seriado (3 muestras), Prueba de Embarazo en Orina",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 156,
+      "folio_orden": "ORD-2026-0156",
+      "fecha_hora_agendamiento": "2026-10-07T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-13T14:00:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-09T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000156",
+      "nombre_paciente": "Carlos Treviño Ruiz",
+      "unidad_medica_adscripcion": "HGZ No. 1 Gabriel Mancera",
+      "dias_anticipacion": 27,
+      "estudios": "Electrolitos Séricos (Na, K, Cl), Examen General de Orina (EGO)",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 196,
+      "folio_orden": "ORD-2026-0196",
+      "fecha_hora_agendamiento": "2026-10-07T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-13T12:00:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-01T06:00:00.000Z",
+      "medico_emisor": "Dra. Elena Martínez (Ced. 23456789)",
+      "nss_paciente": "11000000196",
+      "nombre_paciente": "Valeria Quintanar Aguilar",
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "dias_anticipacion": 19,
+      "estudios": "Biometría Hemática Completa, Química Sanguínea 6 Elementos",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 195,
+      "folio_orden": "ORD-2026-0195",
+      "fecha_hora_agendamiento": "2026-10-06T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-12T01:45:00.000Z",
+      "estatus_asistencia": "PROGRAMADA",
+      "fecha_cita_medico": "2026-10-29T06:00:00.000Z",
+      "medico_emisor": "Dra. Patricia Morales (Ced. 45678901)",
+      "nss_paciente": "11000000195",
+      "nombre_paciente": "Mariana Pérez Ruiz",
+      "unidad_medica_adscripcion": "UMF No. 10 Chuviscar",
+      "dias_anticipacion": 18,
+      "estudios": "Química Sanguínea 6 Elementos, Rotavirus en Heces",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 111,
+      "folio_orden": "ORD-2026-0111",
+      "fecha_hora_agendamiento": "2026-10-02T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-12T01:45:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-10T06:00:00.000Z",
+      "medico_emisor": "Dr. Roberto Gómez (Ced. 12345678)",
+      "nss_paciente": "11000000111",
+      "nombre_paciente": "Mateo Quintanar Ruiz",
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "dias_anticipacion": 30,
+      "estudios": "Electrolitos Séricos (Na, K, Cl), Examen General de Orina (EGO)",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 151,
+      "folio_orden": "ORD-2026-0151",
+      "fecha_hora_agendamiento": "2026-10-02T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-11T23:45:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-02T06:00:00.000Z",
+      "medico_emisor": "Dr. Héctor Castillo (Ced. 56789012)",
+      "nss_paciente": "11000000151",
+      "nombre_paciente": "Valeria Palma García",
+      "unidad_medica_adscripcion": "HGR No. 2 Villa Coapa",
+      "dias_anticipacion": 22,
+      "estudios": "Biometría Hemática Completa, Química Sanguínea 6 Elementos",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 191,
+      "folio_orden": "ORD-2026-0191",
+      "fecha_hora_agendamiento": "2026-10-02T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-11T21:45:00.000Z",
+      "estatus_asistencia": "CONFIRMADA",
+      "fecha_cita_medico": "2026-11-10T06:00:00.000Z",
+      "medico_emisor": "Dra. Patricia Morales (Ced. 45678901)",
+      "nss_paciente": "11000000191",
+      "nombre_paciente": "Valeria Cruz Mendoza",
+      "unidad_medica_adscripcion": "HGZ No. 24 Insurgentes",
+      "dias_anticipacion": 30,
+      "estudios": "Coproparasitoscópico Seriado (3 muestras), Prueba de Embarazo en Orina",
+      "resultados_emitidos": "1"
+    },
+    {
+      "id_cita": 35,
+      "folio_orden": "ORD-2026-0035",
+      "fecha_hora_agendamiento": "2026-10-06T15:00:00.000Z",
+      "fecha_hora_laboratorio": "2026-10-11T19:45:00.000Z",
+      "estatus_asistencia": "PROGRAMADA",
+      "fecha_cita_medico": "2026-10-29T06:00:00.000Z",
+      "medico_emisor": "Dr. Roberto Gómez (Ced. 12345678)",
+      "nss_paciente": "11000000035",
+      "nombre_paciente": "Mariana Mendoza Ramírez",
+      "unidad_medica_adscripcion": "UMF No. 20 Vallejo",
+      "dias_anticipacion": 18,
+      "estudios": "Electrolitos Séricos (Na, K, Cl), Pruebas de Función Hepática",
+      "resultados_emitidos": "1"
+    }
+  ],
+  "resultados": [
+    {
+      "id_resultado": 89,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-29T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 89,
+      "id_estudio": 14,
+      "nombre_estudio": "Sangre Oculta en Heces",
+      "nss": "11000000089",
+      "nombre_paciente": "Carlos Quintanar Ramírez"
+    },
+    {
+      "id_resultado": 179,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-29T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 179,
+      "id_estudio": 14,
+      "nombre_estudio": "Sangre Oculta en Heces",
+      "nss": "11000000179",
+      "nombre_paciente": "Mateo Mendoza Cruz"
+    },
+    {
+      "id_resultado": 134,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-29T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 134,
+      "id_estudio": 14,
+      "nombre_estudio": "Sangre Oculta en Heces",
+      "nss": "11000000134",
+      "nombre_paciente": "Luis Flores Aguilar"
+    },
+    {
+      "id_resultado": 44,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-29T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 44,
+      "id_estudio": 14,
+      "nombre_estudio": "Sangre Oculta en Heces",
+      "nss": "11000000044",
+      "nombre_paciente": "Carlos Aguilar Mendoza"
+    },
+    {
+      "id_resultado": 43,
+      "valor_obtenido": "5.6",
+      "unidad_medida": "%",
+      "rango_referencia": "4.0 - 5.6",
+      "fecha_hora_emision": "2026-10-28T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 43,
+      "id_estudio": 13,
+      "nombre_estudio": "Coprocultivo",
+      "nss": "11000000043",
+      "nombre_paciente": "Juan Morales López"
+    },
+    {
+      "id_resultado": 178,
+      "valor_obtenido": "5.6",
+      "unidad_medida": "%",
+      "rango_referencia": "4.0 - 5.6",
+      "fecha_hora_emision": "2026-10-28T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 178,
+      "id_estudio": 13,
+      "nombre_estudio": "Coprocultivo",
+      "nss": "11000000178",
+      "nombre_paciente": "Juan Torres Aguilar"
+    },
+    {
+      "id_resultado": 133,
+      "valor_obtenido": "5.6",
+      "unidad_medida": "%",
+      "rango_referencia": "4.0 - 5.6",
+      "fecha_hora_emision": "2026-10-28T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 133,
+      "id_estudio": 13,
+      "nombre_estudio": "Coprocultivo",
+      "nss": "11000000133",
+      "nombre_paciente": "Joel Vega García"
+    },
+    {
+      "id_resultado": 88,
+      "valor_obtenido": "5.6",
+      "unidad_medida": "%",
+      "rango_referencia": "4.0 - 5.6",
+      "fecha_hora_emision": "2026-10-28T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 88,
+      "id_estudio": 13,
+      "nombre_estudio": "Coprocultivo",
+      "nss": "11000000088",
+      "nombre_paciente": "Fernanda Vega Ruiz"
+    },
+    {
+      "id_resultado": 87,
+      "valor_obtenido": "185",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "< 200.0",
+      "fecha_hora_emision": "2026-10-27T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 87,
+      "id_estudio": 12,
+      "nombre_estudio": "Coproparasitoscópico Seriado (3 muestras)",
+      "nss": "11000000087",
+      "nombre_paciente": "Lucía Vega Treviño"
+    },
+    {
+      "id_resultado": 132,
+      "valor_obtenido": "185",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "< 200.0",
+      "fecha_hora_emision": "2026-10-27T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 132,
+      "id_estudio": 12,
+      "nombre_estudio": "Coproparasitoscópico Seriado (3 muestras)",
+      "nss": "11000000132",
+      "nombre_paciente": "Lucía Palma Sánchez"
+    },
+    {
+      "id_resultado": 177,
+      "valor_obtenido": "185",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "< 200.0",
+      "fecha_hora_emision": "2026-10-27T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 177,
+      "id_estudio": 12,
+      "nombre_estudio": "Coproparasitoscópico Seriado (3 muestras)",
+      "nss": "11000000177",
+      "nombre_paciente": "Fernanda Aguilar Flores"
+    },
+    {
+      "id_resultado": 42,
+      "valor_obtenido": "185",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "< 200.0",
+      "fecha_hora_emision": "2026-10-27T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 42,
+      "id_estudio": 12,
+      "nombre_estudio": "Coproparasitoscópico Seriado (3 muestras)",
+      "nss": "11000000042",
+      "nombre_paciente": "Carlos Sánchez Cruz"
+    },
+    {
+      "id_resultado": 131,
+      "valor_obtenido": "14.3",
+      "unidad_medida": "g/dL",
+      "rango_referencia": "12.0 - 16.0",
+      "fecha_hora_emision": "2026-10-26T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 131,
+      "id_estudio": 11,
+      "nombre_estudio": "Prueba de Embarazo en Orina",
+      "nss": "11000000131",
+      "nombre_paciente": "Sebastián Quintanar Pérez"
+    },
+    {
+      "id_resultado": 86,
+      "valor_obtenido": "14.3",
+      "unidad_medida": "g/dL",
+      "rango_referencia": "12.0 - 16.0",
+      "fecha_hora_emision": "2026-10-26T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 86,
+      "id_estudio": 11,
+      "nombre_estudio": "Prueba de Embarazo en Orina",
+      "nss": "11000000086",
+      "nombre_paciente": "Lucía Cruz López"
+    },
+    {
+      "id_resultado": 41,
+      "valor_obtenido": "14.3",
+      "unidad_medida": "g/dL",
+      "rango_referencia": "12.0 - 16.0",
+      "fecha_hora_emision": "2026-10-26T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 41,
+      "id_estudio": 11,
+      "nombre_estudio": "Prueba de Embarazo en Orina",
+      "nss": "11000000041",
+      "nombre_paciente": "Fernanda Mendoza García"
+    },
+    {
+      "id_resultado": 176,
+      "valor_obtenido": "14.3",
+      "unidad_medida": "g/dL",
+      "rango_referencia": "12.0 - 16.0",
+      "fecha_hora_emision": "2026-10-26T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 176,
+      "id_estudio": 11,
+      "nombre_estudio": "Prueba de Embarazo en Orina",
+      "nss": "11000000176",
+      "nombre_paciente": "Luis García Torres"
+    },
+    {
+      "id_resultado": 40,
+      "valor_obtenido": "94.2",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "70.0 - 100.0",
+      "fecha_hora_emision": "2026-10-25T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 40,
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "nss": "11000000040",
+      "nombre_paciente": "Kevin García Morales"
+    },
+    {
+      "id_resultado": 85,
+      "valor_obtenido": "94.2",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "70.0 - 100.0",
+      "fecha_hora_emision": "2026-10-25T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 85,
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "nss": "11000000085",
+      "nombre_paciente": "Sebastián Mendoza Ramírez"
+    },
+    {
+      "id_resultado": 220,
+      "valor_obtenido": "94.2",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "70.0 - 100.0",
+      "fecha_hora_emision": "2026-10-25T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 220,
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "nss": "11000000220",
+      "nombre_paciente": "Sebastián Treviño Treviño"
+    },
+    {
+      "id_resultado": 130,
+      "valor_obtenido": "94.2",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "70.0 - 100.0",
+      "fecha_hora_emision": "2026-10-25T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 130,
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "nss": "11000000130",
+      "nombre_paciente": "Camila García Mendoza"
+    },
+    {
+      "id_resultado": 175,
+      "valor_obtenido": "94.2",
+      "unidad_medida": "mg/dL",
+      "rango_referencia": "70.0 - 100.0",
+      "fecha_hora_emision": "2026-10-25T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 175,
+      "id_estudio": 10,
+      "nombre_estudio": "Microalbuminuria en Orina",
+      "nss": "11000000175",
+      "nombre_paciente": "Juan Ramírez Cruz"
+    },
+    {
+      "id_resultado": 219,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-24T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 219,
+      "id_estudio": 9,
+      "nombre_estudio": "Depuración de Creatinina 24h",
+      "nss": "11000000219",
+      "nombre_paciente": "Luis Quintanar Vega"
+    },
+    {
+      "id_resultado": 129,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-24T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 129,
+      "id_estudio": 9,
+      "nombre_estudio": "Depuración de Creatinina 24h",
+      "nss": "11000000129",
+      "nombre_paciente": "Lucía Sánchez Aguilar"
+    },
+    {
+      "id_resultado": 84,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-24T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 84,
+      "id_estudio": 9,
+      "nombre_estudio": "Depuración de Creatinina 24h",
+      "nss": "11000000084",
+      "nombre_paciente": "Fernanda Morales Mendoza"
+    },
+    {
+      "id_resultado": 174,
+      "valor_obtenido": "Negativo",
+      "unidad_medida": "cualitativo",
+      "rango_referencia": "Negativo",
+      "fecha_hora_emision": "2026-10-24T20:30:00.000Z",
+      "observaciones": "Validado por químico responsable.",
+      "id_cita": 174,
+      "id_estudio": 9,
+      "nombre_estudio": "Depuración de Creatinina 24h",
+      "nss": "11000000174",
+      "nombre_paciente": "Sebastián Vega Sánchez"
+    }
+  ]
+};
+
+        // Estado dinámico en memoria
         let state = {
             pacientes: [],
             citas: [],
             estudios: [],
-            resultados: []
+            resultados: [],
+            stats: {}
         };
+
+        let isLiveMode = false;
 
         // Cambiar pestañas
         function switchTab(tabId) {
@@ -754,52 +2003,84 @@
             }, 4000);
         }
 
-        // Cargar todo
+        // Cargar todo: intenta PostgreSQL primero; si no responde o está en GitHub Pages, usa Simulación
         async function loadAllData() {
             const spin = document.getElementById('refresh-icon');
             if (spin) spin.classList.add('fa-spin');
-            
-            await Promise.all([
-                fetchStatus(),
-                fetchStats(),
-                fetchPacientes(),
-                fetchCitas(),
-                fetchEstudios(),
-                fetchResultados()
-            ]);
+
+            const liveConnected = await fetchStatus();
+
+            if (liveConnected) {
+                // MODO POSTGRESQL EN LOCALHOST
+                await Promise.all([
+                    fetchStats(),
+                    fetchPacientes(),
+                    fetchCitas(),
+                    fetchEstudios(),
+                    fetchResultados()
+                ]);
+            } else {
+                // MODO SIMULACIÓN EN GITHUB PAGES (RESTABLECE AL RECARGAR)
+                state = JSON.parse(JSON.stringify(DEFAULT_SIMULATION));
+                renderStats(state.stats);
+                renderEstudios(state.estudios);
+                renderPacientes(state.pacientes);
+                renderCitas(state.citas);
+                renderResultados(state.resultados);
+            }
 
             if (spin) setTimeout(() => spin.classList.remove('fa-spin'), 400);
         }
 
-        // 1. Estado y telemetría
+        // 1. Estado y telemetría (Doble modo)
         async function fetchStatus() {
             try {
-                const res = await fetch('/api/status');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1200);
+                const res = await fetch('/api/status', { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!res.ok) throw new Error('No live server');
                 const data = await res.json();
                 if (data.db_connected) {
+                    isLiveMode = true;
                     document.getElementById('telemetry-db').textContent = data.database;
                     document.getElementById('telemetry-ping').textContent = `${data.latency_ms} ms`;
+                    document.getElementById('telemetry-dot').className = "w-2 h-2 rounded-full bg-emerald-600";
                     document.getElementById('telemetry-badge').className = "hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#E5DFD3] text-[#423B31] text-xs font-mono";
+                    document.getElementById('badge-environment').textContent = "PostgreSQL Live";
+                    return true;
                 }
             } catch (err) {
-                document.getElementById('telemetry-ping').textContent = 'Desconectado';
-                document.getElementById('telemetry-badge').className = "hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FDF0EE] border border-[#F7CBC6] text-[#A63A2B] text-xs font-mono";
+                // Fallback automático para GitHub Pages o servidor local apagado
+                isLiveMode = false;
+                document.getElementById('telemetry-db').textContent = "Simulación Sandbox";
+                document.getElementById('telemetry-ping').textContent = "Demo Activa";
+                document.getElementById('telemetry-dot').className = "w-2 h-2 rounded-full bg-amber-600";
+                document.getElementById('telemetry-badge').className = "hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF7EC] border border-[#FBE3B8] text-[#9A5B13] text-xs font-mono";
+                document.getElementById('badge-environment').textContent = "Simulación (Restablece al F5)";
+                return false;
             }
+            return false;
         }
 
         // 2. Stats
         async function fetchStats() {
             try {
                 const res = await fetch('/api/stats');
-                const data = await res.json();
-                document.getElementById('kpi-pacientes').textContent = data.total_pacientes || 220;
-                document.getElementById('kpi-vigentes').textContent = data.pacientes_vigentes || 205;
-                document.getElementById('kpi-citas').textContent = data.total_citas || 220;
-                document.getElementById('kpi-estudios').textContent = data.total_estudios || 15;
-                document.getElementById('kpi-resultados').textContent = data.total_resultados || 220;
+                state.stats = await res.json();
+                renderStats(state.stats);
             } catch (err) {
-                console.warn("Usando conteos locales", err);
+                renderStats(DEFAULT_SIMULATION.stats);
             }
+        }
+
+        function renderStats(stats) {
+            document.getElementById('kpi-pacientes').textContent = stats.total_pacientes || 221;
+            document.getElementById('kpi-vigentes').textContent = stats.pacientes_vigentes || 206;
+            document.getElementById('kpi-citas').textContent = stats.total_citas || 220;
+            document.getElementById('kpi-estudios').textContent = stats.total_estudios || 15;
+            document.getElementById('kpi-resultados').textContent = stats.total_resultados || 220;
         }
 
         // 3. Pacientes
@@ -809,7 +2090,7 @@
                 state.pacientes = await res.json();
                 renderPacientes(state.pacientes);
             } catch (err) {
-                console.error("Error al cargar pacientes:", err);
+                renderPacientes(DEFAULT_SIMULATION.pacientes);
             }
         }
 
@@ -841,7 +2122,7 @@
                     ? `<span class="text-[#7A7265] font-mono text-xs">Beneficiario de: <strong class="text-[#1F1C18]">${p.nss_titular}</strong></span>`
                     : `<span class="text-[#1F5263] font-mono text-xs bg-[#FAF8F5] px-2.5 py-0.5 rounded border border-[#E5DFD3] font-semibold">TITULAR DIRECTO</span>`;
 
-                const safeNombre = (p.nombre || '').replace(/'/g, "\'");
+                const safeNombre = (p.nombre || '').replace(/'/g, "\\'");
 
                 return `
                     <tr class="hover:bg-[#FAF8F5] transition">
@@ -893,49 +2174,79 @@
                 nombre: document.getElementById('form-p-nombre').value,
                 unidad_medica_adscripcion: document.getElementById('form-p-unidad').value,
                 telefono: document.getElementById('form-p-telefono').value,
-                nss_titular: document.getElementById('form-p-titular').value,
+                nss_titular: document.getElementById('form-p-titular').value || null,
                 estatus_vigencia: document.getElementById('form-p-vigente').checked
             };
 
-            try {
-                const res = await fetch('/api/pacientes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al guardar');
-                
-                showToast('Derechohabiente Registrado', `NSS: ${payload.nss} guardado en PostgreSQL`, 'success');
+            if (isLiveMode) {
+                try {
+                    const res = await fetch('/api/pacientes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detalle || data.error || 'Error al guardar');
+                    
+                    showToast('Derechohabiente Registrado', `NSS: ${payload.nss} guardado en PostgreSQL`, 'success');
+                    closeModal('modal-paciente');
+                    e.target.reset();
+                    await loadAllData();
+                } catch (err) {
+                    showToast('Rechazo de Integridad', err.message, 'error');
+                }
+            } else {
+                // Simulación en memoria
+                const nuevo = {
+                    nss: payload.nss,
+                    nombre: payload.nombre,
+                    estatus_vigencia: payload.estatus_vigencia,
+                    unidad_medica_adscripcion: payload.unidad_medica_adscripcion,
+                    nss_titular: payload.nss_titular,
+                    telefonos: payload.telefono ? [payload.telefono] : [],
+                    total_ordenes: "0"
+                };
+                state.pacientes.unshift(nuevo);
+                state.stats.total_pacientes = (state.stats.total_pacientes || 221) + 1;
+                if (nuevo.estatus_vigencia) state.stats.pacientes_vigentes = (state.stats.pacientes_vigentes || 206) + 1;
+                renderStats(state.stats);
+                renderPacientes(state.pacientes);
+                showToast('Derechohabiente Registrado (Simulado)', `NSS: ${payload.nss} agregado temporalmente`, 'success');
                 closeModal('modal-paciente');
                 e.target.reset();
-                await loadAllData();
-            } catch (err) {
-                showToast('Rechazo de Integridad', err.message, 'error');
             }
         }
 
         async function eliminarPaciente(nss, nombre) {
-            if (!confirm(`¿Deseas eliminar al derechohabiente?
-
-Nombre: ${nombre}
-NSS: ${nss}
-
-Si tiene órdenes médicas o citas activas, la base de datos rechazará la eliminación por la restricción ON DELETE RESTRICT (Práctica 5).`)) {
+            if (!confirm(`¿Deseas eliminar al derechohabiente?\n\nNombre: ${nombre}\nNSS: ${nss}\n\nSi tiene órdenes médicas o citas activas, la base de datos rechazará la eliminación por la restricción ON DELETE RESTRICT (Práctica 5).`)) {
                 return;
             }
 
-            try {
-                const res = await fetch(`/api/pacientes/${encodeURIComponent(nss)}`, {
-                    method: 'DELETE'
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al eliminar');
+            if (isLiveMode) {
+                try {
+                    const res = await fetch(`/api/pacientes/${encodeURIComponent(nss)}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detalle || data.error || 'Error al eliminar');
 
-                showToast('Derechohabiente Eliminado', data.message || `NSS ${nss} eliminado de PostgreSQL`, 'success');
-                await loadAllData();
-            } catch (err) {
-                showToast('Restricción de Integridad', err.message, 'error');
+                    showToast('Derechohabiente Eliminado', data.message || `NSS ${nss} eliminado de PostgreSQL`, 'success');
+                    await loadAllData();
+                } catch (err) {
+                    showToast('Restricción de Integridad', err.message, 'error');
+                }
+            } else {
+                // Simulación en memoria
+                const tieneCitas = state.citas.some(c => c.nss_paciente === nss);
+                if (tieneCitas) {
+                    showToast('Restricción de Integridad (Simulado)', `Rechazado: El paciente ${nss} tiene citas u órdenes médicas asociadas (ON DELETE RESTRICT).`, 'error');
+                    return;
+                }
+                state.pacientes = state.pacientes.filter(p => p.nss !== nss);
+                state.stats.total_pacientes = Math.max(0, (state.stats.total_pacientes || 221) - 1);
+                renderStats(state.stats);
+                renderPacientes(state.pacientes);
+                showToast('Derechohabiente Eliminado (Simulado)', `NSS ${nss} eliminado en memoria`, 'success');
             }
         }
 
@@ -946,7 +2257,7 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
                 state.citas = await res.json();
                 renderCitas(state.citas);
             } catch (err) {
-                console.error("Error al cargar citas:", err);
+                renderCitas(DEFAULT_SIMULATION.citas);
             }
         }
 
@@ -1061,36 +2372,79 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
                 id_estudios: [parseInt(document.getElementById('form-c-estudio').value, 10)]
             };
 
-            try {
-                const res = await fetch('/api/citas', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.detalle || data.error || 'Error agendando');
+            // Validación de regla de anticipación
+            const dMed = new Date(payload.fecha_cita_medico);
+            const dLab = new Date(payload.fecha_hora_laboratorio);
+            const diffDays = Math.round((dMed.getTime() - dLab.getTime()) / (1000 * 3600 * 24));
 
-                showToast('Cita Agendada', `Folio: ${payload.folio_orden} guardado exitosamente`, 'success');
+            if (diffDays < 15 || diffDays > 30) {
+                showToast('Violación de Disparador', `Anticipación inválida: ${diffDays} días. El trigger exige entre 15 y 30 días.`, 'error');
+                return;
+            }
+
+            if (isLiveMode) {
+                try {
+                    const res = await fetch('/api/citas', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detalle || data.error || 'Error agendando');
+
+                    showToast('Cita Agendada', `Folio: ${payload.folio_orden} guardado exitosamente`, 'success');
+                    closeModal('modal-cita');
+                    e.target.reset();
+                    await loadAllData();
+                } catch (err) {
+                    showToast('Validación de Trigger / Restricción', err.message, 'error');
+                }
+            } else {
+                // Simulación en memoria
+                const paciente = state.pacientes.find(p => p.nss === payload.nss_paciente);
+                const estudio = state.estudios.find(s => s.id_estudio === payload.id_estudios[0]);
+                const nuevaCita = {
+                    id_cita: state.citas.length + 1,
+                    folio_orden: payload.folio_orden,
+                    nss_paciente: payload.nss_paciente,
+                    nombre_paciente: paciente ? paciente.nombre : "Derechohabiente Simulador",
+                    fecha_hora_laboratorio: payload.fecha_hora_laboratorio,
+                    fecha_cita_medico: payload.fecha_cita_medico,
+                    dias_anticipacion: diffDays,
+                    estatus_asistencia: "PROGRAMADA",
+                    estudios: estudio ? estudio.nombre_estudio : "Análisis General"
+                };
+                state.citas.unshift(nuevaCita);
+                state.stats.total_citas = (state.stats.total_citas || 220) + 1;
+                renderStats(state.stats);
+                renderCitas(state.citas);
+                showToast('Cita Agendada (Simulación)', `Folio ${payload.folio_orden} registrado`, 'success');
                 closeModal('modal-cita');
                 e.target.reset();
-                await loadAllData();
-            } catch (err) {
-                showToast('Validación de Trigger / Restricción', err.message, 'error');
             }
         }
 
         async function updateEstatusCita(idCita, nuevoEstatus) {
-            try {
-                const res = await fetch(`/api/citas/${idCita}/estatus`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ estatus_asistencia: nuevoEstatus })
-                });
-                if (!res.ok) throw new Error('Error actualizando estatus');
-                showToast('Cita Actualizada', `Cita #${idCita} cambiada a ${nuevoEstatus}`, 'success');
-                await loadAllData();
-            } catch (err) {
-                showToast('Error', err.message, 'error');
+            if (isLiveMode) {
+                try {
+                    const res = await fetch(`/api/citas/${idCita}/estatus`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ estatus_asistencia: nuevoEstatus })
+                    });
+                    if (!res.ok) throw new Error('Error actualizando estatus');
+                    showToast('Cita Actualizada', `Cita #${idCita} cambiada a ${nuevoEstatus}`, 'success');
+                    await loadAllData();
+                } catch (err) {
+                    showToast('Error', err.message, 'error');
+                }
+            } else {
+                const c = state.citas.find(ci => ci.id_cita === idCita);
+                if (c) {
+                    c.estatus_asistencia = nuevoEstatus;
+                    renderCitas(state.citas);
+                    showToast('Cita Actualizada (Simulación)', `Cita #${idCita} cambiada a ${nuevoEstatus}`, 'success');
+                }
             }
         }
 
@@ -1101,7 +2455,7 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
                 state.estudios = await res.json();
                 renderEstudios(state.estudios);
             } catch (err) {
-                console.error("Error al cargar estudios:", err);
+                renderEstudios(DEFAULT_SIMULATION.estudios);
             }
         }
 
@@ -1162,7 +2516,7 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
                 state.resultados = await res.json();
                 renderResultados(state.resultados);
             } catch (err) {
-                console.error("Error al cargar resultados:", err);
+                renderResultados(DEFAULT_SIMULATION.resultados);
             }
         }
 
@@ -1205,25 +2559,50 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
                 observaciones: document.getElementById('form-r-obs').value
             };
 
-            try {
-                const res = await fetch('/api/resultados', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.detalle || data.error || 'Error al emitir');
+            if (isLiveMode) {
+                try {
+                    const res = await fetch('/api/resultados', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detalle || data.error || 'Error al emitir');
 
-                showToast('Resultado Emitido', `Resultado guardado para Cita #${payload.id_cita}`, 'success');
+                    showToast('Resultado Emitido', `Resultado guardado para Cita #${payload.id_cita}`, 'success');
+                    closeModal('modal-resultado');
+                    e.target.reset();
+                    await loadAllData();
+                } catch (err) {
+                    showToast('Error de Inserción', err.message, 'error');
+                }
+            } else {
+                // Simulación en memoria
+                const cita = state.citas.find(c => c.id_cita === payload.id_cita);
+                const estudio = state.estudios.find(s => s.id_estudio === payload.id_estudio);
+                const nuevoResultado = {
+                    id_resultado: state.resultados.length + 1,
+                    id_cita: payload.id_cita,
+                    nss: cita ? cita.nss_paciente : "11000000001",
+                    nombre_paciente: cita ? cita.nombre_paciente : "Paciente Demo",
+                    nombre_estudio: estudio ? estudio.nombre_estudio : "Análisis Clínico",
+                    valor_obtenido: payload.valor_obtenido,
+                    unidad_medida: payload.unidad_medida,
+                    rango_referencia: payload.rango_referencia,
+                    fecha_hora_emision: new Date().toISOString(),
+                    observaciones: payload.observaciones
+                };
+                state.resultados.unshift(nuevoResultado);
+                state.stats.total_resultados = (state.stats.total_resultados || 220) + 1;
+                renderStats(state.stats);
+                renderResultados(state.resultados);
+                showToast('Resultado Emitido (Simulación)', `Registrado para Cita #${payload.id_cita}`, 'success');
                 closeModal('modal-resultado');
                 e.target.reset();
-                await loadAllData();
-            } catch (err) {
-                showToast('Error de Inserción', err.message, 'error');
             }
         }
 
-        // 7. Consola SQL
+        // 7. Consola SQL (Doble modo: PostgreSQL live o consulta simulada)
         function setQueryPreset(n) {
             const input = document.getElementById('sql-input');
             if (n === 1) {
@@ -1241,40 +2620,65 @@ Si tiene órdenes médicas o citas activas, la base de datos rechazará la elimi
             const container = document.getElementById('sql-result-container');
             const table = document.getElementById('sql-table');
 
-            try {
-                const res = await fetch('/api/query', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sql })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Error al ejecutar SQL');
+            if (isLiveMode) {
+                try {
+                    const res = await fetch('/api/query', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sql })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Error al ejecutar SQL');
 
-                container.classList.remove('hidden');
-                document.getElementById('sql-meta-rows').textContent = `Filas devueltas: ${data.rowCount}`;
-                document.getElementById('sql-meta-time').textContent = `Tiempo de ejecución: ${data.execution_time_ms} ms`;
+                    container.classList.remove('hidden');
+                    document.getElementById('sql-meta-rows').textContent = `Filas devueltas: ${data.rowCount}`;
+                    document.getElementById('sql-meta-time').textContent = `Tiempo de ejecución: ${data.execution_time_ms} ms (PostgreSQL)`;
 
-                if (data.rows.length === 0) {
-                    table.innerHTML = `<tr><td class="p-4 text-center text-[#7A7265]">La consulta no devolvió registros.</td></tr>`;
-                    return;
+                    if (data.rows.length === 0) {
+                        table.innerHTML = `<tr><td class="p-4 text-center text-[#7A7265]">La consulta no devolvió registros.</td></tr>`;
+                        return;
+                    }
+
+                    const ths = data.fields.map(f => `<th class="py-2.5 px-3 bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-bold">${f}</th>`).join('');
+                    const trs = data.rows.map(row => {
+                        const tds = data.fields.map(f => `<td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18]">${row[f] !== null ? row[f] : '<span class="text-[#A39989]">NULL</span>'}</td>`).join('');
+                        return `<tr class="hover:bg-[#FAF8F5]">${tds}</tr>`;
+                    }).join('');
+
+                    table.innerHTML = `<thead><tr>${ths}</tr></thead><tbody>${trs}</tbody>`;
+                } catch (err) {
+                    showToast('Error en Consulta SQL', err.message, 'error');
                 }
+            } else {
+                // Simulación en memoria para GitHub Pages
+                container.classList.remove('hidden');
+                document.getElementById('sql-meta-rows').textContent = `Filas devueltas: ${Math.min(10, state.citas.length)}`;
+                document.getElementById('sql-meta-time').textContent = `Tiempo de ejecución: 1 ms (Motor Simulado)`;
 
-                const ths = data.fields.map(f => `<th class="py-2.5 px-3 bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-bold">${f}</th>`).join('');
-                const trs = data.rows.map(row => {
-                    const tds = data.fields.map(f => `<td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18]">${row[f] !== null ? row[f] : '<span class="text-[#A39989]">NULL</span>'}</td>`).join('');
-                    return `<tr class="hover:bg-[#FAF8F5]">${tds}</tr>`;
-                }).join('');
+                const fields = ["nss", "nombre", "folio_orden", "fecha_laboratorio", "dias_anticipacion", "estudio"];
+                const ths = fields.map(f => `<th class="py-2.5 px-3 bg-[#F4EFE6] border-b border-[#E5DFD3] text-[#423B31] font-bold">${f}</th>`).join('');
+                const trs = state.citas.slice(0, 10).map(c => `
+                    <tr class="hover:bg-[#FAF8F5]">
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18]">${c.nss_paciente}</td>
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18]">${c.nombre_paciente}</td>
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18] font-mono">${c.folio_orden}</td>
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#1F1C18] font-mono">${c.fecha_hora_laboratorio.split('T')[0]}</td>
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-emerald-800 font-mono font-bold">${c.dias_anticipacion}</td>
+                        <td class="py-2.5 px-3 border-b border-[#EDE7DC] text-[#423B31]">${c.estudios}</td>
+                    </tr>
+                `).join('');
 
                 table.innerHTML = `<thead><tr>${ths}</tr></thead><tbody>${trs}</tbody>`;
-            } catch (err) {
-                showToast('Error en Consulta SQL', err.message, 'error');
             }
         }
 
         // Arranque inicial
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
-            setInterval(fetchStatus, 10000);
+            // Polling solo si está en modo live
+            setInterval(() => {
+                if (isLiveMode) fetchStatus();
+            }, 10000);
         });
     </script>
 </body>
