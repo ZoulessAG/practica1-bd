@@ -35,7 +35,7 @@ A continuación se presentan las 13 consultas formales cubriendo exhaustivamente
 * **Demostración requerida:** Filtrado de filas bajo una condición booleana atómica.
 * **Expresión en Álgebra Relacional:**
 
-$$\sigma_{\text{estatus\_vigencia} = \text{true}}(\text{paciente})$$
+$$\sigma_{\text{estatus}\textunderscore\text{vigencia} = \text{true}}(\text{paciente})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -66,7 +66,7 @@ WHERE estatus_vigencia = true;
 * **Demostración requerida:** Filtrado vertical de columnas y eliminación de tuplas duplicadas.
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{unidad\_medica\_adscripcion}}(\text{paciente})$$
+$$\pi_{\text{unidad}\textunderscore\text{medica}\textunderscore\text{adscripcion}}(\text{paciente})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -96,7 +96,7 @@ FROM paciente;
 * **Demostración requerida:** Filtrado simultáneo horizontal y vertical con restricción paramétrica.
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{id\_estudio},\, \text{tipo\_tubo},\, \text{color\_tapon}}(\sigma_{\text{ayuno\_horas} \ge 8}(\text{prueba\_sangre}))$$
+$$\pi_{\text{id}\textunderscore\text{estudio},\, \text{tipo}\textunderscore\text{tubo},\, \text{color}\textunderscore\text{tapon}}(\sigma_{\text{ayuno}\textunderscore\text{horas} \ge 8}(\text{prueba}\textunderscore\text{sangre}))$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -129,9 +129,9 @@ WHERE ayuno_horas >= 8;
 * **Demostración requerida:** Compatibilidad de unión (mismo grado y dominios compatibles de atributos).
 * **Expresión en Álgebra Relacional:**
 
-$$T_1 \leftarrow \pi_{\text{nss}}(\sigma_{\text{nss\_titular} = \text{null}}(\text{paciente}))$$
+$$T_1 \leftarrow \pi_{\text{nss}}(\sigma_{\text{nss}\textunderscore\text{titular} = \text{null}}(\text{paciente}))$$
 
-$$T_2 \leftarrow \pi_{\text{nss\_titular}}(\sigma_{\text{nss\_titular} \neq \text{null}}(\text{paciente}))$$
+$$T_2 \leftarrow \pi_{\text{nss}\textunderscore\text{titular}}(\sigma_{\text{nss}\textunderscore\text{titular} \neq \text{null}}(\text{paciente}))$$
 
 $$\text{Resultado} = T_1 \cup T_2$$
 
@@ -177,9 +177,9 @@ WHERE nss_titular IS NOT NULL;
 
 $$T_{\text{todos}} \leftarrow \pi_{\text{nss}}(\text{paciente})$$
 
-$$T_{\text{con\_tel}} \leftarrow \pi_{\text{nss}}(\text{paciente\_telefono})$$
+$$T_{\text{con}\textunderscore\text{tel}} \leftarrow \pi_{\text{nss}}(\text{paciente}\textunderscore\text{telefono})$$
 
-$$\text{Resultado} = T_{\text{todos}} - T_{\text{con\_tel}}$$
+$$\text{Resultado} = T_{\text{todos}} - T_{\text{con}\textunderscore\text{tel}}$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -216,9 +216,9 @@ JOIN paciente_telefono t ON p.nss = t.nss;
 * **Demostración requerida:** Compatibilidad de tipos y preservación únicamente de tuplas compartidas.
 * **Expresión en Álgebra Relacional:**
 
-$$E_1 \leftarrow \pi_{\text{id\_estudio}}(\sigma_{\text{folio\_orden} = \text{'ORD-2026-0001'}}(\text{orden\_estudio}))$$
+$$E_1 \leftarrow \pi_{\text{id}\textunderscore\text{estudio}}(\sigma_{\text{folio}\textunderscore\text{orden} = \text{'ORD-2026-0001'}}(\text{orden}\textunderscore\text{estudio}))$$
 
-$$E_2 \leftarrow \pi_{\text{id\_estudio}}(\sigma_{\text{folio\_orden} = \text{'ORD-2026-0003'}}(\text{orden\_estudio}))$$
+$$E_2 \leftarrow \pi_{\text{id}\textunderscore\text{estudio}}(\sigma_{\text{folio}\textunderscore\text{orden} = \text{'ORD-2026-0003'}}(\text{orden}\textunderscore\text{estudio}))$$
 
 $$\text{Resultado} = E_1 \cap E_2$$
 
@@ -262,9 +262,9 @@ WHERE folio_orden = 'ORD-2026-0003';
 * **Demostración requerida:** Demostrar por qué casi nunca se usa sin filtrar (explosión combinatoria de tuplas).
 * **Expresión en Álgebra Relacional:**
 
-$$U \leftarrow \pi_{\text{nombre\_estudio}}(\text{estudio} \bowtie \text{prueba\_orina})$$
+$$U \leftarrow \pi_{\text{nombre}\textunderscore\text{estudio}}(\text{estudio} \bowtie \text{prueba}\textunderscore\text{orina})$$
 
-$$F \leftarrow \pi_{\text{tipo\_frasco}}(\text{prueba\_fecal})$$
+$$F \leftarrow \pi_{\text{tipo}\textunderscore\text{frasco}}(\text{prueba}\textunderscore\text{fecal})$$
 
 $$\text{Resultado} = U \times F$$
 
@@ -305,7 +305,7 @@ CROSS JOIN (SELECT DISTINCT tipo_frasco FROM prueba_fecal) pf;
 * **Demostración requerida:** Qué filas se pierden y cuáles se conservan en la correspondencia de claves.
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{nss},\, \text{nombre},\, \text{folio\_orden},\, \text{medico\_emisor}}(\text{paciente} \bowtie_{\text{paciente.nss} = \text{orden\_medica.nss\_paciente}} \text{orden\_medica})$$
+$$\pi_{\text{nss},\, \text{nombre},\, \text{folio}\textunderscore\text{orden},\, \text{medico}\textunderscore\text{emisor}}(\text{paciente} \bowtie_{\text{paciente.nss} = \text{orden}\textunderscore\text{medica.nss}\textunderscore\text{paciente}} \text{orden}\textunderscore\text{medica})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -342,7 +342,7 @@ JOIN orden_medica o ON p.nss = o.nss_paciente;
 * **Demostración requerida:** Condición de unión basada en una desigualdad ($>$) en lugar de igualdad.
 * **Expresión en Álgebra Relacional:**
 
-$$\text{Resultado} = \rho_{A}(\text{prueba\_sangre}) \bowtie_{A.\text{ayuno\_horas} > B.\text{ayuno\_horas}} \rho_{B}(\text{prueba\_sangre})$$
+$$\text{Resultado} = \rho_{A}(\text{prueba}\textunderscore\text{sangre}) \bowtie_{A.\text{ayuno}\textunderscore\text{horas} > B.\text{ayuno}\textunderscore\text{horas}} \rho_{B}(\text{prueba}\textunderscore\text{sangre})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -376,7 +376,7 @@ JOIN prueba_sangre s2 ON s1.ayuno_horas > s2.ayuno_horas;
 * **Demostración requerida:** Preservación de tuplas incompletas mediante la introducción de nulos relacionales.
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{paciente.nss},\, \text{nombre},\, \text{telefono}}(\text{paciente} \mathbin{⟕}_{\text{paciente.nss} = \text{paciente\_telefono.nss}} \text{paciente\_telefono})$$
+$$\pi_{\text{paciente.nss},\, \text{nombre},\, \text{telefono}}(\text{paciente} \mathbin{⟕}_{\text{paciente.nss} = \text{paciente}\textunderscore\text{telefono.nss}} \text{paciente}\textunderscore\text{telefono})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -411,7 +411,7 @@ LEFT JOIN paciente_telefono t ON p.nss = t.nss;
 * **Demostración requerida:** Generación de resúmenes estadísticos agrupados por un atributo categórico.
 * **Expresión en Álgebra Relacional:**
 
-$$\gamma_{\text{estatus};\, \text{count}(\text{id\_cita}) \rightarrow \text{total\_citas}}(\text{cita})$$
+$$\gamma_{\text{estatus};\, \text{count}(\text{id}\textunderscore\text{cita}) \rightarrow \text{total}\textunderscore\text{citas}}(\text{cita})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -443,7 +443,7 @@ ORDER BY total_citas DESC;
 * **Demostración requerida:** Composición de reunión con agrupación analítica.
 * **Expresión en Álgebra Relacional:**
 
-$$\gamma_{\text{medico\_emisor};\, \text{count}(\text{id\_estudio}) \rightarrow \text{total\_estudios}}(\text{orden\_medica} \bowtie \text{orden\_estudio})$$
+$$\gamma_{\text{medico}\textunderscore\text{emisor};\, \text{count}(\text{id}\textunderscore\text{estudio}) \rightarrow \text{total}\textunderscore\text{estudios}}(\text{orden}\textunderscore\text{medica} \bowtie \text{orden}\textunderscore\text{estudio})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -481,16 +481,16 @@ ORDER BY total_estudios_prescritos DESC;
 * **Expresión en Álgebra Relacional:**
 
 Sean:
-$$R = \pi_{\text{folio\_orden},\, \text{id\_estudio}}(\text{orden\_estudio})$$
+$$R = \pi_{\text{folio}\textunderscore\text{orden},\, \text{id}\textunderscore\text{estudio}}(\text{orden}\textunderscore\text{estudio})$$
 
-$$S = \pi_{\text{id\_estudio}}(\text{prueba\_orina})$$
+$$S = \pi_{\text{id}\textunderscore\text{estudio}}(\text{prueba}\textunderscore\text{orina})$$
 
 La división formal $R \div S$ se define en álgebra primitiva como:
-$$\text{Ordenes} \leftarrow \pi_{\text{folio\_orden}}(R)$$
+$$\text{Ordenes} \leftarrow \pi_{\text{folio}\textunderscore\text{orden}}(R)$$
 
-$$\text{Combinaciones\_Posibles} \leftarrow \text{Ordenes} \times S$$
+$$\text{Combinaciones}\textunderscore\text{Posibles} \leftarrow \text{Ordenes} \times S$$
 
-$$\text{Faltantes} \leftarrow \pi_{\text{folio\_orden}}(\text{Combinaciones\_Posibles} - R)$$
+$$\text{Faltantes} \leftarrow \pi_{\text{folio}\textunderscore\text{orden}}(\text{Combinaciones}\textunderscore\text{Posibles} - R)$$
 
 $$\text{Resultado} = \text{Ordenes} - \text{Faltantes}$$
 
@@ -550,7 +550,7 @@ Se seleccionaron tres consultas analíticas representativas del sistema de monit
 * **Pregunta del negocio:** ¿Cuáles son los sismos registrados en los estados de Oaxaca o Guerrero con magnitud mayor o igual a 6.0 Richter?
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{fecha\_hora},\, \text{magnitud},\, \text{estado}}(\sigma_{\text{magnitud} \ge 6.0 \,\land\, (\text{estado}='Oaxaca' \,\lor\, \text{estado}='Guerrero')}(\text{Fact\_Sismos} \bowtie \text{Dim\_Ubicacion}))$$
+$$\pi_{\text{fecha}\textunderscore\text{hora},\, \text{magnitud},\, \text{estado}}(\sigma_{\text{magnitud} \ge 6.0 \,\land\, (\text{estado}='Oaxaca' \,\lor\, \text{estado}='Guerrero')}(\text{Fact}\textunderscore\text{Sismos} \bowtie \text{Dim}\textunderscore\text{Ubicacion}))$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -579,7 +579,7 @@ pi fecha_hora, magnitud, estado (
 * **Pregunta del negocio:** ¿Cuántos sismos totales y cuál es la magnitud promedio registrada en cada estado de la República?
 * **Expresión en Álgebra Relacional:**
 
-$$\gamma_{\text{estado};\, \text{count}(\text{id\_sismo}) \rightarrow \text{total\_eventos},\, \text{avg}(\text{magnitud}) \rightarrow \text{promedio\_mag}}(\text{Fact\_Sismos} \bowtie \text{Dim\_Ubicacion})$$
+$$\gamma_{\text{estado};\, \text{count}(\text{id}\textunderscore\text{sismo}) \rightarrow \text{total}\textunderscore\text{eventos},\, \text{avg}(\text{magnitud}) \rightarrow \text{promedio}\textunderscore\text{mag}}(\text{Fact}\textunderscore\text{Sismos} \bowtie \text{Dim}\textunderscore\text{Ubicacion})$$
 
 * **Sintaxis RelaX:**
 ```text
@@ -604,7 +604,7 @@ gamma estado; count(id_sismo)->total_eventos, avg(magnitud)->promedio_mag (
 * **Pregunta del negocio:** ¿Qué estaciones sismológicas instaladas en la red de sensores no han registrado ningún evento sísmico?
 * **Expresión en Álgebra Relacional:**
 
-$$\pi_{\text{id\_estacion}}(\text{Dim\_Estacion}) - \pi_{\text{id\_estacion}}(\text{Fact\_Sismos})$$
+$$\pi_{\text{id}\textunderscore\text{estacion}}(\text{Dim}\textunderscore\text{Estacion}) - \pi_{\text{id}\textunderscore\text{estacion}}(\text{Fact}\textunderscore\text{Sismos})$$
 
 * **Sintaxis RelaX:**
 ```text

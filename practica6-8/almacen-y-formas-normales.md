@@ -21,22 +21,22 @@ Analizamos la estructura de las tablas del almacén dimensional de sismos (`sism
 ### 1. `Dim_Ubicacion` (Dimensión Geográfica Espacial)
 * **Atributos:** `id_ubicacion` (PK), `latitud`, `longitud`, `municipio_epicentro`, `estado_epicentro`, `region_geografica`, `pais`.
 * **Dependencias funcionales presentes en el dominio:**
-  1. $\text{id\_ubicacion} \rightarrow \{\text{latitud}, \text{longitud}, \text{municipio\_epicentro}, \text{estado\_epicentro}, \text{region\_geografica}, \text{pais}\}$
-  2. $\text{municipio\_epicentro} \rightarrow \text{estado\_epicentro}$
-  3. $\text{estado\_epicentro} \rightarrow \text{region\_geografica}$
-  4. $\text{region\_geografica} \rightarrow \text{pais}$
+  1. $\text{id}\textunderscore\text{ubicacion} \rightarrow \{\text{latitud}, \text{longitud}, \text{municipio}\textunderscore\text{epicentro}, \text{estado}\textunderscore\text{epicentro}, \text{region}\textunderscore\text{geografica}, \text{pais}\}$
+  2. $\text{municipio}\textunderscore\text{epicentro} \rightarrow \text{estado}\textunderscore\text{epicentro}$
+  3. $\text{estado}\textunderscore\text{epicentro} \rightarrow \text{region}\textunderscore\text{geografica}$
+  4. $\text{region}\textunderscore\text{geografica} \rightarrow \text{pais}$
 * **Forma Normal:** **2FN (Segunda Forma Normal), NO cumple 3FN**.
 * **Justificación:**
   * Está en 2FN porque la clave primaria es simple (`id_ubicacion`) y no existen dependencias parciales.
   * **Falla 3FN:** Existen múltiples **dependencias transitivas** donde atributos no primos determinan a otros atributos no primos:
-    $$\text{id\_ubicacion} \longrightarrow \text{municipio\_epicentro} \longrightarrow \text{estado\_epicentro} \longrightarrow \text{region\_geografica}$$
+    $$\text{id}\textunderscore\text{ubicacion} \longrightarrow \text{municipio}\textunderscore\text{epicentro} \longrightarrow \text{estado}\textunderscore\text{epicentro} \longrightarrow \text{region}\textunderscore\text{geografica}$$
     En una base de datos normalizada clásica en 3FN, estas entidades territoriales estarían descompuestas en cascada: `Pais` $\rightarrow$ `Region` $\rightarrow$ `Estado` $\rightarrow$ `Municipio` $\rightarrow$ `Coordenada`.
 
 ### 2. `Dim_Estacion` (Dimensión de Sensores y Redes)
 * **Atributos:** `id_estacion` (PK), `codigo_estacion`, `nombre_estacion`, `red_sismica`, `institucion_operadora`, `tipo_sensor`.
 * **Dependencias funcionales:**
-  1. $\text{id\_estacion} \rightarrow \{\text{codigo\_estacion}, \text{nombre\_estacion}, \text{red\_sismica}, \text{institucion\_operadora}, \text{tipo\_sensor}\}$
-  2. $\text{red\_sismica} \rightarrow \text{institucion\_operadora}$ (ej. la red SSN pertenece a la UNAM, la red CIRES pertenece al CIRES A.C.).
+  1. $\text{id}\textunderscore\text{estacion} \rightarrow \{\text{codigo}\textunderscore\text{estacion}, \text{nombre}\textunderscore\text{estacion}, \text{red}\textunderscore\text{sismica}, \text{institucion}\textunderscore\text{operadora}, \text{tipo}\textunderscore\text{sensor}\}$
+  2. $\text{red}\textunderscore\text{sismica} \rightarrow \text{institucion}\textunderscore\text{operadora}$ (ej. la red SSN pertenece a la UNAM, la red CIRES pertenece al CIRES A.C.).
 * **Forma Normal:** **2FN, NO cumple 3FN**.
 * **Justificación:** Conserva la dependencia transitiva entre la red sismológica y la institución u organismo que la opera dentro de la misma fila de estación.
 
@@ -50,7 +50,7 @@ Analizamos la estructura de las tablas del almacén dimensional de sismos (`sism
 ## 3. ¿Qué Dependencia Transitiva Conserva y Qué Gana el Almacén al Conservarla?
 
 ### La dependencia transitiva clave:
-$$\text{id\_ubicacion} \xrightarrow{\quad\quad} \text{municipio\_epicentro} \xrightarrow{\quad\quad} \text{estado\_epicentro}$$
+$$\text{id}\textunderscore\text{ubicacion} \xrightarrow{\quad\quad} \text{municipio}\textunderscore\text{epicentro} \xrightarrow{\quad\quad} \text{estado}\textunderscore\text{epicentro}$$
 
 ### ¿Qué gana el almacén al conservarla?
 1. **Eliminación radical de operaciones `JOIN` en consultas analíticas:**  
