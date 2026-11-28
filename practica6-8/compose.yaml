@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: citasmed-p68-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-citas_medicas_p4}
+      POSTGRES_USER: ${POSTGRES_USER:-admin_lab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-laboratorio_secret_pass}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata_p68:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin_lab} -d ${POSTGRES_DB:-citas_medicas_p4}"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  runner:
+    build:
+      context: .
+      dockerfile: runner/Dockerfile
+    container_name: citasmed-p68-runner
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-admin_lab}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-laboratorio_secret_pass}
+      PGDATABASE: ${POSTGRES_DB:-citas_medicas_p4}
+    volumes:
+      - ./relax:/app/relax
+      - ./consultas:/app/consultas
+
+volumes:
+  pgdata_p68:
+    driver: local

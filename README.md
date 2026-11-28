@@ -62,6 +62,7 @@
 - [Práctica 3: Transformación al Modelo Relacional](./practica3/README.md)
 - [Práctica 4: Implementación DDL, Dominios y Permisos](./practica4/README.md)
 - [Práctica 5: Edición DML e Integridad Referencial](./practica5/README.md)
+- [Prácticas 6, 7 y 8: Normalización y Álgebra Relacional](./practica6-8/README.md)
 
 ---
 
@@ -71,3 +72,5 @@
    ```bash
    git clone https://github.com/ZoulessAG/practica1-bd.git
    cd practica1-bd/entorno
+   docker compose up -d
+   ```

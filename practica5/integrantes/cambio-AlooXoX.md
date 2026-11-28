@@ -19,6 +19,7 @@ ALTER TABLE resultado ADD CONSTRAINT fk_resultado_cita
     ON DELETE CASCADE ON UPDATE CASCADE;
 
 DELETE FROM cita WHERE id_cita = '105';
+```
 
 - **Resultado:** `DELETE 1` en `cita`.
 - **Qué se pierde:** Se eliminan en cascada `3` resultados médicos en `resultado` (sus valores obtenidos, observaciones y fechas de emisión).
