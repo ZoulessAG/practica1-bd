@@ -8,18 +8,38 @@
 
 ## 1. Consultas Propias en Álgebra Relacional
 
-### Consulta Individual 1: Reunión Externa Izquierda (⟕)
-* **Pregunta clínica:** ¿Cuáles son todos los pacientes y su fecha de última orden médica, conservando pacientes recién registrados sin órdenes?
+### Consulta Individual 1: Selección Booleana Compuesta (σ)
+* **Pregunta clínica:** ¿Cuáles citas fueron programadas con 5 o más días de anticipación y su estatus actual es 'CONFIRMADA'?
 * **Expresión en Álgebra Relacional:**
-  $$\pi_{\text{nss},\, \text{nombre},\, \text{fecha\_cita\_medico}}(\text{paciente} \mathbin{⟕} \text{orden\_medica})$$
+  $$\pi_{\text{id}\textunderscore\text{cita}, \text{folio}\textunderscore\text{orden}, \text{fecha}\textunderscore\text{laboratorio}, \text{dias}\textunderscore\text{anticipacion}}(\sigma_{\text{dias}\textunderscore\text{anticipacion} \ge 5 \land \text{estatus} = \text{'CONFIRMADA'}}(\text{cita}))$$
+* **Sintaxis RelaX:**
+  ```text
+  pi id_cita, folio_orden, fecha_laboratorio, dias_anticipacion (sigma dias_anticipacion >= 5 and estatus = 'CONFIRMADA' (cita))
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-kevin-01.png`]*
 
-### Consulta Individual 2: División Relacional (÷)
-* **Pregunta clínica:** ¿Qué órdenes médicas prescriben todos los estudios de química sanguínea con ayuno estricto de 8 horas?
+### Consulta Individual 2: Unión de Recipientes Compatibles (∪)
+* **Pregunta clínica:** ¿Cuáles son todos los tipos de recipientes y frascos recolectores requeridos entre pruebas de orina y fecales?
 * **Expresión en Álgebra Relacional:**
-  $$\pi_{\text{folio\_orden},\, \text{id\_estudio}}(\text{orden\_estudio}) \div \pi_{\text{id\_estudio}}(\sigma_{\text{ayuno\_horas} = 8}(\text{prueba\_sangre}))$$
+  $$\pi_{\text{tipo}\textunderscore\text{frasco}}(\text{prueba}\textunderscore\text{orina}) \cup \pi_{\text{tipo}\textunderscore\text{frasco}}(\text{prueba}\textunderscore\text{fecal})$$
+* **Sintaxis RelaX:**
+  ```text
+  (pi tipo_frasco (prueba_orina)) union (pi tipo_frasco (prueba_fecal))
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-kevin-02.png`]*
 
-### Consulta Individual 3: Agregación con Función Promedio (γ)
-* **Pregunta clínica:** Promedio de anticipación de citas clínicas por clínica de adscripción del paciente.
+### Consulta Individual 3: Agrupación Multitabla con Conteo de Resultados (γ)
+* **Pregunta clínica:** ¿Cuántos resultados emitidos tiene registrados cada estudio clínico en el laboratorio?
+* **Expresión en Álgebra Relacional:**
+  $$\gamma_{\text{nombre}\textunderscore\text{estudio}; \text{count}(\text{id}\textunderscore\text{resultado}) \rightarrow \text{total}\textunderscore\text{resultados}}(\text{estudio} \bowtie \text{resultado})$$
+* **Sintaxis RelaX:**
+  ```text
+  gamma nombre_estudio; count(id_resultado)->total_resultados (estudio join resultado)
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-kevin-03.png`]*
 
 ---
 

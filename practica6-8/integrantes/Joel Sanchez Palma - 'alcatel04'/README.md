@@ -8,18 +8,38 @@
 
 ## 1. Consultas Propias en Álgebra Relacional
 
-### Consulta Individual 1: División Relacional (÷)
-* **Pregunta clínica:** ¿Qué pacientes han tenido órdenes que abarcan la totalidad de las pruebas coprológicas del catálogo?
+### Consulta Individual 1: Reunión de Catálogo y Especificación (⋈ ∘ σ)
+* **Pregunta clínica:** ¿Cuáles son los estudios de sangre que usan tubo con gel separador y cuál es su tapón?
 * **Expresión en Álgebra Relacional:**
-  $$\pi_{\text{nss\_paciente},\, \text{id\_estudio}}(\text{orden\_medica} \bowtie \text{orden\_estudio}) \div \pi_{\text{id\_estudio}}(\text{prueba\_fecal})$$
+  $$\pi_{\text{id}\textunderscore\text{estudio}, \text{nombre}\textunderscore\text{estudio}, \text{color}\textunderscore\text{tapon}}(\text{estudio} \bowtie \sigma_{\text{tipo}\textunderscore\text{tubo} = \text{'Tubo con gel separador'}}(\text{prueba}\textunderscore\text{sangre}))$$
+* **Sintaxis RelaX:**
+  ```text
+  pi id_estudio, nombre_estudio, color_tapon (estudio join (sigma tipo_tubo = 'Tubo con gel separador' (prueba_sangre)))
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-joel-01.png`]*
 
-### Consulta Individual 2: Reunión Externa Completa (⟗)
-* **Pregunta clínica:** Relación bilateral entre órdenes médicas y citas, auditando inconsistencias en ambos extremos.
+### Consulta Individual 2: Reunión Externa Izquierda (⟕)
+* **Pregunta clínica:** ¿Cuáles son todas las órdenes médicas registradas, preservando aquellas que aún no tienen una cita de laboratorio agendada?
 * **Expresión en Álgebra Relacional:**
-  $$\text{orden\_medica} \mathbin{⟗}_{\text{folio\_orden}} \text{cita}$$
+  $$\pi_{\text{folio}\textunderscore\text{orden}, \text{fecha}\textunderscore\text{orden}, \text{medico}\textunderscore\text{emisor}, \text{id}\textunderscore\text{cita}, \text{estatus}}(\text{orden}\textunderscore\text{medica} \mathbin{⟕} \text{cita})$$
+* **Sintaxis RelaX:**
+  ```text
+  pi folio_orden, fecha_orden, medico_emisor, id_cita, estatus (orden_medica left outer join cita)
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-joel-02.png`]*
 
-### Consulta Individual 3: Intersección con Proyección (π ∘ ∩)
-* **Pregunta clínica:** Identificadores de pacientes que acudieron a citas en dos meses operativos distintos.
+### Consulta Individual 3: Agrupación de Catálogo por Categoría (γ)
+* **Pregunta clínica:** ¿Cuántos estudios existen en el catálogo general agrupados por su tipo de categoría clínica?
+* **Expresión en Álgebra Relacional:**
+  $$\gamma_{\text{tipo}\textunderscore\text{categoria}; \text{count}(\text{id}\textunderscore\text{estudio}) \rightarrow \text{total}\textunderscore\text{estudios}}(\text{estudio})$$
+* **Sintaxis RelaX:**
+  ```text
+  gamma tipo_categoria; count(id_estudio)->total_estudios (estudio)
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-joel-03.png`]*
 
 ---
 

@@ -8,30 +8,38 @@
 
 ## 1. Consultas Propias en Álgebra Relacional
 
-### Consulta Individual 1: Reunión Externa Derecha / Izquierda (⟕)
-* **Pregunta clínica:** ¿Cuáles son los estudios del catálogo y sus indicaciones de preparación, preservando aquellos estudios que no han sido solicitados en ninguna orden médica?
+### Consulta Individual 1: Reunión con Filtro de Categoría (⋈ ∘ σ)
+* **Pregunta clínica:** ¿Qué pacientes tienen estudios asignados que pertenecen a la categoría 'Orina'?
 * **Expresión en Álgebra Relacional:**
-  $$\pi_{\text{id\_estudio},\, \text{nombre\_estudio},\, \text{folio\_orden}}(\text{estudio} \mathbin{⟕} \text{orden\_estudio})$$
+  $$\pi_{\text{nss}\textunderscore\text{paciente}, \text{folio}\textunderscore\text{orden}, \text{nombre}\textunderscore\text{estudio}}(\text{orden}\textunderscore\text{medica} \bowtie (\text{orden}\textunderscore\text{estudio} \bowtie \sigma_{\text{tipo}\textunderscore\text{categoria} = \text{'Orina'}}(\text{estudio})))$$
 * **Sintaxis RelaX:**
   ```text
-  pi id_estudio, nombre_estudio, folio_orden (estudio leftouterjoin orden_estudio)
+  pi nss_paciente, folio_orden, nombre_estudio (orden_medica join (orden_estudio join (sigma tipo_categoria = 'Orina' (estudio))))
   ```
-* **Consulta SQL Equivalente:**
-  ```sql
-  SELECT e.id_estudio, e.nombre_estudio, oe.folio_orden
-  FROM estudio e
-  LEFT JOIN orden_estudio oe ON e.id_estudio = oe.id_estudio;
-  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-alondra-01.png`]*
 
 ### Consulta Individual 2: Diferencia Relacional (-)
-* **Pregunta clínica:** ¿Cuáles son los médicos emisores que nunca han emitido una orden que incluya pruebas coprológicas/fecales?
+* **Pregunta clínica:** ¿Qué estudios clínicos del catálogo general no han sido prescritos en ninguna orden médica?
 * **Expresión en Álgebra Relacional:**
-  $$\pi_{\text{medico\_emisor}}(\text{orden\_medica}) - \pi_{\text{medico\_emisor}}(\text{orden\_medica} \bowtie \text{orden\_estudio} \bowtie \text{prueba\_fecal})$$
+  $$\pi_{\text{id}\textunderscore\text{estudio}}(\text{estudio}) - \pi_{\text{id}\textunderscore\text{estudio}}(\text{orden}\textunderscore\text{estudio})$$
+* **Sintaxis RelaX:**
+  ```text
+  (pi id_estudio (estudio)) - (pi id_estudio (orden_estudio))
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-alondra-02.png`]*
 
-### Consulta Individual 3: Agrupación y Selección (γ ∘ σ)
-* **Pregunta clínica:** ¿Cuántos estudios de tipo orina tienen un volumen mínimo requerido mayor o igual a 20 ml?
+### Consulta Individual 3: Agrupación con Conteo por Clínica (γ)
+* **Pregunta clínica:** ¿Cuántos derechohabientes tiene registrados cada unidad médica de adscripción?
 * **Expresión en Álgebra Relacional:**
-  $$\gamma_{\text{count}(\text{id\_estudio}) \rightarrow \text{total}}(\sigma_{\text{volumen\_minimo} \ge '20 ml'}(\text{prueba\_orina}))$$
+  $$\gamma_{\text{unidad}\textunderscore\text{medica}; \text{count}(\text{nss}) \rightarrow \text{total}\textunderscore\text{derechohabientes}}(\text{paciente})$$
+* **Sintaxis RelaX:**
+  ```text
+  gamma unidad_medica; count(nss)->total_derechohabientes (paciente)
+  ```
+* **Captura de RelaX (Árbol y Resultado):**
+  *[Pendiente de captura: guardar en `../../evidencias/relax/individual-alondra-03.png`]*
 
 ---
 

@@ -18,11 +18,11 @@ Las siguientes tres consultas son de autoría individual, no repiten las 13 cons
 * **Justificación del operador:** Requiere el cuantificador universal («todos» los estudios hematológicos del catálogo).
 * **Expresión formal en Álgebra Relacional:**
   Sean:
-  $$R = \pi_{\text{medico\_emisor},\, \text{id\_estudio}}(\text{orden\_medica} \bowtie \text{orden\_estudio})$$
-  $$S = \pi_{\text{id\_estudio}}(\text{prueba\_sangre})$$
+  $$R = \pi_{\text{medico}\textunderscore\text{emisor}, \text{id}\textunderscore\text{estudio}}(\text{orden}\textunderscore\text{medica} \bowtie \text{orden}\textunderscore\text{estudio})$$
+  $$S = \pi_{\text{id}\textunderscore\text{estudio}}(\text{prueba}\textunderscore\text{sangre})$$
   La división $R \div S$ se expresa en operadores relacionales primitivos como:
-  $$\text{Medicos} \leftarrow \pi_{\text{medico\_emisor}}(R)$$
-  $$\text{Faltantes} \leftarrow \pi_{\text{medico\_emisor}}((\text{Medicos} \times S) - R)$$
+  $$\text{Medicos} \leftarrow \pi_{\text{medico}\textunderscore\text{emisor}}(R)$$
+  $$\text{Faltantes} \leftarrow \pi_{\text{medico}\textunderscore\text{emisor}}((\text{Medicos} \times S) - R)$$
   $$\text{Resultado} = \text{Medicos} - \text{Faltantes}$$
 * **Sintaxis compatible con RelaX:**
 ```text
@@ -75,7 +75,7 @@ WHERE NOT EXISTS (
 * **Pregunta clínica del dominio:** ¿Cuáles son todas las citas registradas en el laboratorio y sus resultados emitidos, preservando aquellas citas que aún están programadas o pendientes de emisión de resultados?
 * **Justificación del operador:** Demuestra la conservación de tuplas incompletas mediante la inyección de nulos en el lado derecho de la reunión.
 * **Expresión formal en Álgebra Relacional:**
-  $$\pi_{\text{cita.id\_cita},\, \text{folio\_orden},\, \text{estatus\_asistencia},\, \text{id\_resultado},\, \text{valor\_obtenido}}(\text{cita} \mathbin{⟕}_{\text{cita.id\_cita} = \text{resultado.id\_cita}} \text{resultado})$$
+  $$\pi_{\text{cita.id}\textunderscore\text{cita}, \text{folio}\textunderscore\text{orden}, \text{estatus}\textunderscore\text{asistencia}, \text{id}\textunderscore\text{resultado}, \text{valor}\textunderscore\text{obtenido}}(\text{cita} \mathbin{⟕}_{\text{cita.id}\textunderscore\text{cita} = \text{resultado.id}\textunderscore\text{cita}} \text{resultado})$$
 * **Sintaxis compatible con RelaX:**
 ```text
 pi id_cita, folio_orden, estatus, id_resultado, valor_obtenido (
@@ -101,7 +101,7 @@ SELECT c.id_cita, c.folio_orden, c.estatus_asistencia,
 FROM cita c
 LEFT JOIN resultado r ON c.id_cita = r.id_cita;
 ```
-* **Análisis de comportamiento:** En una reunión interna ($owtie$), las citas con estatus `'PROGRAMADA'` o citas recién tomadas en flebotomía que aún no son analizadas por los químicos de laboratorio desaparecerían del reporte. El operador $\mathbin{⟕}$ retiene la totalidad de citas del hospital, rellenando con `NULL` las columnas de resultados para las pruebas en proceso.
+* **Análisis de comportamiento:** En una reunión interna (⋈), las citas con estatus `'PROGRAMADA'` o citas recién tomadas en flebotomía que aún no son analizadas por los químicos de laboratorio desaparecerían del reporte. El operador $\mathbin{⟕}$ retiene la totalidad de citas del hospital, rellenando con `NULL` las columnas de resultados para las pruebas en proceso.
 
 ---
 
@@ -109,7 +109,7 @@ LEFT JOIN resultado r ON c.id_cita = r.id_cita;
 * **Pregunta clínica del dominio:** ¿Qué pares de derechohabientes distintos están adscritos a la misma clínica pero pertenecen a generaciones distintas (titular vs beneficiario)?
 * **Justificación del operador:** Autoreunión (*Self-Join*) con condición compuesta de igualdad de clínica y desigualdad de claves primarias y jerarquía familiar.
 * **Expresión formal en Álgebra Relacional:**
-  $$T \leftarrow \rho_{\text{p1}}(\text{paciente}) \bowtie_{\text{p1.unidad = p2.unidad } \land \text{ p1.nss} \neq \text{p2.nss } \land \text{ p1.nss\_titular is null } \land \text{ p2.nss\_titular is not null}} \rho_{\text{p2}}(\text{paciente})$$
+  $$T \leftarrow \rho_{\text{p1}}(\text{paciente}) \bowtie_{\text{p1.unidad = p2.unidad } \land \text{ p1.nss} \neq \text{p2.nss } \land \text{ p1.nss\textunderscore titular is null } \land \text{ p2.nss\textunderscore titular is not null}} \rho_{\text{p2}}(\text{paciente})$$
   $$\text{Resultado} = \pi_{\text{p1.nombre},\, \text{p2.nombre},\, \text{p1.unidad}}(T)$$
 * **Sintaxis compatible con RelaX:**
 ```text
@@ -153,7 +153,7 @@ Descompusimos la relación plana en cuatro tablas en Forma Normal de Boyce-Codd 
 
 ### ¿Por qué esta descomposición es correcta? (Reunión sin pérdida y preservación)
 1. **Reunión sin pérdida (*Lossless Join*):** Al reunir las tablas mediante la intersección de sus atributos comunes:
-   $$\text{norm\_paciente} \cap \text{norm\_orden\_medica} = \{\text{nss}\}$$
+   $$\text{norm}\textunderscore\text{paciente} \cap \text{norm}\textunderscore\text{orden}\textunderscore\text{medica} = \{\text{nss}\}$$
    Como `nss` es la clave primaria de `norm_paciente`, el Teorema de Reunión sin Pérdida garantiza que el `NATURAL JOIN` produce exactamente las tuplas originales, sin generar registros espurios o fantasma.
 2. **Preservación de dependencias funcionales:** Todas las dependencias del negocio ($NSS \rightarrow \text{Nombre}$, $\text{Folio} \rightarrow \text{Fecha, Médico, NSS}$, $\text{IdEstudio} \rightarrow \text{Nombre, Categoría}$) quedaron contenidas enteramente dentro de sus respectivas tablas individuales, por lo que el gestor puede validar cualquier restricción de integridad mediante índices `PRIMARY KEY` y `FOREIGN KEY` sin necesidad de ejecutar costosos `JOIN` previos.
 
